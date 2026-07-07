@@ -1,0 +1,3 @@
+# Call the binary directly — skips pnpm's deps-status precheck, which needs a
+# TTY and fails in the non-interactive git-hook shell (see AGENTS.md).
+./node_modules/.bin/lint-staged

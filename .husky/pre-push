@@ -1,0 +1,3 @@
+# tsc is whole-program — runs on push, not per-file on commit (too slow there).
+# Binary called directly to skip pnpm's deps-status precheck (no TTY in hooks).
+./node_modules/.bin/tsc --noEmit
