@@ -269,7 +269,7 @@ export function CustomScrollbar({
 		<div
 			ref={trackRef}
 			className={cn(
-				'top-0 right-0 z-50 mr-2 h-full w-1 transition-opacity duration-300',
+				'top-0 right-0 z-50 h-full w-2 mix-blend-difference transition-opacity duration-300',
 				isLocal ? 'absolute' : 'fixed',
 				active || isVisible ? 'opacity-100' : 'opacity-0'
 			)}
@@ -281,8 +281,9 @@ export function CustomScrollbar({
 			<div
 				ref={thumbRef}
 				className={cn(
-					'absolute right-0 w-full cursor-pointer rounded-full transition-colors duration-300',
-					active ? 'bg-scrollbar-thumb/50' : 'bg-transparent'
+					'absolute right-0 cursor-pointer rounded-full transition-[width,background-color] duration-300',
+					isHovering || isDragging ? 'w-2' : 'w-1',
+					active ? 'bg-scrollbar-thumb' : 'bg-transparent'
 				)}
 				style={{ height: `${thumbHeight}px` }}
 				onMouseDown={handleMouseDown}

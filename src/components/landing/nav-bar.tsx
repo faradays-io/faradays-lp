@@ -1,129 +1,76 @@
 'use client'
 
-import { CaretDown, List, X } from '@phosphor-icons/react'
+import gsap from 'gsap'
+import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
 
-const MENUS = [
-	{
-		label: 'Product',
-		items: [
-			{ label: 'Scout', href: '#agent-canvas' },
-			{ label: 'Omnichannel', href: '#voice' },
-			{ label: 'Agent Canvas', href: '#agent-canvas' },
-			{ label: 'Insights', href: '#insights' },
-			{ label: 'Voice Experience', href: '#voice' },
-			{ label: 'Browser Agent', href: '#agent-canvas' }
-		]
-	},
-	{
-		label: 'Company',
-		items: [
-			{ label: 'Careers', href: '#cta' },
-			{ label: 'Contact', href: '#cta' },
-			{ label: 'Trust Center', href: '#cta' }
-		]
-	}
-]
+type Language = 'en' | 'pt'
 
 export function NavBar() {
-	const [scrolled, setScrolled] = useState(false)
-	const [open, setOpen] = useState(false)
+	const [language, setLanguage] = useState<Language>('en')
+	const headerRef = useRef<HTMLElement>(null)
 
 	useEffect(() => {
-		const onScroll = () => setScrolled(window.scrollY > 24)
-		onScroll()
-		window.addEventListener('scroll', onScroll, { passive: true })
-		return () => window.removeEventListener('scroll', onScroll)
+		const root = headerRef.current
+		if (!root) return
+		const ctx = gsap.context(() => {
+			gsap.fromTo(
+				'[data-nav-item]',
+				{ autoAlpha: 0, y: -16 },
+				{
+					autoAlpha: 1,
+					y: 0,
+					duration: 0.9,
+					ease: 'power3.out',
+					stagger: 0.08,
+					delay: 0.3
+				}
+			)
+		}, root)
+		return () => ctx.revert()
 	}, [])
 
 	return (
-		<header
-			className={cn(
-				'fixed inset-x-0 top-0 z-50 transition-all duration-500',
-				scrolled
-					? 'bg-background/80 border-b backdrop-blur-md'
-					: 'border-b border-transparent bg-transparent'
-			)}
-		>
-			<nav className="max-w-section mx-auto flex h-[74px] w-full items-center justify-between px-5 min-[810px]:px-8">
+		<header ref={headerRef} className="fixed inset-x-0 top-0 z-50 p-7">
+			<nav className="flex h-9 w-full items-center justify-between">
 				<Link
 					href="/"
-					className="font-heading text-lg font-semibold tracking-[0.35em] uppercase"
+					data-nav-item
+					className="flex items-center opacity-0"
 				>
-					Giga
+					<Image
+						src="/logo.png"
+						alt="Faradays"
+						width={1420}
+						height={334}
+						priority
+						className="h-9 w-auto invert"
+					/>
 				</Link>
 
-				<div className="hidden items-center gap-1 md:flex">
-					{MENUS.map((menu) => (
-						<div key={menu.label} className="group relative">
-							<button className="text-foreground/80 hover:text-foreground flex items-center gap-1 rounded-md px-3 py-2 text-sm transition-colors">
-								{menu.label}
-								<CaretDown className="size-3 transition-transform duration-300 group-hover:rotate-180" />
-							</button>
-							<div className="bg-popover/95 invisible absolute top-full left-0 min-w-48 translate-y-2 rounded-xl border p-2 opacity-0 shadow-xl backdrop-blur-md transition-all duration-300 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
-								{menu.items.map((item) => (
-									<Link
-										key={item.label}
-										href={item.href}
-										className="text-foreground/80 hover:bg-muted hover:text-foreground block rounded-lg px-3 py-2 text-sm transition-colors"
-									>
-										{item.label}
-									</Link>
-								))}
-							</div>
-						</div>
-					))}
-				</div>
-
-				<div className="hidden items-center gap-3 md:flex">
-					<Link
-						href="#cta"
-						className="text-foreground/80 hover:text-foreground text-sm transition-colors"
+				<div className="flex items-center gap-3">
+					<button
+						data-nav-item
+						aria-label="Switch language"
+						onClick={() =>
+							setLanguage((l) => (l === 'en' ? 'pt' : 'en'))
+						}
+						className="bg-background text-foreground/80 hover:text-foreground flex size-9 items-center justify-center rounded-md border font-mono text-sm font-semibold uppercase opacity-0 transition-colors"
 					>
-						Sign in
-					</Link>
-					<Button asChild size="sm">
+						{language}
+					</button>
+					<Button
+						asChild
+						data-nav-item
+						className="h-9 px-5 font-sans text-base normal-case opacity-0"
+					>
 						<Link href="#cta">See a demo</Link>
 					</Button>
 				</div>
-
-				<button
-					className="rounded-md p-2 md:hidden"
-					aria-label="Toggle menu"
-					onClick={() => setOpen((v) => !v)}
-				>
-					{open ? <List className="hidden" /> : null}
-					{open ? (
-						<X className="size-5" />
-					) : (
-						<List className="size-5" />
-					)}
-				</button>
 			</nav>
-
-			{open ? (
-				<div className="bg-background/95 border-t px-5 py-4 backdrop-blur-md md:hidden">
-					{MENUS.flatMap((m) => m.items).map((item) => (
-						<Link
-							key={item.label}
-							href={item.href}
-							onClick={() => setOpen(false)}
-							className="text-foreground/80 block py-2 text-sm"
-						>
-							{item.label}
-						</Link>
-					))}
-					<Button asChild className="mt-3 w-full">
-						<Link href="#cta" onClick={() => setOpen(false)}>
-							See a demo
-						</Link>
-					</Button>
-				</div>
-			) : null}
 		</header>
 	)
 }

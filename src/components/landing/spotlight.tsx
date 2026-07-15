@@ -8,14 +8,14 @@ import { Reveal } from '@/components/landing/reveal'
 /** Light case-study section — fictional customer + placeholder assets. */
 export function Spotlight() {
 	return (
-		<section id="spotlight" className="bg-white text-neutral-950">
-			<div className="max-w-section mx-auto w-full px-5 py-24 min-[810px]:px-8">
+		<section id="spotlight" className="bg-[#d1d1c4] text-neutral-950">
+			<div className="max-w-section mx-auto w-full px-4 py-40 min-[810px]:px-6">
 				<Reveal>
 					<span className="font-mono text-sm tracking-wide text-neutral-500 uppercase">
 						Customer spotlight
 					</span>
 					<h2 className="font-heading text-h1 mt-3 max-w-2xl text-balance">
-						How enterprise teams scale support with Giga
+						How enterprise teams scale support with Faradays
 					</h2>
 				</Reveal>
 
@@ -58,7 +58,7 @@ export function Spotlight() {
 							</Link>
 							<blockquote className="text-body-lg border-l-2 border-neutral-300 pl-5 text-neutral-700">
 								&ldquo;We operate across dozens of markets and
-								languages. Giga turned our conversation data
+								languages. Faradays turned our conversation data
 								into fewer escalations, faster resolutions, and
 								calmer queues — quarter after quarter.&rdquo;
 							</blockquote>

@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/button'
 
 export function CtaSection() {
 	return (
-		<section id="cta" className="bg-white text-neutral-950">
-			<div className="max-w-section mx-auto w-full px-5 pb-24 min-[810px]:px-8">
+		<section id="cta" className="bg-[#d1d1c4] text-neutral-950">
+			<div className="max-w-section mx-auto w-full px-4 py-40 min-[810px]:px-6">
 				<Reveal className="mx-auto max-w-2xl py-16 text-center">
 					<span className="font-mono text-sm tracking-wide text-neutral-500 uppercase">
 						Get a personalized demo
@@ -15,7 +15,7 @@ export function CtaSection() {
 						Ready to see the agent in action?
 					</h2>
 					<p className="text-body-lg mt-5 text-neutral-600">
-						From live delivery hiccups to compliance calls, Giga
+						From live delivery hiccups to compliance calls, Faradays
 						agents run complex workflows at scale — holding
 						resolution accuracy above 90% in production.
 					</p>

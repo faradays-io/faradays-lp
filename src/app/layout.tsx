@@ -10,7 +10,7 @@ import { activeFontVariables, TYPE } from '@/lib/fonts'
 import { cn } from '@/lib/utils'
 
 export const metadata: Metadata = {
-	title: 'Giga — AI agents for enterprise support',
+	title: 'Faradays — AI agents for enterprise support',
 	description:
 		'Landing page study inspired by giga.ai — structure and motion, with original placeholder content.'
 }

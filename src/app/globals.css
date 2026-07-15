@@ -175,7 +175,7 @@
 }
 
 :root {
-	--background: hsl(0, 0%, 98%);
+	--background: #d1d1c4;
 	--foreground: oklch(0.145 0 0);
 	--card: oklch(1 0 0);
 	--card-foreground: oklch(0.145 0 0);
@@ -202,8 +202,9 @@
 	--chart-4: oklch(0.371 0 0);
 	--chart-5: oklch(0.269 0 0);
 	--radius: 0.45rem;
-	/* Custom scrollbar thumb — constant gray, a touch darker than background. */
-	--scrollbar-thumb: oklch(0.8 0 0);
+	/* Custom scrollbar thumb — constant gray; mix-blend-difference on the
+	   thumb makes it contrast with whatever is behind it. */
+	--scrollbar-thumb: #f2f2f2;
 	--sidebar: hsl(0, 0%, 96%);
 	--sidebar-foreground: oklch(0.145 0 0);
 	--sidebar-primary: oklch(0.205 0 0);
@@ -215,10 +216,8 @@
 }
 
 .dark {
-	--background: #16171b;
-	--foreground: oklch(0.985 0 0);
-	/* A touch lighter than the dark background. */
-	--scrollbar-thumb: oklch(0.32 0 0);
+	--background: #0f0f0e;
+	--foreground: #d1d1c4;
 	--card: oklch(0.205 0 0);
 	--card-foreground: oklch(0.985 0 0);
 	--popover: oklch(0.205 0 0);
@@ -256,14 +255,7 @@
 /* ---- Landing --------------------------------------------------------- */
 @theme {
 	/* `max-w-section` — shared content width of every landing section. */
-	--container-section: 82.5rem;
-
-	--animate-marquee: marquee 45s linear infinite;
-	@keyframes marquee {
-		to {
-			transform: translateX(-50%);
-		}
-	}
+	--container-section: 115rem;
 
 	/* Slow ken-burns pan for ambient/mock media blocks. */
 	--animate-slow-pan: slow-pan 24s ease-in-out infinite alternate;
@@ -291,7 +283,7 @@
 			140% 95% at 50% 120%,
 			#3d2f3e 0%,
 			#232031 48%,
-			#16171b 80%
+			#0f0f0e 80%
 		),
-		#16171b;
+		#0f0f0e;
 }

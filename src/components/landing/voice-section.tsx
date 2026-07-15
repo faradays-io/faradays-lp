@@ -8,7 +8,7 @@ import { Reveal } from '@/components/landing/reveal'
 export function VoiceSection() {
 	return (
 		<section id="voice" className="bg-background text-foreground">
-			<div className="max-w-section mx-auto w-full px-5 py-24 min-[810px]:px-8">
+			<div className="max-w-section mx-auto w-full px-4 py-40 min-[810px]:px-6">
 				<Reveal className="max-w-2xl">
 					<h2 className="font-heading text-h1">Voice Experience</h2>
 					<p className="text-body-lg text-muted-foreground mt-4">

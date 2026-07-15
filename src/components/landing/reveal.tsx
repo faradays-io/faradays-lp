@@ -13,12 +13,18 @@ export function Reveal({
 	children,
 	className,
 	delay = 0,
-	y = 36
+	y = 36,
+	start = 'top 85%',
+	trigger
 }: {
 	children: React.ReactNode
 	className?: string
 	delay?: number
 	y?: number
+	/** ScrollTrigger start — pass earlier values for transformed sections. */
+	start?: string
+	/** Selector to watch instead of the element itself (e.g. the section). */
+	trigger?: string
 }) {
 	const ref = useRef<HTMLDivElement>(null)
 
@@ -35,12 +41,16 @@ export function Reveal({
 					duration: 1.1,
 					delay,
 					ease: 'power3.out',
-					scrollTrigger: { trigger: el, start: 'top 85%', once: true }
+					scrollTrigger: {
+						trigger: trigger ?? el,
+						start,
+						once: true
+					}
 				}
 			)
 		})
 		return () => ctx.revert()
-	}, [delay, y])
+	}, [delay, y, start, trigger])
 
 	return (
 		<div ref={ref} className={cn('will-change-transform', className)}>
