@@ -68,7 +68,7 @@ export function HomeHero() {
 			   painel (40svh) visível na dobra. */}
 			<div className="flex min-h-[calc(60svh-5.75rem)] w-full flex-col items-center justify-center px-7 pt-12 pb-16 text-center">
 				<Link
-					href="/credito"
+					href="#cta"
 					data-hero-item
 					className="bg-foreground/5 hover:bg-foreground/10 mb-7 flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm opacity-0 transition-colors"
 				>

@@ -47,7 +47,7 @@ export function HomeCta() {
 							variant="ghost"
 							className="px-6"
 						>
-							<Link href="/credito">
+							<Link href="#cta">
 								<SplitHoverText as="span">
 									Conheça a IA de crédito
 								</SplitHoverText>

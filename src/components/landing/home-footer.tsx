@@ -35,7 +35,7 @@ const FOOTER_COLUMNS = [
 	{
 		title: 'Soluções',
 		links: [
-			{ label: 'IA de crédito', href: '/credito' },
+			{ label: 'IA de crédito', href: '#cta' },
 			{ label: 'Portais operacionais', href: '#features' },
 			{ label: 'Agentes com seus dados', href: '#features' }
 		]
