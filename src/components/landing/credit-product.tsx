@@ -23,7 +23,8 @@ const PROFILES = [
 		signals: ['Sem birô', 'Recebíveis estáveis', 'Setor em expansão'],
 		staticVerdict: 'Recusar — score insuficiente',
 		policyVerdict: 'Aprovar com limite de entrada',
-		policyDetail: 'Limite inicial reduzido · revisão automática em 90 dias',
+		policyDetail:
+			'Limite inicial reduzido · revisão automática conforme o comportamento',
 		rationale:
 			'O valor de aprender sobre um nicho novo supera o risco da exposição inicial.'
 	},

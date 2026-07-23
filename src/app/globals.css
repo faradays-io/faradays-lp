@@ -174,7 +174,10 @@
 	}
 }
 
-:root {
+/* `.light` re-opens the light tokens as a scope, so a subtree (e.g. the
+   /credito page) can render light while the forced theme stays dark. */
+:root,
+.light {
 	--background: #d1d1c4;
 	--foreground: oklch(0.145 0 0);
 	--card: oklch(1 0 0);
@@ -213,6 +216,12 @@
 	--sidebar-accent-foreground: oklch(0.205 0 0);
 	--sidebar-border: oklch(0.922 0 0);
 	--sidebar-ring: oklch(0.708 0 0);
+}
+
+/* `.light-home` — ground da nova home (usar junto com `.light`): cinza
+   claro no tema claro; o escuro segue o `.dark` global (#0f0f0e). */
+.light-home {
+	--background: #f4f4f4;
 }
 
 .dark {
@@ -267,6 +276,13 @@
 			transform: scale(1.14) translateY(-2.5%);
 		}
 	}
+}
+
+/* Fundo pontilhado sutil atrás das células da grade que têm figura. */
+.bg-dotted {
+	background-image: radial-gradient(var(--border) 1px, transparent 1px);
+	background-size: 16px 16px;
+	background-position: center;
 }
 
 /* Mock "sunrise over mountains" — CSS stand-in for the hero photograph. */

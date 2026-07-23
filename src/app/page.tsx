@@ -1,36 +1,32 @@
-import { BrandsSection } from '@/components/landing/brands-section'
-import { CreditTeaser } from '@/components/landing/credit-teaser'
-import { CtaSection } from '@/components/landing/cta-section'
-import { FeatureShowcase } from '@/components/landing/feature-showcase'
-import { Footer } from '@/components/landing/footer'
-import { Hero } from '@/components/landing/hero'
-import { NavBar } from '@/components/landing/nav-bar'
-import { ProjectJourney } from '@/components/landing/project-journey'
-import { Spotlight } from '@/components/landing/spotlight'
-import { StackedSections } from '@/components/landing/stacked-sections'
-import { StatsBand } from '@/components/landing/stats-band'
-import { VoiceSection } from '@/components/landing/voice-section'
+import type { Metadata } from 'next'
 
-export default function Home() {
+import { FeaturesSection } from '@/components/landing/features-section'
+import { HomeCta } from '@/components/landing/home-cta'
+import { HomeFooter } from '@/components/landing/home-footer'
+import { HomeHero } from '@/components/landing/home-hero'
+import { NavBar } from '@/components/landing/nav-bar'
+import { PageTransition } from '@/components/landing/page-transition'
+import { PartnersSection } from '@/components/landing/partners-section'
+import { TestimonialsSection } from '@/components/landing/testimonials-section'
+
+export const metadata: Metadata = {
+	title: 'Faradays',
+	description: 'Inteligência artificial aplicada à sua operação.'
+}
+
+export default function HomePage() {
 	return (
-		<>
+		<div className="light light-home bg-background text-foreground min-h-svh">
+			<PageTransition />
 			<NavBar />
 			<main className="pt-23">
-				<Hero />
-				<StackedSections>
-					<BrandsSection />
-					<StatsBand />
-				</StackedSections>
-
-				<FeatureShowcase />
-				<CreditTeaser />
-				<ProjectJourney />
-
-				<VoiceSection />
-				<Spotlight />
-				<CtaSection />
+				<HomeHero />
+				<FeaturesSection />
+				<PartnersSection />
+				<TestimonialsSection />
+				<HomeCta />
 			</main>
-			<Footer />
-		</>
+			<HomeFooter />
+		</div>
 	)
 }

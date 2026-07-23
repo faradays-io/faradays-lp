@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
 
 import { CreditApproach } from '@/components/landing/credit-approach'
+import { CreditGraph } from '@/components/landing/credit-graph'
 import { CreditHero } from '@/components/landing/credit-hero'
 import { CreditPoc } from '@/components/landing/credit-poc'
-import { CreditProblem } from '@/components/landing/credit-problem'
 import { CreditProduct } from '@/components/landing/credit-product'
+import { CreditShowcase } from '@/components/landing/credit-showcase'
 import { Footer } from '@/components/landing/footer'
 import { NavBar } from '@/components/landing/nav-bar'
 
@@ -16,16 +17,17 @@ export const metadata: Metadata = {
 
 export default function CreditoPage() {
 	return (
-		<>
+		<div className="light bg-background text-foreground">
 			<NavBar />
 			<main className="pt-23">
 				<CreditHero />
 				<CreditProduct />
-				<CreditProblem />
+				<CreditShowcase />
 				<CreditApproach />
+				<CreditGraph />
 				<CreditPoc />
 			</main>
 			<Footer />
-		</>
+		</div>
 	)
 }

@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button'
 const FACTS: Array<[string, string]> = [
 	['Decisão', 'Política, não score'],
 	['Adaptação', 'Sem retreino'],
-	['Prova de conceito', '6 meses']
+	['Fairness', 'Na função objetivo']
 ]
 
 export function CreditHero() {
@@ -103,7 +103,7 @@ export function CreditHero() {
 
 				<div
 					data-hero-item
-					className="relative h-[52svh] w-full overflow-hidden rounded-3xl border opacity-0 lg:h-[72svh]"
+					className="dark bg-background relative h-[52svh] w-full overflow-hidden rounded-3xl border opacity-0 lg:h-[72svh]"
 				>
 					<DriftCanvas className="absolute inset-0" />
 					<span className="text-foreground/60 absolute bottom-5 left-6 font-mono text-xs tracking-wide uppercase">

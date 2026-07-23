@@ -31,7 +31,7 @@ const GUARDRAILS = [
 	},
 	{
 		tag: 'Autonomia',
-		text: 'Nesta fase o sistema não decide sozinho — entrega evidências e métricas para o seu time de risco validar.'
+		text: 'Na prova de conceito o sistema não decide sozinho — entrega evidências e métricas para o seu time de risco validar.'
 	},
 	{
 		tag: 'Privacidade',
@@ -41,34 +41,34 @@ const GUARDRAILS = [
 
 export function CreditPoc() {
 	return (
-		<section id="poc" className="bg-[#d1d1c4] text-neutral-950">
+		<section id="poc" className="dark bg-background text-foreground">
 			<div className="max-w-section mx-auto w-full px-4 py-40 min-[810px]:px-6">
 				<Reveal>
-					<span className="font-mono text-sm tracking-wide text-neutral-500 uppercase">
-						(comece em 6 meses)
+					<span className="text-muted-foreground font-mono text-sm tracking-wide uppercase">
+						(comece pequeno, meça tudo)
 					</span>
 					<h2 className="font-heading text-h1 mt-3 max-w-3xl text-balance">
 						Uma prova de conceito com régua explícita
 					</h2>
-					<p className="text-body-lg mt-5 max-w-2xl text-neutral-600">
-						Antes de qualquer compromisso longo: 6 meses medindo
-						modelos fundacionais contra os baselines da casa, em
-						dados históricos reais — com três níveis de sucesso
-						definidos de antemão.
+					<p className="text-body-lg text-foreground/70 mt-5 max-w-2xl">
+						Antes de qualquer compromisso longo: uma prova de
+						conceito enxuta, medindo modelos fundacionais contra os
+						baselines da casa, nos seus dados históricos reais — com
+						três níveis de sucesso definidos de antemão.
 					</p>
 				</Reveal>
 
 				<div className="mt-14 grid gap-6 min-[810px]:grid-cols-3">
 					{LEVELS.map((level, i) => (
 						<Reveal key={level.level} delay={i * 0.12}>
-							<div className="flex h-full flex-col gap-3 rounded-3xl border border-neutral-950/15 p-7">
-								<span className="font-mono text-xs font-bold tracking-widest text-neutral-500 uppercase">
+							<div className="flex h-full flex-col gap-3 rounded-3xl border p-7">
+								<span className="text-muted-foreground font-mono text-xs font-bold tracking-widest uppercase">
 									{level.level}
 								</span>
 								<h3 className="font-heading text-h4">
 									{level.title}
 								</h3>
-								<p className="text-neutral-700">
+								<p className="text-foreground/80">
 									{level.description}
 								</p>
 							</div>
@@ -77,13 +77,13 @@ export function CreditPoc() {
 				</div>
 
 				<Reveal className="mt-16">
-					<div className="grid gap-8 border-t border-neutral-950/15 pt-10 min-[810px]:grid-cols-3">
+					<div className="grid gap-8 border-t pt-10 min-[810px]:grid-cols-3">
 						{GUARDRAILS.map((rail) => (
 							<div key={rail.tag} className="flex flex-col gap-2">
 								<span className="font-mono text-xs font-bold tracking-wide uppercase">
 									{rail.tag}
 								</span>
-								<p className="text-body-sm text-neutral-600">
+								<p className="text-body-sm text-foreground/70">
 									{rail.text}
 								</p>
 							</div>
@@ -92,13 +92,13 @@ export function CreditPoc() {
 				</Reveal>
 
 				<Reveal className="mx-auto mt-32 max-w-2xl text-center">
-					<span className="font-mono text-sm tracking-wide text-neutral-500 uppercase">
+					<span className="text-muted-foreground font-mono text-sm tracking-wide uppercase">
 						Faradays × Unicamp
 					</span>
 					<h3 className="font-heading text-h2 mt-3 text-balance">
 						Vamos medir contra o seu baseline?
 					</h3>
-					<p className="mt-5 text-neutral-600">
+					<p className="text-foreground/70 mt-5">
 						Pesquisa conduzida em cooperação com a Universidade
 						Estadual de Campinas (Unicamp), com interveniência da
 						Funcamp.
