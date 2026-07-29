@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 
 import { cn } from '@/lib/utils'
 
-const BONE = '#d1d1c4'
+const BONE = '#f4f4f4'
 const BRAND = '#3b8eff'
 const PANEL = '#0f0f0e'
 const KNOWN_COUNT = 42

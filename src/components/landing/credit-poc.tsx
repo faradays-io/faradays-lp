@@ -2,6 +2,7 @@ import Link from 'next/link'
 
 import { Reveal } from '@/components/landing/reveal'
 import { Button } from '@/components/ui/button'
+import { BOOKING_URL } from '@/lib/links'
 
 const LEVELS = [
 	{
@@ -104,7 +105,11 @@ export function CreditPoc() {
 						Funcamp.
 					</p>
 					<Button asChild size="lg" className="mt-8">
-						<Link href="mailto:contato@faradays.io">
+						<Link
+							href={BOOKING_URL}
+							target="_blank"
+							rel="noopener noreferrer"
+						>
 							Falar com a equipe
 						</Link>
 					</Button>

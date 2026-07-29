@@ -7,8 +7,8 @@ import { useEffect, useRef } from 'react'
 
 import { SplitHoverText } from '@/components/custom-ui/split-hover-text'
 import { AsciiField, HeroDemo } from '@/components/landing/hero-demo'
-import { PAGE_TRANSITION_COMPLETE } from '@/components/landing/page-transition'
 import { Button } from '@/components/ui/button'
+import { usePageReady } from '@/lib/page-ready'
 
 /**
  * Hero claro (copy no padrão do hero da rota raiz): pill de anúncio,
@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button'
  */
 export function HomeHero() {
 	const rootRef = useRef<HTMLElement>(null)
+	const ready = usePageReady()
 
 	useEffect(() => {
 		const root = rootRef.current
@@ -28,35 +29,24 @@ export function HomeHero() {
 			gsap.set(items, { autoAlpha: 1 })
 			return
 		}
-		let played = false
-		let ctx: gsap.Context | undefined
-		const play = () => {
-			if (played) return
-			played = true
-			ctx = gsap.context(() => {
-				gsap.fromTo(
-					'[data-hero-item]',
-					{ autoAlpha: 0, y: 40 },
-					{
-						autoAlpha: 1,
-						y: 0,
-						duration: 1.1,
-						ease: 'power3.out',
-						stagger: 0.1,
-						delay: 0.05
-					}
-				)
-			}, root)
-		}
-		window.addEventListener(PAGE_TRANSITION_COMPLETE, play)
-		// Fallback: anima mesmo se a transição não estiver na página.
-		const fallback = window.setTimeout(play, 4000)
-		return () => {
-			window.removeEventListener(PAGE_TRANSITION_COMPLETE, play)
-			window.clearTimeout(fallback)
-			ctx?.revert()
-		}
-	}, [])
+		// Só depois do loader: até lá os itens ficam em opacity-0 no markup.
+		if (!ready) return
+		const ctx = gsap.context(() => {
+			gsap.fromTo(
+				'[data-hero-item]',
+				{ autoAlpha: 0, y: 40 },
+				{
+					autoAlpha: 1,
+					y: 0,
+					duration: 1.1,
+					ease: 'power3.out',
+					stagger: 0.1,
+					delay: 0.05
+				}
+			)
+		}, root)
+		return () => ctx.revert()
+	}, [ready])
 
 	return (
 		<section

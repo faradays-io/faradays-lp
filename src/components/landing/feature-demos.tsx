@@ -9,6 +9,7 @@ import {
 	useState
 } from 'react'
 
+import { usePageReady } from '@/lib/page-ready'
 import { cn } from '@/lib/utils'
 
 /* Demos do showcase (padrão do CursorDuo do /credito): mini-UIs claras com
@@ -59,12 +60,16 @@ function DemoStage({
 	const hoveredRef = useRef(false)
 	const [hovered, setHovered] = useState(false)
 	const [step, setStep] = useState(-1)
+	const ready = usePageReady()
 
 	useEffect(() => {
 		const root = rootRef.current
 		const ai = aiRef.current
 		const human = humanRef.current
 		if (!root || !ai || !human) return
+		// O tour mede posições em tela: só depois do loader, com o layout já
+		// assentado (e sem rodar escondido atrás dele).
+		if (!ready) return
 		const rootRect = root.getBoundingClientRect()
 		gsap.set(ai, {
 			x: rootRect.width * AI_REST.x,
@@ -145,7 +150,7 @@ function DemoStage({
 			tl.kill()
 			setStep(-1)
 		}
-	}, [tour])
+	}, [tour, ready])
 
 	const reducedMotion = () =>
 		window.matchMedia('(prefers-reduced-motion: reduce)').matches

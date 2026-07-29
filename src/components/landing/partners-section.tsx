@@ -6,6 +6,7 @@ import { SplitText } from 'gsap/SplitText'
 import Image from 'next/image'
 import { useEffect, useRef } from 'react'
 
+import { usePageReady } from '@/lib/page-ready'
 import { cn } from '@/lib/utils'
 
 gsap.registerPlugin(ScrollTrigger, SplitText)
@@ -75,6 +76,7 @@ function CornerDots() {
 
 export function PartnersSection() {
 	const rootRef = useRef<HTMLElement>(null)
+	const ready = usePageReady()
 
 	const containerRef = useRef<HTMLDivElement>(null)
 	const highlightRef = useRef<HTMLDivElement>(null)
@@ -132,6 +134,9 @@ export function PartnersSection() {
 	useEffect(() => {
 		const root = rootRef.current
 		if (!root) return
+		// ScrollTrigger avalia o gatilho na criação — antes do fim do loader
+		// a seção poderia já estar em viewport e animar sob ele.
+		if (!ready) return
 		let ctx: gsap.Context | undefined
 		let split: SplitText | undefined
 		let cancelled = false
@@ -174,7 +179,7 @@ export function PartnersSection() {
 			ctx?.revert()
 			split?.revert()
 		}
-	}, [])
+	}, [ready])
 
 	return (
 		<section id="partners" ref={rootRef} className="px-7 py-24 md:py-36">

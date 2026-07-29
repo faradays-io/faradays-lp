@@ -4,8 +4,11 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useEffect, useRef } from 'react'
 
-import { SplitHoverText } from '@/components/custom-ui/split-hover-text'
 import { FaradaysWordmark } from '@/components/landing/faradays-wordmark'
+import { LEGAL_PAGES } from '@/components/landing/legal-data'
+import { SOLUTIONS } from '@/components/landing/solutions-data'
+import { BOOKING_URL } from '@/lib/links'
+import { usePageReady } from '@/lib/page-ready'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -14,31 +17,30 @@ gsap.registerPlugin(ScrollTrigger)
    desenrolam até a reta conforme o wordmark sobe na tela. */
 const ARC = 1.5
 
-const LEGAL_LINKS = [
-	{ label: 'Licenças', href: '#' },
-	{ label: 'Termos', href: '#' },
-	{ label: 'Privacidade', href: '#' },
-	{ label: 'Cookies', href: '#' }
-]
+const LEGAL_LINKS = LEGAL_PAGES.map((page) => ({
+	label: page.label,
+	href: page.slug
+}))
 
 /* Colunas de navegação acima do wordmark. */
 const FOOTER_COLUMNS = [
 	{
 		title: 'Navegue',
+		/* Absolutos: o rodapé aparece em mais de uma rota, e âncora relativa
+		   só funcionaria na página que tem as seções. */
 		links: [
-			{ label: 'Produto', href: '#features' },
-			{ label: 'Parceiros', href: '#partners' },
-			{ label: 'Relatos', href: '#testimonials' },
-			{ label: 'Agende uma demo', href: '#cta' }
+			{ label: 'Produto', href: '/importacoes#features' },
+			{ label: 'Parceiros', href: '/importacoes#partners' },
+			{ label: 'Relatos', href: '/importacoes#testimonials' },
+			{ label: 'Agende uma demo', href: BOOKING_URL }
 		]
 	},
 	{
 		title: 'Soluções',
-		links: [
-			{ label: 'IA de crédito', href: '#cta' },
-			{ label: 'Portais operacionais', href: '#features' },
-			{ label: 'Agentes com seus dados', href: '#features' }
-		]
+		links: SOLUTIONS.map((solution) => ({
+			label: solution.name,
+			href: solution.slug
+		}))
 	},
 	{
 		title: 'Contato',
@@ -55,11 +57,12 @@ const FOOTER_COLUMNS = [
 export function HomeFooter() {
 	const rootRef = useRef<HTMLElement>(null)
 	const wordRef = useRef<HTMLDivElement>(null)
+	const ready = usePageReady()
 
 	useEffect(() => {
 		const root = rootRef.current
 		const word = wordRef.current
-		if (!root || !word) return
+		if (!root || !word || !ready) return
 		const svg = word.querySelector('svg')
 		// Cada letra é um <g.wm-letter> isolado no wordmark SVG.
 		const letters = gsap.utils.toArray<SVGGElement>('.wm-letter', word)
@@ -67,7 +70,7 @@ export function HomeFooter() {
 		const count = letters.length
 		// Amplitude do arco em unidades do viewBox (o y do gsap em SVG é
 		// aplicado no espaço de usuário), então escala junto com o desenho.
-		const vbWidth = svg.viewBox.baseVal.width || 563.5
+		const vbWidth = svg.viewBox.baseVal.width || 500.5
 
 		const mm = gsap.matchMedia(root)
 		// Só em telas md+ — no mobile fica o wordmark único, estático.
@@ -110,7 +113,7 @@ export function HomeFooter() {
 			}
 		})
 		return () => mm.revert()
-	}, [])
+	}, [ready])
 
 	return (
 		<footer
@@ -136,13 +139,12 @@ export function HomeFooter() {
 						<ul className="flex flex-col gap-2.5">
 							{column.links.map((link) => (
 								<li key={link.label}>
-									<SplitHoverText
-										as="a"
+									<a
 										href={link.href}
-										className="text-body-sm text-foreground/70 hover:text-foreground block transition-colors"
+										className="link-underline text-body-sm text-foreground/70 hover:text-foreground inline-block transition-colors"
 									>
 										{link.label}
-									</SplitHoverText>
+									</a>
 								</li>
 							))}
 						</ul>
@@ -158,38 +160,35 @@ export function HomeFooter() {
 			</div>
 
 			<div className="flex flex-col items-center gap-3 px-7 font-mono text-sm tracking-widest uppercase lg:flex-row lg:justify-between">
-				<ul className="flex items-center gap-1.5">
+				<ul className="flex items-center gap-4">
 					{LEGAL_LINKS.map((link) => (
 						<li key={link.label}>
-							<SplitHoverText
-								as="a"
+							<a
 								href={link.href}
-								className="bg-foreground text-background hover:bg-brand hover:text-brand-foreground block rounded-full px-3 py-1 transition-colors"
+								className="link-underline text-foreground/70 hover:text-foreground inline-block transition-colors"
 							>
 								{link.label}
-							</SplitHoverText>
+							</a>
 						</li>
 					))}
 				</ul>
 				<p className="text-foreground/70 order-first lg:order-none">
 					© 2026 Faradays Consulting LTDA
 				</p>
-				<div className="flex items-center gap-1.5">
+				<div className="flex items-center gap-4">
 					<span className="text-foreground/70">Contato</span>
-					<SplitHoverText
-						as="a"
+					<a
 						href="mailto:contato@faradays.io"
-						className="bg-brand text-brand-foreground block rounded-full px-3 py-1 transition-opacity hover:opacity-85"
+						className="link-underline text-brand inline-block transition-opacity hover:opacity-85"
 					>
 						E-mail
-					</SplitHoverText>
-					<SplitHoverText
-						as="a"
+					</a>
+					<a
 						href="#"
-						className="bg-brand text-brand-foreground block rounded-full px-3 py-1 transition-opacity hover:opacity-85"
+						className="link-underline text-brand inline-block transition-opacity hover:opacity-85"
 					>
 						LinkedIn
-					</SplitHoverText>
+					</a>
 				</div>
 			</div>
 		</footer>

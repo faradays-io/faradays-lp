@@ -178,7 +178,7 @@
    /credito page) can render light while the forced theme stays dark. */
 :root,
 .light {
-	--background: #d1d1c4;
+	--background: #f4f4f4;
 	--foreground: oklch(0.145 0 0);
 	--card: oklch(1 0 0);
 	--card-foreground: oklch(0.145 0 0);
@@ -226,7 +226,7 @@
 
 .dark {
 	--background: #0f0f0e;
-	--foreground: #d1d1c4;
+	--foreground: #f4f4f4;
 	--card: oklch(0.205 0 0);
 	--card-foreground: oklch(0.985 0 0);
 	--popover: oklch(0.205 0 0);
@@ -276,6 +276,29 @@
 			transform: scale(1.14) translateY(-2.5%);
 		}
 	}
+}
+
+/* Underline animado: no hover a linha desenha da esquerda para a direita;
+   ao sair, some também da esquerda para a direita (a origem do scale troca
+   de lado entre os dois estados). */
+.link-underline {
+	position: relative;
+}
+.link-underline::after {
+	content: '';
+	position: absolute;
+	right: 0;
+	bottom: -0.2em;
+	left: 0;
+	height: 1px;
+	background: currentColor;
+	transform: scaleX(0);
+	transform-origin: right;
+	transition: transform 0.3s ease;
+}
+.link-underline:hover::after {
+	transform: scaleX(1);
+	transform-origin: left;
 }
 
 /* Fundo pontilhado sutil atrás das células da grade que têm figura. */

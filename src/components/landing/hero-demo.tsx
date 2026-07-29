@@ -17,6 +17,7 @@ import {
 import gsap from 'gsap'
 import { useEffect, useRef, useState } from 'react'
 
+import { usePageReady } from '@/lib/page-ready'
 import { cn } from '@/lib/utils'
 
 /* ------------------------------------------------------------------ *
@@ -27,8 +28,16 @@ import { cn } from '@/lib/utils'
 const CELL = 16
 const CHARS = ' .:-=+*#'
 
-export function AsciiField({ className }: { className?: string }) {
+export function AsciiField({
+	className,
+	rgb = '0, 101, 224'
+}: {
+	className?: string
+	/** Cor dos glifos como "r, g, b" — default azul brand. */
+	rgb?: string
+}) {
 	const canvasRef = useRef<HTMLCanvasElement>(null)
+	const ready = usePageReady()
 
 	useEffect(() => {
 		const canvas = canvasRef.current
@@ -67,7 +76,7 @@ export function AsciiField({ className }: { className?: string }) {
 						Math.max(0, Math.floor(v * CHARS.length))
 					)
 					if (idx === 0) continue
-					ctx.fillStyle = `rgba(0, 101, 224, ${0.07 + v * 0.16})`
+					ctx.fillStyle = `rgba(${rgb}, ${0.07 + v * 0.16})`
 					ctx.fillText(CHARS[idx], x, y)
 				}
 			}
@@ -83,20 +92,23 @@ export function AsciiField({ className }: { className?: string }) {
 			paint(now / 1000)
 		}
 
+		// Congelado até o fim do loader: a textura fica pintada, mas parada.
+		const frozen = reducedMotion || !ready
+
 		const ro = new ResizeObserver(() => {
 			resize()
-			if (reducedMotion) paint(0)
+			if (frozen) paint(0)
 		})
 		ro.observe(canvas)
 		resize()
-		if (reducedMotion) paint(0)
+		if (frozen) paint(0)
 		else raf = requestAnimationFrame(loop)
 
 		return () => {
 			cancelAnimationFrame(raf)
 			ro.disconnect()
 		}
-	}, [])
+	}, [rgb, ready])
 
 	return (
 		<canvas
@@ -144,13 +156,14 @@ export function HeroDemo() {
 	const [dragging, setDragging] = useState(false)
 	const [overZone, setOverZone] = useState(false)
 	const phaseRef = useRef(phase)
+	const ready = usePageReady()
 	useEffect(() => {
 		phaseRef.current = phase
 	}, [phase])
 
 	/* Flutuação da planilha enquanto espera interação. */
 	useEffect(() => {
-		if (phase !== 'idle' || dragging) return
+		if (phase !== 'idle' || dragging || !ready) return
 		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches)
 			return
 		const file = fileRef.current
@@ -166,7 +179,7 @@ export function HeroDemo() {
 		return () => {
 			bob.kill()
 		}
-	}, [phase, dragging])
+	}, [phase, dragging, ready])
 
 	/* Arraste + soltura na zona do sistema. */
 	useEffect(() => {

@@ -24,7 +24,7 @@ uniform float u_time;
 uniform float u_cell;
 
 const vec3 DARK = vec3(0.0588, 0.0588, 0.0549);  /* #0f0f0e */
-const vec3 LIGHT = vec3(0.8196, 0.8196, 0.7686); /* #d1d1c4 */
+const vec3 LIGHT = vec3(0.9569, 0.9569, 0.9569); /* #f4f4f4 */
 
 float hash(vec2 p) {
 	p = fract(p * vec2(123.34, 456.21));

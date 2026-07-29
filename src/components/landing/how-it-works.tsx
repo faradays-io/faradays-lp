@@ -25,6 +25,7 @@ import {
 import { AsciiField } from '@/components/landing/hero-demo'
 import { HOME_FEATURES } from '@/components/landing/home-features-data'
 import { SECTION_TITLE } from '@/components/landing/type'
+import { usePageReady } from '@/lib/page-ready'
 import { cn } from '@/lib/utils'
 
 gsap.registerPlugin(SplitText)
@@ -42,6 +43,12 @@ const BRAND = '#0065e0'
 
 const INPUT_S = 84
 const CORE_S = 96
+/* Quanto os controles da curva se afastam das pontas, em fração da distância
+   vertical nó→núcleo. Perto de 0.5 o "S" fica bem pronunciado (saída e
+   chegada quase verticais); perto de 0 vira reta. */
+const ROOT_BOW = 0.55
+/* Raio das bolinhas que percorrem as arestas. */
+const PULSE_R = 3.5
 
 type NodeDef = {
 	id: string
@@ -132,25 +139,34 @@ const easeInOutCubic = (v: number) =>
 	v < 0.5 ? 4 * v * v * v : 1 - Math.pow(-2 * v + 2, 3) / 2
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v))
 
+/* Cúbica: dois controles, um em cada ponta, é o que permite sair e chegar
+   na vertical com a barriga horizontal no meio — o "S" da raiz. */
 const bezier = (
 	u: number,
 	x0: number,
 	y0: number,
-	cx: number,
-	cy: number,
+	c1x: number,
+	c1y: number,
+	c2x: number,
+	c2y: number,
 	x1: number,
 	y1: number
 ) => {
 	const k = 1 - u
+	const a = k * k * k
+	const b = 3 * k * k * u
+	const c = 3 * k * u * u
+	const d = u * u * u
 	return {
-		x: k * k * x0 + 2 * k * u * cx + u * u * x1,
-		y: k * k * y0 + 2 * k * u * cy + u * u * y1
+		x: a * x0 + b * c1x + c * c2x + d * x1,
+		y: a * y0 + b * c1y + c * c2y + d * y1
 	}
 }
 
 function SystemsGraph({ className }: { className?: string }) {
 	const rootRef = useRef<HTMLDivElement>(null)
 	const canvasRef = useRef<HTMLCanvasElement>(null)
+	const ready = usePageReady()
 
 	useEffect(() => {
 		const root = rootRef.current
@@ -235,7 +251,7 @@ function SystemsGraph({ className }: { className?: string }) {
 			const activeIdx = hovered >= 0 ? hovered : dragging
 			const core = nodes[CORE_INDEX]
 
-			/* Arestas: cada nó de entrada → núcleo, em leque + pulsos. */
+			/* Arestas: cada nó de entrada → núcleo, em "S" + pulsos. */
 			NODES.forEach((def, i) => {
 				if (def.core) return
 				const progress = easeInOutCubic(
@@ -247,8 +263,15 @@ function SystemsGraph({ className }: { className?: string }) {
 				const ay = a.y + INPUT_S / 2
 				const bx = core.x
 				const by = core.y - CORE_S / 2
-				const cx = ax + (bx - ax) * 0.15
-				const cy = ay + (by - ay) * 0.75
+				/* Um controle logo abaixo do nó e outro logo acima do núcleo,
+				   ambos no eixo vertical das pontas: a curva sai íngreme, deita
+				   no meio e volta a mergulhar na chegada — o "S" que faz as
+				   linhas parecerem raízes descendo para o mesmo ponto. */
+				const span = by - ay
+				const c1x = ax
+				const c1y = ay + span * ROOT_BOW
+				const c2x = bx
+				const c2y = by - span * ROOT_BOW
 
 				const touched =
 					activeIdx < 0 || i === activeIdx || activeIdx === CORE_INDEX
@@ -258,20 +281,30 @@ function SystemsGraph({ className }: { className?: string }) {
 				ctx.globalAlpha = 0.28 * progress * emphasis
 				ctx.beginPath()
 				ctx.moveTo(ax, ay)
-				const steps = 24
+				const steps = 32
 				for (let s = 1; s <= steps * progress; s++) {
-					const p = bezier(s / steps, ax, ay, cx, cy, bx, by)
+					const p = bezier(
+						s / steps,
+						ax,
+						ay,
+						c1x,
+						c1y,
+						c2x,
+						c2y,
+						bx,
+						by
+					)
 					ctx.lineTo(p.x, p.y)
 				}
 				ctx.stroke()
 
 				if (progress >= 1 && !reducedMotion) {
 					const u = (wave * 0.16 + i * 0.31) % 1
-					const p = bezier(u, ax, ay, cx, cy, bx, by)
+					const p = bezier(u, ax, ay, c1x, c1y, c2x, c2y, bx, by)
 					ctx.globalAlpha = 0.8 * emphasis
 					ctx.fillStyle = BRAND
 					ctx.beginPath()
-					ctx.arc(p.x, p.y, 2, 0, Math.PI * 2)
+					ctx.arc(p.x, p.y, PULSE_R, 0, Math.PI * 2)
 					ctx.fill()
 				}
 				ctx.globalAlpha = 1
@@ -297,7 +330,7 @@ function SystemsGraph({ className }: { className?: string }) {
 					ctx.arc(
 						core.x,
 						from + (height - from) * u,
-						2.4,
+						PULSE_R,
 						0,
 						Math.PI * 2
 					)
@@ -380,7 +413,9 @@ function SystemsGraph({ className }: { className?: string }) {
 		const ro = new ResizeObserver(resize)
 		ro.observe(canvas)
 		resize()
-		raf = requestAnimationFrame(loop)
+		// Antes do fim do loader: um frame estático, sem loop.
+		if (ready) raf = requestAnimationFrame(loop)
+		else draw(performance.now())
 
 		return () => {
 			cancelAnimationFrame(raf)
@@ -389,7 +424,7 @@ function SystemsGraph({ className }: { className?: string }) {
 			root.removeEventListener('pointermove', onRootPointerMove)
 			cleanups.forEach((fn) => fn())
 		}
-	}, [])
+	}, [ready])
 
 	return (
 		<div ref={rootRef} className={cn('relative h-full w-full', className)}>
@@ -414,7 +449,7 @@ function SystemsGraph({ className }: { className?: string }) {
 					<div
 						key={def.id}
 						data-node={i}
-						className="bg-card absolute top-0 left-0 flex size-21 cursor-grab touch-none flex-col items-center justify-center gap-1.5 rounded-xl border opacity-0 will-change-transform"
+						className="bg-background border-foreground/30 absolute top-0 left-0 flex size-21 cursor-grab touch-none flex-col items-center justify-center gap-1.5 rounded-xl border-4 opacity-0 will-change-transform"
 					>
 						<def.IconCmp
 							weight="fill"
@@ -447,6 +482,7 @@ function FeatureShowcase() {
 	const tweenRef = useRef<gsap.core.Tween | null>(null)
 	const hoveredRef = useRef(false)
 	const transitioningRef = useRef(false)
+	const ready = usePageReady()
 
 	const go = useCallback((direction: number) => {
 		if (transitioningRef.current) return
@@ -475,7 +511,8 @@ function FeatureShowcase() {
 
 	useEffect(() => {
 		const bar = barRef.current
-		if (!bar) return
+		// O autoplay não pode consumir slides enquanto a página carrega.
+		if (!bar || !ready) return
 		const tween = gsap.fromTo(
 			bar,
 			{ width: '0%' },
@@ -492,11 +529,11 @@ function FeatureShowcase() {
 			tween.kill()
 			tweenRef.current = null
 		}
-	}, [index, go])
+	}, [index, go, ready])
 
 	useEffect(() => {
 		const text = textRef.current
-		if (!text) return
+		if (!text || !ready) return
 		const split = new SplitText(text, { type: 'lines', mask: 'lines' })
 		const lines = gsap.from(split.lines, {
 			yPercent: 110,
@@ -508,7 +545,7 @@ function FeatureShowcase() {
 			lines.kill()
 			split.revert()
 		}
-	}, [index])
+	}, [index, ready])
 
 	const feature = HOME_FEATURES[index]
 	const Demo = DEMOS[index]

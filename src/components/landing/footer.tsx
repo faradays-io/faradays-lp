@@ -1,7 +1,7 @@
 export function Footer() {
 	return (
 		<footer className="bg-background text-foreground">
-			<div className="text-h4 grid items-end gap-2 bg-[#d1d1c4] p-7 text-[#0f0f0e] sm:grid-cols-3">
+			<div className="text-h4 grid items-end gap-2 bg-[#f4f4f4] p-7 text-[#0f0f0e] sm:grid-cols-3">
 				<p>
 					São Paulo, SP
 					<br />

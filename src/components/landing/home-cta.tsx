@@ -6,6 +6,7 @@ import { AsciiField } from '@/components/landing/hero-demo'
 import { Reveal } from '@/components/landing/reveal'
 import { SECTION_TITLE } from '@/components/landing/type'
 import { Button } from '@/components/ui/button'
+import { BOOKING_URL } from '@/lib/links'
 import { cn } from '@/lib/utils'
 
 /**
@@ -35,7 +36,11 @@ export function HomeCta() {
 					</p>
 					<div className="mt-9 flex flex-wrap items-center justify-center gap-3">
 						<Button asChild size="lg" className="px-6">
-							<Link href="mailto:contato@faradays.io">
+							<Link
+								href={BOOKING_URL}
+								target="_blank"
+								rel="noopener noreferrer"
+							>
 								<SplitHoverText as="span">
 									Agende uma demo
 								</SplitHoverText>

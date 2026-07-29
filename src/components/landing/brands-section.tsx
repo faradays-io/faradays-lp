@@ -36,7 +36,7 @@ export function BrandsSection() {
 									<div
 										role="img"
 										aria-label={brand.name}
-										className="h-full w-full bg-[#d1d1c4]"
+										className="h-full w-full bg-[#f4f4f4]"
 										style={{
 											maskImage: `url(${brand.src})`,
 											maskPosition: 'center',

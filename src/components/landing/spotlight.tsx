@@ -8,7 +8,7 @@ import { Reveal } from '@/components/landing/reveal'
 /** Light case-study section — fictional customer + placeholder assets. */
 export function Spotlight() {
 	return (
-		<section id="spotlight" className="bg-[#d1d1c4] text-neutral-950">
+		<section id="spotlight" className="bg-[#f4f4f4] text-neutral-950">
 			<div className="max-w-section mx-auto w-full px-4 py-40 min-[810px]:px-6">
 				<Reveal>
 					<span className="font-mono text-sm tracking-wide text-neutral-500 uppercase">

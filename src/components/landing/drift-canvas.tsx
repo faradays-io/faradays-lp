@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 
 import { cn } from '@/lib/utils'
 
-const BONE = '#d1d1c4'
+const BONE = '#f4f4f4'
 const BRAND = '#3b8eff'
 const DOT_COUNT = 130
 /* Approval cutoff the "static model" was trained on (fraction of width). */

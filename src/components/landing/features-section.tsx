@@ -8,6 +8,7 @@ import { FeatureFigures } from '@/components/landing/feature-figures'
 import { FeatureGraphic } from '@/components/landing/feature-graphic'
 import { HOME_FEATURES } from '@/components/landing/home-features-data'
 import { HowItWorks } from '@/components/landing/how-it-works'
+import { usePageReady } from '@/lib/page-ready'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -16,10 +17,12 @@ const FEATURES = HOME_FEATURES
 export function FeaturesSection() {
 	const [active, setActive] = useState(0)
 	const rootRef = useRef<HTMLElement>(null)
+	const ready = usePageReady()
 
 	useEffect(() => {
 		const root = rootRef.current
 		if (!root) return
+		if (!ready) return
 		const ctx = gsap.context(() => {
 			const blocks = root.querySelectorAll<HTMLElement>('[data-feature]')
 			blocks.forEach((block) => {
@@ -36,7 +39,7 @@ export function FeaturesSection() {
 			})
 		}, root)
 		return () => ctx.revert()
-	}, [])
+	}, [ready])
 
 	return (
 		<section
@@ -51,25 +54,26 @@ export function FeaturesSection() {
 			<HowItWorks />
 
 			<div className="max-w-section mx-auto grid grid-cols-1 gap-x-16 px-7 lg:grid-cols-2">
-				{/* Esquerda: features que rolam. */}
+				{/* Esquerda: features que rolam. Bloco centralizado na coluna,
+				   texto alinhado à esquerda. */}
 				<div className="flex flex-col">
 					{FEATURES.map((feature, i) => (
 						<div
 							key={feature.eyebrow}
 							data-feature={i}
-							className="flex min-h-svh flex-col justify-center gap-6 py-24"
+							className="flex min-h-svh flex-col items-center justify-center gap-6 py-24 text-left"
 						>
 							<FeatureGraphic
 								index={i}
-								className="mb-2 max-w-sm lg:hidden"
+								className="mb-2 w-full max-w-sm lg:hidden"
 							/>
-							<span className="text-foreground/50 font-mono text-sm tracking-widest uppercase">
+							<span className="text-foreground/50 w-full max-w-md font-mono text-sm tracking-widest uppercase">
 								({feature.eyebrow})
 							</span>
-							<h3 className="font-heading text-h2 max-w-md text-balance">
+							<h3 className="font-heading text-h2 w-full max-w-md text-balance">
 								{feature.title}
 							</h3>
-							<p className="text-body-lg text-foreground/70 max-w-md">
+							<p className="text-body-lg text-foreground/70 w-full max-w-md">
 								{feature.description}
 							</p>
 						</div>

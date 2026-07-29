@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 
+import { usePageReady } from '@/lib/page-ready'
 import { cn } from '@/lib/utils'
 
 /* Gráfico das features — quatro figuras distintas, desenhadas em canvas
@@ -378,6 +379,7 @@ export function FeatureGraphic({
 	const canvasRef = useRef<HTMLCanvasElement>(null)
 	const sceneRef = useRef(index)
 	const clockRef = useRef<number>(NaN)
+	const ready = usePageReady()
 
 	/* Troca de cena reinicia o relógio de entrada. */
 	useEffect(() => {
@@ -473,14 +475,16 @@ export function FeatureGraphic({
 		const ro = new ResizeObserver(resize)
 		ro.observe(canvas)
 		resize()
-		raf = requestAnimationFrame(loop)
+		// Antes do fim do loader: um frame estático, sem loop.
+		if (ready) raf = requestAnimationFrame(loop)
+		else draw(performance.now())
 
 		return () => {
 			cancelAnimationFrame(raf)
 			ro.disconnect()
 			io.disconnect()
 		}
-	}, [])
+	}, [ready])
 
 	return (
 		<div className={cn('relative aspect-square w-full', className)}>
