@@ -17,6 +17,10 @@ let ready = false
 /* Alguém (o PageTransition) assumiu a responsabilidade de sinalizar? Se sim,
    a auto-resolução no `load` não entra — o loader é que decide a hora. */
 let claimed = false
+/* O último `claim` encontrou a store já resolvida? (= navegação client-side
+   com o módulo quente, não primeiro load.) Guardado fora da função para o
+   segundo render do StrictMode receber a mesma resposta. */
+let lastClaimWarm = false
 let autoWired = false
 const listeners = new Set<() => void>()
 
@@ -33,10 +37,24 @@ export function markPageReady() {
 
 /**
  * Declara que esta página tem um loader e que ele é quem chama
- * `markPageReady()`. Desarma a auto-resolução no `load`.
+ * `markPageReady()`. Desarma a auto-resolução no `load` e, quando encontra a
+ * store já resolvida (navegação client-side: o módulo sobrevive à troca de
+ * rota), re-arma o ciclo — os componentes da página nova voltam a esperar o
+ * sinal do loader novo em vez de animar por baixo do overlay.
+ *
+ * O rebaixamento é silencioso (sem notificar listeners): roda em tempo de
+ * render do PageTransition, antes dos filhos da página nova montarem, e os
+ * inscritos remanescentes são da página que está saindo.
+ *
+ * Retorna `true` no caso quente — o loader usa isso para encurtar a rampa.
  */
-export function claimPageReady() {
+export function claimPageReady(): boolean {
+	if (ready) {
+		ready = false
+		lastClaimWarm = true
+	}
 	claimed = true
+	return lastClaimWarm
 }
 
 /* Rede de segurança das páginas sem loader: só arma quando alguém começa a

@@ -3,7 +3,7 @@
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useLenis } from 'lenis/react'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { claimPageReady, markPageReady, usePageReady } from '@/lib/page-ready'
 
@@ -14,6 +14,10 @@ gsap.registerPlugin(ScrollTrigger)
    carregamento: ela espera em HOLD_AT e só fecha quando a página está pronta. */
 const HOLD_AT = 0.99
 const RAMP_DURATION = 1.2
+/* Navegação client-side (módulo quente, rota em cache): a espera real é
+   quase nula, então a rampa encurta para o loader ser um respiro, não um
+   pedágio. */
+const RAMP_DURATION_WARM = 0.5
 /* Fecho: fecha o último ponto percentual, respira em 100% e só então some. */
 const CLOSE_DURATION = 0.35
 const HOLD_AT_FULL = 0.3
@@ -45,8 +49,13 @@ export function PageTransition() {
 
 	/* Em tempo de render, antes de qualquer efeito: avisa a store que este
 	   loader é quem vai dar o sinal, senão ela se resolveria sozinha no
-	   `load` (e em cache quente isso acontece antes do nosso fecho). */
-	if (typeof window !== 'undefined') claimPageReady()
+	   `load` (e em cache quente isso acontece antes do nosso fecho). No
+	   inicializador do useState para rodar só no mount — o claim rebaixa
+	   `ready`, e re-renders posteriores (o próprio flip do `usePageReady`)
+	   não podem desfazer o sinal que o loader acabou de dar. */
+	const [warm] = useState(
+		() => typeof window !== 'undefined' && claimPageReady()
+	)
 
 	useEffect(() => {
 		// Reload sempre começa do topo, independente de hash ou posição
@@ -115,7 +124,7 @@ export function PageTransition() {
 		/* 0 → 99% em tempo próprio: contínuo, sem degraus. */
 		const ramp = gsap.to(state, {
 			p: HOLD_AT,
-			duration: RAMP_DURATION,
+			duration: warm ? RAMP_DURATION_WARM : RAMP_DURATION,
 			ease: 'power1.inOut',
 			onUpdate: draw,
 			onComplete: () => {
@@ -159,7 +168,7 @@ export function PageTransition() {
 			ramp.kill()
 			outro?.kill()
 		}
-	}, [])
+	}, [warm])
 
 	/* Nada de rolar por baixo do loader: as seções abaixo animam na entrada em
 	   viewport e o usuário passaria por elas antes de terem permissão para
