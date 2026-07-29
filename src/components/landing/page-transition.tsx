@@ -17,7 +17,7 @@ const RAMP_DURATION = 1.2
 /* Navegação client-side (módulo quente, rota em cache): a espera real é
    quase nula, então a rampa encurta para o loader ser um respiro, não um
    pedágio. */
-const RAMP_DURATION_WARM = 0.5
+const RAMP_DURATION_WARM = 1
 /* Fecho: fecha o último ponto percentual, respira em 100% e só então some. */
 const CLOSE_DURATION = 0.35
 const HOLD_AT_FULL = 0.3
