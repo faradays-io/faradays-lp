@@ -12,8 +12,8 @@ export const SOLUTIONS = [
 		slug: '/credito',
 		name: 'IA de crédito',
 		description:
-			'Análise de crédito com parecer pronto: dados do cliente, mercado e histórico num único fluxo.',
-		available: false
+			'Otimização dinâmica de crédito com modelos fundacionais e aprendizagem por reforço — PD&I com a Unicamp.',
+		available: true
 	},
 	{
 		slug: '/portais',
