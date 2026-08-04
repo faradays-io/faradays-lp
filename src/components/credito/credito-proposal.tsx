@@ -1,4 +1,3 @@
-import { ChartHorizon } from '@/components/credito/credito-charts'
 import { Reveal } from '@/components/landing/reveal'
 import { SECTION_TITLE } from '@/components/landing/type'
 import { cn } from '@/lib/utils'
@@ -58,11 +57,10 @@ export function CreditoProposal() {
 					</Reveal>
 
 					<Reveal delay={0.15}>
-						{/* Interativo: o ponteiro percorre o tempo e mede a
-						   diferença entre as duas curvas. Levemente deslocado
-						   para baixo em relação ao texto. */}
-						<div className="relative aspect-[4/3] w-full overflow-hidden lg:translate-y-12">
-							<ChartHorizon className="absolute inset-0 h-full" />
+						{/* Placeholder: o gráfico desta seção foi removido e
+						   será substituído. */}
+						<div className="border-border text-foreground/30 flex aspect-[4/3] w-full items-center justify-center rounded-2xl border border-dashed lg:translate-y-12">
+							<span className="font-heading text-7xl">!</span>
 						</div>
 					</Reveal>
 				</div>

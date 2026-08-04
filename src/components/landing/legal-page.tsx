@@ -39,7 +39,6 @@ export function LegalPage({
 					Atualizado em {updatedAt}
 				</p>
 
-
 				<p className="text-body-lg text-foreground/70 mt-8">{intro}</p>
 
 				<div className="mt-12 flex flex-col gap-10">

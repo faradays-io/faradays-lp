@@ -1,11 +1,11 @@
 'use client'
 
-import { ArrowRight } from '@phosphor-icons/react'
 import gsap from 'gsap'
 import Link from 'next/link'
 import { useEffect, useRef } from 'react'
 
 import { SplitHoverText } from '@/components/custom-ui/split-hover-text'
+import { ArrowSwapIcon } from '@/components/landing/arrow-swap-icon'
 import { AsciiField, HeroDemo } from '@/components/landing/hero-demo'
 import { Button } from '@/components/ui/button'
 import { usePageReady } from '@/lib/page-ready'
@@ -60,12 +60,12 @@ export function HomeHero() {
 				<Link
 					href="#cta"
 					data-hero-item
-					className="bg-foreground/5 hover:bg-foreground/10 mb-7 flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm opacity-0 transition-colors"
+					className="group/button bg-foreground/5 hover:bg-foreground/10 mb-7 flex items-center gap-5 rounded-full border px-4 py-1.5 text-sm opacity-0 transition-colors"
 				>
-					<SplitHoverText as="span">
+					<span className="transition-transform duration-300 group-hover/button:translate-x-2">
 						Conheça a IA de crédito
-					</SplitHoverText>
-					<ArrowRight className="size-3.5" />
+					</span>
+					<ArrowSwapIcon className="size-3.5 [&>svg]:size-3.5" />
 				</Link>
 
 				<h1

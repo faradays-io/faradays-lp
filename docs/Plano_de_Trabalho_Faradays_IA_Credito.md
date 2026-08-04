@@ -97,23 +97,23 @@ A equipe combina beneficiários já vinculados às linhas de pesquisa do grupo p
 
 ### 5.2 Categorias dos Beneficiários e Vinculação Acadêmica
 
-| Categoria | Vínculo | Situação | Curso/Programa |
-|---|---|---|---|
-| Coordenador | Servidor docente | Bolsa de Inovação Docente | — |
-| Coordenador Adjunto | Servidor docente | Bolsa de Inovação Docente | — |
-| Bolsista de Doutorado (2) | Aluno de pós-graduação | Bolsa de pesquisa | Pós-Graduação em Ciência da Computação |
-| Bolsista de Mestrado (2) | Aluno de pós-graduação | Bolsa de pesquisa | Pós-Graduação em Ciência da Computação |
-| Bolsista de Iniciação Científica (4) | Aluno de graduação | Bolsa de Iniciação Científica | Ciência e Engenharia de Computação e áreas correlatas |
+| Categoria                            | Vínculo                | Situação                      | Curso/Programa                                        |
+| ------------------------------------ | ---------------------- | ----------------------------- | ----------------------------------------------------- |
+| Coordenador                          | Servidor docente       | Bolsa de Inovação Docente     | —                                                     |
+| Coordenador Adjunto                  | Servidor docente       | Bolsa de Inovação Docente     | —                                                     |
+| Bolsista de Doutorado (2)            | Aluno de pós-graduação | Bolsa de pesquisa             | Pós-Graduação em Ciência da Computação                |
+| Bolsista de Mestrado (2)             | Aluno de pós-graduação | Bolsa de pesquisa             | Pós-Graduação em Ciência da Computação                |
+| Bolsista de Iniciação Científica (4) | Aluno de graduação     | Bolsa de Iniciação Científica | Ciência e Engenharia de Computação e áreas correlatas |
 
 ### 5.3 Carga Horária e Duração do Pagamento
 
-| Categoria | Carga Hor. Semanal | Carga Hor. Mensal | Duração |
-|---|---|---|---|
-| Coordenador | 8 horas | 35 horas | 36 meses |
-| Coordenador Adjunto | 4 horas | 18 horas | 36 meses |
-| Bolsista de Doutorado | 40 horas | 170 horas | 36 meses |
-| Bolsista de Mestrado | 40 horas | 170 horas | 36 meses |
-| Bolsista de Iniciação Científica | 20 horas | 80 horas | 36 meses |
+| Categoria                        | Carga Hor. Semanal | Carga Hor. Mensal | Duração  |
+| -------------------------------- | ------------------ | ----------------- | -------- |
+| Coordenador                      | 8 horas            | 35 horas          | 36 meses |
+| Coordenador Adjunto              | 4 horas            | 18 horas          | 36 meses |
+| Bolsista de Doutorado            | 40 horas           | 170 horas         | 36 meses |
+| Bolsista de Mestrado             | 40 horas           | 170 horas         | 36 meses |
+| Bolsista de Iniciação Científica | 20 horas           | 80 horas          | 36 meses |
 
 Os bolsistas de Doutorado e Mestrado atuarão em regime de dedicação integral (40 horas semanais); os de Iniciação Científica atuarão em regime de dedicação parcial (20 horas semanais), compatível com a manutenção regular de suas atividades acadêmicas. O pagamento das bolsas terá duração de 36 (trinta e seis) meses para todas as categorias, correspondente ao período integral de execução do projeto, podendo ser interrompido antecipadamente em caso de desligamento do bolsista, conclusão do curso ou encerramento do projeto.
 

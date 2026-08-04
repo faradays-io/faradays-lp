@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { FaradaysLockup } from '@/components/landing/faradays-lockup'
+import { FaradaysComposed } from '@/components/landing/faradays-composed'
+import { HomeLoader } from '@/components/landing/home-loader'
 import { LEGAL_PAGES } from '@/components/landing/legal-data'
-import { PageTransition } from '@/components/landing/page-transition'
 import { Reveal } from '@/components/landing/reveal'
 import { SOLUTIONS } from '@/components/landing/solutions-data'
 import { BOOKING_URL } from '@/lib/links'
@@ -23,14 +23,21 @@ export const metadata: Metadata = {
  * direciona. A estilização é a mesma do resto do site (Aspekta/Fixel, rota
  * em mono como dispositivo estrutural, fundo `.light-home`).
  */
+const NAV_ROW =
+	'border-border grid gap-1 border-b px-2 py-5 sm:grid-cols-[8rem_1fr_auto] sm:items-baseline sm:gap-6'
+
 export default function HomePage() {
 	return (
 		<div className="light light-home bg-background text-foreground flex min-h-svh flex-col">
-			<PageTransition />
+			<HomeLoader />
 
 			<main className="mx-auto flex w-full max-w-5xl flex-1 flex-col justify-center px-7 py-16">
+				{/* Fora do Reveal: a logo do HomeLoader pousa aqui no fim do
+				   morph — o loader controla a visibilidade deste bloco. */}
+				<div data-home-lockup className="flex justify-center">
+					<FaradaysComposed className="text-foreground h-8 md:h-10" />
+				</div>
 				<Reveal y={20}>
-					<FaradaysLockup className="text-foreground mx-auto block h-8 w-auto md:h-10" />
 					<p className="text-body-lg text-foreground/70 mx-auto mt-8 max-w-xl text-center text-balance">
 						Inteligência artificial aplicada à operação: motores de
 						decisão, portais e agentes que trabalham com os dados
@@ -38,63 +45,86 @@ export default function HomePage() {
 					</p>
 				</Reveal>
 
-				<Reveal y={20} delay={0.1}>
-					<nav
-						aria-label="Soluções"
-						className="border-border mt-14 border-t md:mt-20"
-					>
-						{SOLUTIONS.map((solution) => {
-							const inner = (
-								<>
-									<span
-										className={cn(
-											'font-mono text-sm',
-											solution.available
-												? 'text-brand'
-												: 'text-foreground/35'
-										)}
-									>
-										{solution.slug}
-									</span>
-									<span
-										className={cn(
-											'font-heading text-h5',
-											!solution.available &&
-												'text-foreground/50'
-										)}
-									>
-										{solution.name}
-									</span>
-									{!solution.available && (
-										<span className="text-foreground/40 font-mono text-xs sm:justify-self-end">
-											(em breve)
-										</span>
-									)}
-								</>
-							)
-							const row =
-								'border-border grid gap-1 border-b px-2 py-5 sm:grid-cols-[8rem_1fr_auto] sm:items-baseline sm:gap-6'
-							return solution.available ? (
-								<Link
-									key={solution.slug}
-									href={solution.slug}
+				{/* Cada linha entra em sequência: um Reveal por item com delay
+				   incremental (o Blog fecha a fila). O border-t vive na
+				   primeira linha (não no nav) para animar junto com ela. */}
+				<nav aria-label="Soluções" className="mt-14 md:mt-20">
+					{SOLUTIONS.map((solution, index) => {
+						const inner = (
+							<>
+								<span
 									className={cn(
-										row,
-										'hover:bg-foreground/[0.03] transition-colors'
+										'font-mono text-sm',
+										solution.available
+											? 'text-brand'
+											: 'text-foreground/35'
 									)}
 								>
-									{inner}
-								</Link>
-							) : (
-								<div key={solution.slug} className={row}>
-									{inner}
-								</div>
-							)
-						})}
-					</nav>
-				</Reveal>
+									{solution.slug}
+								</span>
+								<span
+									className={cn(
+										'font-heading text-h5',
+										!solution.available &&
+											'text-foreground/50'
+									)}
+								>
+									{solution.name}
+								</span>
+								{!solution.available && (
+									<span className="text-foreground/40 font-mono text-xs sm:justify-self-end">
+										(em breve)
+									</span>
+								)}
+							</>
+						)
+						return (
+							<Reveal
+								key={solution.slug}
+								y={16}
+								delay={0.15 + index * 0.05}
+							>
+								{solution.available ? (
+									<Link
+										href={solution.slug}
+										className={cn(
+											NAV_ROW,
+											index === 0 && 'border-t',
+											'hover:bg-foreground/[0.03] transition-colors'
+										)}
+									>
+										{inner}
+									</Link>
+								) : (
+									<div
+										className={cn(
+											NAV_ROW,
+											index === 0 && 'border-t'
+										)}
+									>
+										{inner}
+									</div>
+								)}
+							</Reveal>
+						)
+					})}
+					<Reveal y={16} delay={0.15 + SOLUTIONS.length * 0.05}>
+						<Link
+							href="/blog"
+							className={cn(
+								NAV_ROW,
+								'hover:bg-foreground/[0.03] transition-colors'
+							)}
+						>
+							<span className="text-brand font-mono text-sm">
+								/blog
+							</span>
+							<span className="font-heading text-h5">Blog</span>
+						</Link>
+					</Reveal>
+				</nav>
 
-				<Reveal y={20} delay={0.2}>
+				<Reveal y={20} delay={0.2 + (SOLUTIONS.length + 1) * 0.05}>
 					<div className="text-body-sm mt-10 flex flex-wrap items-center gap-x-6 gap-y-2">
 						<a
 							href={BOOKING_URL}

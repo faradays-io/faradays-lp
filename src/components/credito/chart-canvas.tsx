@@ -18,8 +18,9 @@ export const HALO = '#f4f4f4'
 export const easeOutCubic = (v: number) => 1 - Math.pow(1 - v, 3)
 export const clamp01 = (v: number) => Math.min(1, Math.max(0, v))
 
-/** Posição do ponteiro em px do canvas; active só enquanto está em cima. */
-export type Pointer = { x: number; y: number; active: boolean }
+/** Posição do ponteiro em px do canvas; active só enquanto está em cima;
+ *  down enquanto o botão/toque está pressionado (com captura). */
+export type Pointer = { x: number; y: number; active: boolean; down: boolean }
 
 export type DrawArgs = {
 	ctx: CanvasRenderingContext2D
@@ -49,7 +50,12 @@ export function ChartCanvas({
 	className?: string
 }) {
 	const canvasRef = useRef<HTMLCanvasElement>(null)
-	const pointerRef = useRef<Pointer>({ x: 0, y: 0, active: false })
+	const pointerRef = useRef<Pointer>({
+		x: 0,
+		y: 0,
+		active: false,
+		down: false
+	})
 	const ready = usePageReady()
 
 	useEffect(() => {
@@ -145,13 +151,36 @@ export function ChartCanvas({
 			onPointerMove={(event) => {
 				const rect = event.currentTarget.getBoundingClientRect()
 				pointerRef.current = {
+					...pointerRef.current,
 					x: event.clientX - rect.left,
 					y: event.clientY - rect.top,
 					active: true
 				}
 			}}
+			onPointerDown={(event) => {
+				const rect = event.currentTarget.getBoundingClientRect()
+				pointerRef.current = {
+					x: event.clientX - rect.left,
+					y: event.clientY - rect.top,
+					active: true,
+					down: true
+				}
+				/* Captura: o arrasto continua mesmo saindo do canvas. */
+				event.currentTarget.setPointerCapture(event.pointerId)
+			}}
+			onPointerUp={(event) => {
+				pointerRef.current = { ...pointerRef.current, down: false }
+				event.currentTarget.releasePointerCapture(event.pointerId)
+			}}
+			onPointerCancel={() => {
+				pointerRef.current = { ...pointerRef.current, down: false }
+			}}
 			onPointerLeave={() => {
-				pointerRef.current = { ...pointerRef.current, active: false }
+				pointerRef.current = {
+					...pointerRef.current,
+					active: false,
+					down: false
+				}
 			}}
 		>
 			<canvas

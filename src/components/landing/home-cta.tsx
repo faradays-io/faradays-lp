@@ -1,7 +1,7 @@
-import { ArrowRight } from '@phosphor-icons/react/dist/ssr'
 import Link from 'next/link'
 
 import { SplitHoverText } from '@/components/custom-ui/split-hover-text'
+import { ArrowSwapIcon } from '@/components/landing/arrow-swap-icon'
 import { AsciiField } from '@/components/landing/hero-demo'
 import { Reveal } from '@/components/landing/reveal'
 import { SECTION_TITLE } from '@/components/landing/type'
@@ -50,13 +50,13 @@ export function HomeCta() {
 							asChild
 							size="lg"
 							variant="ghost"
-							className="px-6"
+							className="gap-6 px-6 hover:bg-transparent dark:hover:bg-transparent"
 						>
 							<Link href="#cta">
-								<SplitHoverText as="span">
+								<span className="transition-transform duration-300 group-hover/button:translate-x-2">
 									Conheça a IA de crédito
-								</SplitHoverText>
-								<ArrowRight className="size-4" />
+								</span>
+								<ArrowSwapIcon />
 							</Link>
 						</Button>
 					</div>

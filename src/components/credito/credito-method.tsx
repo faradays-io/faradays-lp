@@ -1,5 +1,4 @@
-import { ChartEnrichment } from '@/components/credito/credito-charts'
-import { WorldGraph } from '@/components/credito/world-graph'
+import { ChartTables } from '@/components/credito/credito-charts'
 import { Reveal } from '@/components/landing/reveal'
 import { SECTION_TITLE } from '@/components/landing/type'
 import { cn } from '@/lib/utils'
@@ -12,7 +11,7 @@ const PILLARS = [
 			'O núcleo técnico usa Tabular Foundation Models como extratores de informação robusta: em vez de engenharia de atributos manual, o conhecimento estrutural pré-adquirido mapeia dados heterogêneos em representações que capturam invariantes de crédito.',
 			'A base do Lending Club — com datas de concessão, pagamentos e status — ancora a validação, modelando a trajetória financeira do devedor. Fontes adicionais (registros públicos, consumo, indicadores setoriais) são prospectadas avaliando ganho informacional contra risco de viés.'
 		],
-		Chart: ChartEnrichment
+		Chart: ChartTables
 	},
 	{
 		n: 'Pilar 02',
@@ -21,7 +20,8 @@ const PILLARS = [
 			'Um ambiente de simulação estratégica (World Model) incorpora a dinâmica de Predição Performativa: as decisões de crédito alteram a distribuição futura dos perfis, e a política precisa contar com isso.',
 			'A otimização explora o equilíbrio entre aproveitar perfis conhecidos e explorar novos nichos — combinando Aprendizagem por Reforço Offline, Aprendizado Ativo e Predição Performativa para reduzir a incerteza sobre o segmento rejeitado.'
 		],
-		Chart: WorldGraph
+		/* Gráfico removido — placeholder até o substituto entrar. */
+		Chart: 'placeholder'
 	},
 	{
 		n: 'Pilar 03',
@@ -89,11 +89,20 @@ export function CreditoMethod() {
 									</div>
 								</Reveal>
 								<Reveal delay={0.15}>
-									{/* Interativo: no pilar 01 o ponteiro
-									   escolhe a fonte; no pilar 02 os nós do
-									   grafo podem ser arrastados. */}
+									{/* Interativo: no pilar 01 o hover numa
+									   fonte mostra a contribuição dela; no
+									   pilar 02 fica o placeholder até o novo
+									   gráfico entrar. */}
 									<div className="relative aspect-[4/3] w-full overflow-hidden">
-										<pillar.Chart className="absolute inset-0 h-full" />
+										{pillar.Chart === 'placeholder' ? (
+											<div className="border-border text-foreground/30 flex h-full items-center justify-center rounded-2xl border border-dashed">
+												<span className="font-heading text-7xl">
+													!
+												</span>
+											</div>
+										) : (
+											<pillar.Chart className="absolute inset-0 h-full" />
+										)}
 									</div>
 								</Reveal>
 							</div>
