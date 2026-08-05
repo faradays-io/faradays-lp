@@ -24,14 +24,14 @@ export const metadata: Metadata = {
  * em mono como dispositivo estrutural, fundo `.light-home`).
  */
 const NAV_ROW =
-	'border-border grid gap-1 border-b px-2 py-5 sm:grid-cols-[8rem_1fr_auto] sm:items-baseline sm:gap-6'
+	'border-border grid gap-1 border-b px-2 py-4 sm:grid-cols-[8rem_1fr_auto] sm:items-baseline sm:gap-6'
 
 export default function HomePage() {
 	return (
-		<div className="light light-home bg-background text-foreground flex min-h-svh flex-col">
+		<div className="light light-home bg-background text-foreground flex min-h-svh flex-col md:h-svh md:overflow-hidden">
 			<HomeLoader />
 
-			<main className="mx-auto flex w-full max-w-5xl flex-1 flex-col justify-center px-7 py-16">
+			<main className="mx-auto flex w-full max-w-5xl min-h-0 flex-1 flex-col justify-center px-7 py-8">
 				{/* Fora do Reveal: a logo do HomeLoader pousa aqui no fim do
 				   morph — o loader controla a visibilidade deste bloco. */}
 				<div data-home-lockup className="flex justify-center">
@@ -48,7 +48,7 @@ export default function HomePage() {
 				{/* Cada linha entra em sequência: um Reveal por item com delay
 				   incremental (o Blog fecha a fila). O border-t vive na
 				   primeira linha (não no nav) para animar junto com ela. */}
-				<nav aria-label="Soluções" className="mt-14 md:mt-20">
+				<nav aria-label="Soluções" className="mt-10 md:mt-12">
 					{SOLUTIONS.map((solution, index) => {
 						const inner = (
 							<>
@@ -125,7 +125,7 @@ export default function HomePage() {
 				</nav>
 
 				<Reveal y={20} delay={0.2 + (SOLUTIONS.length + 1) * 0.05}>
-					<div className="text-body-sm mt-10 flex flex-wrap items-center gap-x-6 gap-y-2">
+					<div className="text-body-sm mt-8 flex flex-wrap items-center gap-x-6 gap-y-2">
 						<a
 							href={BOOKING_URL}
 							target="_blank"
@@ -145,7 +145,7 @@ export default function HomePage() {
 			</main>
 
 			<footer className="border-border border-t">
-				<div className="text-foreground/50 mx-auto flex w-full max-w-5xl flex-col gap-4 px-7 py-8 font-mono text-xs sm:flex-row sm:items-center sm:justify-between">
+				<div className="text-foreground/50 mx-auto flex w-full max-w-5xl flex-col gap-4 px-7 py-5 font-mono text-xs sm:flex-row sm:items-center sm:justify-between">
 					<span>
 						© {new Date().getFullYear()} Faradays. Todos os direitos
 						reservados.

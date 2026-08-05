@@ -16,10 +16,10 @@ export const SOLUTIONS = [
 		available: true
 	},
 	{
-		slug: '/portais',
-		name: 'Portais operacionais',
+		slug: '/cobranca',
+		name: 'IA completa de cobrança',
 		description:
-			'Cotações, documentos e atendimento no mesmo lugar, direto do ERP.',
+			'Régua, negociação e acordos conduzidos por agentes — do vencido ao pago.',
 		available: false
 	},
 	{
