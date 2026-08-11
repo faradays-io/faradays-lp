@@ -285,4 +285,39 @@ mesma faixa.
 
 ## Respostas
 
-_(o agente registra aqui, no formato `- 0.1: b — comentário`)_
+_Sessão de 11/08/2026, conduzida via Claude Code._
+
+- 0.1: b — `/distribuicao`, "Operação de distribuição".
+- 0.2: a — redirect 301 `/importacoes → /distribuicao`.
+- 0.3: d — texto livre do usuário: "Sua operação inteira no WhatsApp. Seu
+  representante criando cotações, solicitando documentos, e informação direto
+  e rápido no chat. Seu gestor acompanhando todas as interações em nosso
+  portal. Nada mais é preenchido em planilha ou enviado por e-mail."
+  _(condensar para uma linha na implementação do índice)_
+- 1.1: a — dono / diretor comercial da distribuidora.
+- 1.2: b + d — documento vencido chegou ao cliente; representante demora
+  horas para responder.
+- 1.3: b — 20–100 representantes.
+- 1.4: d — outro SaaS vertical (a página precisa diferenciar de concorrente
+  direto, não só do status quo).
+- 2.1: d — pelo canal: "Seu representante fecha a cotação pelo WhatsApp.
+  O sistema faz o resto."
+- 2.2: c — remover o pill.
+- 2.3: b — trocar a demo por conversa de WhatsApp gerando cotação em PDF.
+- 2.4: b — "Ver a demo de 2 min" (vídeo). _Pendência: produzir o vídeo._
+- 3.1: destaque = 1 (WhatsApp), 2 (cotação de venda), 3 (RFQ de compra),
+  4 (laudos/COA); grade resumida = 5, 6, 7, 8, 9, 10, 11, 12 (todas as
+  demais — nada fica de fora).
+- 3.2: a — sim, números reais: tempo de cotação e tempo de resposta do rep.
+  _Pendência: usuário ainda vai informar os valores medidos._
+- 3.3: b — copy de negócio + uma linha técnica em mono por feature.
+- 4.1: a (variante) — retirar depoimentos e substituir por mini-case da
+  Monfiza; usuário pediu ajuda para bolar o mini-case em seguida.
+- 4.2: c — não/não sei — remover os stats (−70%, 3×, 100%) ou substituir
+  por fatos verificáveis.
+- 4.3: a (ajustada por 4.4) — separar as provas; por ora a faixa vira só
+  "Integra com" (ferramentas), sem faixa de clientes.
+- 4.4: c (transitório) — ainda sem autorização da Monfiza (esperada em
+  breve); retirar Aventis; retirar a seção de clientes inteira e deixar
+  apenas o mini-case da Monfiza. _Atenção: o mini-case nomeia a Monfiza —
+  publicar nominal só quando a autorização chegar (ou sair anônimo até lá)._
