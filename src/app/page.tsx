@@ -147,8 +147,8 @@ export default function HomePage() {
 			<footer className="border-border border-t">
 				<div className="text-foreground/50 mx-auto flex w-full max-w-5xl flex-col gap-4 px-7 py-5 font-mono text-xs sm:flex-row sm:items-center sm:justify-between">
 					<span>
-						© {new Date().getFullYear()} Faradays. Todos os direitos
-						reservados.
+						© {new Date().getFullYear()} Faradays Consulting LTDA.
+						Todos os direitos reservados.
 					</span>
 					<nav
 						aria-label="Políticas"
