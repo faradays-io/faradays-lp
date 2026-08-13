@@ -12,7 +12,12 @@ import { cn } from '@/lib/utils'
 export const metadata: Metadata = {
 	title: 'Faradays — AI agents for enterprise support',
 	description:
-		'Landing page study inspired by giga.ai — structure and motion, with original placeholder content.'
+		'Landing page study inspired by giga.ai — structure and motion, with original placeholder content.',
+	verification: {
+		other: {
+			'facebook-domain-verification': 'bvn3zc4rndhujiy2yzs7or5ooluoqy'
+		}
+	}
 }
 
 // Map the active pair to role vars consumed by globals.css (@theme inline).
