@@ -4,7 +4,17 @@ import './src/env'
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-	/* config options here */
+	async redirects() {
+		return [
+			// A landing do produto de distribuição nasceu como /importacoes;
+			// 301 preserva links já compartilhados.
+			{
+				source: '/importacoes',
+				destination: '/distribuicao',
+				permanent: true
+			}
+		]
+	}
 }
 
 export default nextConfig

@@ -84,28 +84,51 @@ export function AsciiField({
 
 		let raf = 0
 		let last = 0
+		let running = false
 		const loop = (now: number) => {
+			if (!running) return
 			raf = requestAnimationFrame(loop)
 			// ~11fps é suficiente para textura e barato para a página.
 			if (now - last < 90) return
 			last = now
 			paint(now / 1000)
 		}
+		const start = () => {
+			if (running) return
+			running = true
+			raf = requestAnimationFrame(loop)
+		}
+		const stop = () => {
+			running = false
+			cancelAnimationFrame(raf)
+		}
 
 		// Congelado até o fim do loader: a textura fica pintada, mas parada.
 		const frozen = reducedMotion || !ready
 
+		// Fora da viewport o loop para — a página costuma ter mais de um
+		// campo/canvas e só o visível deve gastar frame.
+		const io = new IntersectionObserver(
+			(entries) => {
+				if (frozen) return
+				if (entries.some((entry) => entry.isIntersecting)) start()
+				else stop()
+			},
+			{ rootMargin: '100px' }
+		)
+		io.observe(canvas)
+
 		const ro = new ResizeObserver(() => {
 			resize()
-			if (frozen) paint(0)
+			if (!running) paint(0)
 		})
 		ro.observe(canvas)
 		resize()
-		if (frozen) paint(0)
-		else raf = requestAnimationFrame(loop)
+		paint(0)
 
 		return () => {
-			cancelAnimationFrame(raf)
+			stop()
+			io.disconnect()
 			ro.disconnect()
 		}
 	}, [rgb, ready])
@@ -303,7 +326,9 @@ export function HeroDemo() {
 	return (
 		<div className="relative z-10 flex h-full items-center justify-center p-5 md:p-8">
 			{/* Janela do app (referência: docs/image copy 13.png). */}
-			<div className="bg-card/95 flex h-full max-h-[36rem] w-[min(60rem,100%)] flex-col overflow-hidden rounded-xl border shadow-2xl backdrop-blur-[2px]">
+			{/* Sem backdrop-blur: a janela cobre um canvas que repinta, e o blur
+			   forçaria recomposição da área inteira a cada frame da textura. */}
+			<div className="bg-card/95 flex h-full max-h-[36rem] w-[min(60rem,100%)] flex-col overflow-hidden rounded-xl border shadow-2xl">
 				{/* Barra de título. */}
 				<div className="relative flex items-center border-b px-4 py-2.5">
 					<div className="flex gap-1.5" aria-hidden>

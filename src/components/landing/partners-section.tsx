@@ -21,10 +21,6 @@ gsap.registerPlugin(ScrollTrigger, SplitText)
  * marca.
  */
 const PARTNERS = [
-	{ name: 'Gmail', src: '/company/gmail.png' },
-	{ name: 'Microsoft', src: '/company/microsoft.png' },
-	{ name: 'Outlook', src: '/company/outlook.png' },
-	{ name: 'Excel', src: '/company/excel.png' },
 	{ name: 'Monfiza', src: '/company/monfiza.png' },
 	{ name: 'Aventis', src: '/company/aventis.png' }
 ]

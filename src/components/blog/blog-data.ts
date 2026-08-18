@@ -12,10 +12,11 @@ export const BLOG_PRODUCTS = ['Importações', 'Crédito'] as const
 export type BlogCategory = (typeof BLOG_CATEGORIES)[number]
 export type BlogProduct = (typeof BLOG_PRODUCTS)[number]
 
-/** Rota da landing de cada produto — usada pela label de produto do post. */
-export const PRODUCT_ROUTES: Record<BlogProduct, string> = {
-	Importações: '/importacoes',
-	Crédito: '/credito'
+/** Rota da landing de cada produto — usada pela label de produto do post.
+    `null` = produto sem landing publicada: a label vira texto, não link. */
+export const PRODUCT_ROUTES: Record<BlogProduct, string | null> = {
+	Importações: '/distribuicao',
+	Crédito: null
 }
 
 export type PostBlock =

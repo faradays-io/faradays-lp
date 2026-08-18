@@ -25,16 +25,23 @@ export function PostMeta({ post, views }: { post: BlogPost; views: number }) {
 				{post.category}
 			</span>
 			{post.product ? (
-				<Link
-					href={PRODUCT_ROUTES[post.product]}
-					className={cn(
-						META_ITEM,
-						'link-underline hover:text-foreground transition-colors'
-					)}
-				>
-					<Cube className="size-4" />
-					{post.product}
-				</Link>
+				PRODUCT_ROUTES[post.product] ? (
+					<Link
+						href={PRODUCT_ROUTES[post.product]!}
+						className={cn(
+							META_ITEM,
+							'link-underline hover:text-foreground transition-colors'
+						)}
+					>
+						<Cube className="size-4" />
+						{post.product}
+					</Link>
+				) : (
+					<span className={META_ITEM}>
+						<Cube className="size-4" />
+						{post.product}
+					</span>
+				)
 			) : null}
 			<span className={META_ITEM}>
 				<CalendarBlank className="size-4" />

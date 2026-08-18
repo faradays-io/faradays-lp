@@ -10,12 +10,12 @@ import { PartnersSection } from '@/components/landing/partners-section'
 import { TestimonialsSection } from '@/components/landing/testimonials-section'
 
 export const metadata: Metadata = {
-	title: 'Importações — Faradays',
+	title: 'Distribuição — Faradays',
 	description:
-		'Motores de decisão e portais operacionais para importação: cotações, documentos e atendimento em um fluxo só.'
+		'A operação da sua distribuidora no WhatsApp: cotação formalizada em PDF na conversa, RFQ de compra automática, laudos com validade viva — e uma IA que nunca inventa número.'
 }
 
-export default function ImportacoesPage() {
+export default function DistribuicaoPage() {
 	return (
 		<div className="light light-home bg-background text-foreground min-h-svh">
 			<PageTransition />
