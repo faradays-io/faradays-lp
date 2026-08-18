@@ -20,15 +20,34 @@ import {
 	AtendimentoDemo,
 	CotacoesDemo,
 	DocumentosDemo,
-	VisaoDemo
+	VendaDemo
 } from '@/components/landing/feature-demos'
 import { AsciiField } from '@/components/landing/hero-demo'
 import { HOME_FEATURES } from '@/components/landing/home-features-data'
 import { SECTION_TITLE } from '@/components/landing/type'
+import { useCopy, useLang } from '@/components/language-provider'
+import type { Localized } from '@/lib/i18n'
 import { usePageReady } from '@/lib/page-ready'
 import { cn } from '@/lib/utils'
 
 gsap.registerPlugin(SplitText)
+
+const COPY = {
+	pt: {
+		eyebrow: '01 · How it works',
+		heading: 'Connect Your Systems. Command Your Outcomes.',
+		sub: 'Cada sistema da sua operação vira entrada de um motor único — que conecta, aprende e devolve a decisão pronta, feature a feature.',
+		prevFeature: 'Feature anterior',
+		nextFeature: 'Próxima feature'
+	},
+	en: {
+		eyebrow: '01 · How it works',
+		heading: 'Connect Your Systems. Command Your Outcomes.',
+		sub: 'Every system in your operation becomes an input to a single engine — one that connects, learns and returns decisions ready to use, feature by feature.',
+		prevFeature: 'Previous feature',
+		nextFeature: 'Next feature'
+	}
+} satisfies Localized<Record<string, string>>
 
 /* ------------------------------------------------------------------ *
  * Grafo de sistemas (referências: docs/image copy 11.png + o grafo do
@@ -52,7 +71,7 @@ const PULSE_R = 3.5
 
 type NodeDef = {
 	id: string
-	label: string
+	label: Localized<string>
 	desc: string
 	x: number
 	y: number
@@ -64,7 +83,7 @@ type NodeDef = {
 const NODES: NodeDef[] = [
 	{
 		id: 'erp',
-		label: 'ERP',
+		label: { pt: 'ERP', en: 'ERP' },
 		desc: 'Pedidos, faturamento e crédito — a fonte da verdade da operação.',
 		x: 0.08,
 		y: 0.16,
@@ -73,7 +92,7 @@ const NODES: NodeDef[] = [
 	},
 	{
 		id: 'crm',
-		label: 'CRM',
+		label: { pt: 'CRM', en: 'CRM' },
 		desc: 'Clientes e representantes com histórico unificado.',
 		x: 0.245,
 		y: 0.16,
@@ -82,7 +101,7 @@ const NODES: NodeDef[] = [
 	},
 	{
 		id: 'email',
-		label: 'E-mail',
+		label: { pt: 'E-mail', en: 'Email' },
 		desc: 'RFQs disparadas e respostas capturadas automaticamente.',
 		x: 0.41,
 		y: 0.16,
@@ -91,7 +110,7 @@ const NODES: NodeDef[] = [
 	},
 	{
 		id: 'whatsapp',
-		label: 'WhatsApp',
+		label: { pt: 'WhatsApp', en: 'WhatsApp' },
 		desc: 'O canal onde as cotações chegam e os preços circulam.',
 		x: 0.575,
 		y: 0.16,
@@ -100,7 +119,7 @@ const NODES: NodeDef[] = [
 	},
 	{
 		id: 'docs',
-		label: 'Docs',
+		label: { pt: 'Docs', en: 'Docs' },
 		desc: 'Laudos, certificados e COA com validade viva.',
 		x: 0.74,
 		y: 0.16,
@@ -109,7 +128,7 @@ const NODES: NodeDef[] = [
 	},
 	{
 		id: 'planilhas',
-		label: 'Planilhas',
+		label: { pt: 'Planilhas', en: 'Spreadsheets' },
 		desc: 'As tabelas que hoje seguram o processo — absorvidas.',
 		x: 0.9,
 		y: 0.16,
@@ -118,7 +137,7 @@ const NODES: NodeDef[] = [
 	},
 	{
 		id: 'core',
-		label: 'Faradays',
+		label: { pt: 'Faradays', en: 'Faradays' },
 		desc: 'O motor que conecta tudo e devolve a decisão pronta.',
 		x: 0.5,
 		y: 0.62,
@@ -164,6 +183,7 @@ const bezier = (
 }
 
 function SystemsGraph({ className }: { className?: string }) {
+	const { lang } = useLang()
 	const rootRef = useRef<HTMLDivElement>(null)
 	const canvasRef = useRef<HTMLCanvasElement>(null)
 	const ready = usePageReady()
@@ -405,20 +425,41 @@ function SystemsGraph({ className }: { className?: string }) {
 		root.addEventListener('pointermove', onRootPointerMove)
 
 		let raf = 0
+		let running = false
 		const loop = (now: number) => {
+			if (!running) return
 			draw(now)
 			raf = requestAnimationFrame(loop)
 		}
+		const start = () => {
+			if (running || !ready) return
+			running = true
+			raf = requestAnimationFrame(loop)
+		}
+		const stop = () => {
+			running = false
+			cancelAnimationFrame(raf)
+		}
+
+		// O loop (física + pintura a 60fps) só roda com o grafo em tela.
+		const visibility = new IntersectionObserver(
+			(entries) => {
+				if (entries.some((entry) => entry.isIntersecting)) start()
+				else stop()
+			},
+			{ rootMargin: '100px' }
+		)
+		visibility.observe(root)
 
 		const ro = new ResizeObserver(resize)
 		ro.observe(canvas)
 		resize()
-		// Antes do fim do loader: um frame estático, sem loop.
-		if (ready) raf = requestAnimationFrame(loop)
-		else draw(performance.now())
+		// Frame estático de partida (pré-loader ou fora da viewport).
+		draw(performance.now())
 
 		return () => {
-			cancelAnimationFrame(raf)
+			stop()
+			visibility.disconnect()
 			ro.disconnect()
 			io.disconnect()
 			root.removeEventListener('pointermove', onRootPointerMove)
@@ -442,7 +483,7 @@ function SystemsGraph({ className }: { className?: string }) {
 					>
 						<def.IconCmp weight="fill" className="size-8" />
 						<span className="font-mono text-[10px] tracking-wide uppercase opacity-80">
-							{def.label}
+							{def.label[lang]}
 						</span>
 					</div>
 				) : (
@@ -456,7 +497,7 @@ function SystemsGraph({ className }: { className?: string }) {
 							className="text-foreground/80 size-5"
 						/>
 						<span className="text-foreground/60 font-mono text-[10px] tracking-wide uppercase">
-							{def.label}
+							{def.label[lang]}
 						</span>
 					</div>
 				)
@@ -473,14 +514,19 @@ function SystemsGraph({ className }: { className?: string }) {
 
 const HOLD_MS = 8000
 
-const DEMOS = [CotacoesDemo, DocumentosDemo, AtendimentoDemo, VisaoDemo]
+/* Ordem espelha HOME_FEATURES: WhatsApp · venda · RFQ de compra · docs. */
+const DEMOS = [AtendimentoDemo, VendaDemo, CotacoesDemo, DocumentosDemo]
 
 function FeatureShowcase() {
+	const { lang } = useLang()
+	const t = COPY[lang]
 	const [index, setIndex] = useState(0)
+	const rootRef = useRef<HTMLDivElement>(null)
 	const textRef = useRef<HTMLDivElement>(null)
 	const barRef = useRef<HTMLDivElement>(null)
 	const tweenRef = useRef<gsap.core.Tween | null>(null)
 	const hoveredRef = useRef(false)
+	const offscreenRef = useRef(false)
 	const transitioningRef = useRef(false)
 	const ready = usePageReady()
 
@@ -523,7 +569,7 @@ function FeatureShowcase() {
 				onComplete: () => go(1)
 			}
 		)
-		if (hoveredRef.current) tween.pause()
+		if (hoveredRef.current || offscreenRef.current) tween.pause()
 		tweenRef.current = tween
 		return () => {
 			tween.kill()
@@ -531,6 +577,23 @@ function FeatureShowcase() {
 		}
 	}, [index, go, ready])
 
+	/* Fora da viewport o autoplay pausa — senão o showcase consome slides e
+	   re-splita texto sem ninguém vendo. */
+	useEffect(() => {
+		const root = rootRef.current
+		if (!root) return
+		const io = new IntersectionObserver((entries) => {
+			const visible = entries.some((entry) => entry.isIntersecting)
+			offscreenRef.current = !visible
+			if (!visible) tweenRef.current?.pause()
+			else if (!hoveredRef.current) tweenRef.current?.play()
+		})
+		io.observe(root)
+		return () => io.disconnect()
+	}, [])
+
+	/* `lang` nas deps: a troca de idioma re-renderiza o texto, então o
+	   SplitText precisa re-splitar sobre o conteúdo novo. */
 	useEffect(() => {
 		const text = textRef.current
 		if (!text || !ready) return
@@ -545,14 +608,17 @@ function FeatureShowcase() {
 			lines.kill()
 			split.revert()
 		}
-	}, [index, ready])
+	}, [index, lang, ready])
 
 	const feature = HOME_FEATURES[index]
 	const Demo = DEMOS[index]
 	const counter = `${String(index + 1).padStart(2, '0')}/${String(HOME_FEATURES.length).padStart(2, '0')}`
 
 	return (
-		<div className="flex w-full flex-col items-start gap-10 lg:flex-row lg:gap-14">
+		<div
+			ref={rootRef}
+			className="flex w-full flex-col items-start gap-10 lg:flex-row lg:gap-14"
+		>
 			<div className="flex w-full flex-col lg:max-w-xl lg:shrink-0">
 				{/* Barra de progresso — fio em tom escuro único. */}
 				<div className="bg-foreground/15 relative h-px w-full max-w-xl">
@@ -567,14 +633,14 @@ function FeatureShowcase() {
 				<div className="mt-5 flex max-w-xl items-center justify-between">
 					<div className="flex items-center gap-5">
 						<button
-							aria-label="Feature anterior"
+							aria-label={t.prevFeature}
 							onClick={() => go(-1)}
 							className="text-foreground/60 hover:text-foreground transition-colors"
 						>
 							<ArrowLeft className="size-5" />
 						</button>
 						<button
-							aria-label="Próxima feature"
+							aria-label={t.nextFeature}
 							onClick={() => go(1)}
 							className="text-foreground/60 hover:text-foreground transition-colors"
 						>
@@ -586,15 +652,22 @@ function FeatureShowcase() {
 					</span>
 				</div>
 
-				<div ref={textRef} className="mt-10 flex flex-col gap-5">
+				{/* key por index+idioma: o SplitText desliga estes nós do React
+			   (revert restaura clones), então trocar feature ou idioma só
+			   aparece se o bloco remontar com DOM novo antes do re-split. */}
+				<div
+					key={`${index}-${lang}`}
+					ref={textRef}
+					className="mt-10 flex flex-col gap-5"
+				>
 					<span className="text-foreground/50 font-mono text-sm tracking-wide uppercase">
-						({feature.eyebrow})
+						({feature.eyebrow[lang]})
 					</span>
 					<h4 className="font-heading text-h3 max-w-xl">
-						{feature.title}
+						{feature.title[lang]}
 					</h4>
 					<p className="text-body-lg text-foreground/70 max-w-xl">
-						{feature.description}
+						{feature.description[lang]}
 					</p>
 				</div>
 			</div>
@@ -620,20 +693,19 @@ function FeatureShowcase() {
 }
 
 export function HowItWorks() {
+	const t = useCopy(COPY)
 	return (
 		<div className="px-7 py-32">
 			<div className="max-w-section mx-auto">
 				<div className="flex flex-col items-center gap-6 text-center">
 					<span className="text-foreground/50 font-mono text-base tracking-widest uppercase">
-						01 · How it works
+						{t.eyebrow}
 					</span>
 					<h3 className={cn(SECTION_TITLE, 'max-w-5xl')}>
-						Connect Your Systems. Command Your Outcomes.
+						{t.heading}
 					</h3>
 					<p className="text-body-lg text-foreground/70 max-w-2xl text-balance">
-						Cada sistema da sua operação vira entrada de um motor
-						único — que conecta, aprende e devolve a decisão pronta,
-						feature a feature.
+						{t.sub}
 					</p>
 				</div>
 

@@ -5,7 +5,28 @@ import { gsap } from 'gsap'
 import Link from 'next/link'
 import { useEffect, useRef } from 'react'
 
+import { useCopy } from '@/components/language-provider'
 import { Button } from '@/components/ui/button'
+import type { Localized } from '@/lib/i18n'
+
+/* digest/message e o rótulo RUNTIME_EXCEPTION ficam como estão — leitura
+   de terminal, igual nos dois idiomas. */
+const COPY = {
+	pt: {
+		systemFault: 'Falha no sistema',
+		headline: 'Algo quebrou do nosso lado.',
+		body: 'Um erro inesperado interrompeu este trecho. Você pode tentar de novo — se persistir, o diagnóstico abaixo é a trilha.',
+		tryAgain: 'Tentar de novo',
+		returnBase: 'Voltar à base'
+	},
+	en: {
+		systemFault: 'System fault',
+		headline: 'Something broke on our end.',
+		body: 'An unexpected error interrupted this segment. You can retry — if it persists, the diagnostic below is the trail.',
+		tryAgain: 'Try again',
+		returnBase: 'Return to base'
+	}
+} satisfies Localized<Record<string, string>>
 
 /* ------------------------------------------------------------------ *
  * error.tsx — segment error boundary. "SYSTEM FAULT", sibling to the
@@ -23,6 +44,7 @@ export default function Error({
 	error: Error & { digest?: string }
 	reset: () => void
 }) {
+	const t = useCopy(COPY)
 	const root = useRef<HTMLElement>(null)
 
 	// Report to your error service here (Sentry, etc.).
@@ -135,7 +157,7 @@ export default function Error({
 				className="text-muted-foreground absolute top-6 left-1/2 flex -translate-x-1/2 items-center gap-3 font-mono text-xs tracking-widest uppercase"
 			>
 				<Warning weight="bold" className="size-4" />
-				System fault
+				{t.systemFault}
 			</div>
 
 			<div className="relative z-10 flex flex-col items-center text-center">
@@ -158,14 +180,13 @@ export default function Error({
 					data-reveal
 					className="text-h5 text-foreground sm:text-h4 mt-2 max-w-md text-balance"
 				>
-					Something broke on our end.
+					{t.headline}
 				</p>
 				<p
 					data-reveal
 					className="text-body-sm text-muted-foreground mt-3 max-w-sm text-balance"
 				>
-					An unexpected error interrupted this segment. You can retry
-					— if it persists, the diagnostic below is the trail.
+					{t.body}
 				</p>
 
 				{/* Diagnostic readout. */}
@@ -213,7 +234,7 @@ export default function Error({
 							weight="bold"
 							className="transition-transform duration-500 group-hover/retry:rotate-180"
 						/>
-						Try again
+						{t.tryAgain}
 					</Button>
 					<Button
 						asChild
@@ -226,7 +247,7 @@ export default function Error({
 								weight="bold"
 								className="transition-transform duration-300 group-hover/home:-translate-y-0.5"
 							/>
-							Return to base
+							{t.returnBase}
 						</Link>
 					</Button>
 				</div>

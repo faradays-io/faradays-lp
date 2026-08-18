@@ -5,10 +5,29 @@ import Link from 'next/link'
 import { useEffect, useRef } from 'react'
 
 import { SplitHoverText } from '@/components/custom-ui/split-hover-text'
-import { ArrowSwapIcon } from '@/components/landing/arrow-swap-icon'
-import { AsciiField, HeroDemo } from '@/components/landing/hero-demo'
+import { AsciiField } from '@/components/landing/hero-demo'
+import { WhatsAppHeroDemo } from '@/components/landing/whatsapp-hero-demo'
+import { useCopy } from '@/components/language-provider'
 import { Button } from '@/components/ui/button'
+import type { Localized } from '@/lib/i18n'
 import { usePageReady } from '@/lib/page-ready'
+
+const COPY = {
+	pt: {
+		headline:
+			'Seu representante fecha a cotação pelo WhatsApp. O sistema faz o resto.',
+		sub: 'Cotação formalizada em PDF na conversa, documentos e preços na hora — e o gestor acompanhando tudo no portal. Nada mais preenchido em planilha ou enviado por e-mail.',
+		bookDemo: 'Agende uma demo',
+		exploreProduct: 'Conhecer o produto'
+	},
+	en: {
+		headline:
+			'Your sales rep closes the quote on WhatsApp. The system does the rest.',
+		sub: 'A formalized PDF quote right in the chat, documents and prices on the spot — with managers following everything on the portal. Nothing typed into spreadsheets or sent by e-mail anymore.',
+		bookDemo: 'Book a demo',
+		exploreProduct: 'Explore the product'
+	}
+} satisfies Localized<Record<string, string>>
 
 /**
  * Hero claro (copy no padrão do hero da rota raiz): pill de anúncio,
@@ -18,6 +37,7 @@ import { usePageReady } from '@/lib/page-ready'
  * convida o scroll para a visualização geral.
  */
 export function HomeHero() {
+	const t = useCopy(COPY)
 	const rootRef = useRef<HTMLElement>(null)
 	const ready = usePageReady()
 
@@ -57,30 +77,18 @@ export function HomeHero() {
 			{/* Copy + CTA — min-h calculado para deixar exatamente metade do
 			   painel (40svh) visível na dobra. */}
 			<div className="flex min-h-[calc(60svh-5.75rem)] w-full flex-col items-center justify-center px-7 pt-12 pb-16 text-center">
-				<Link
-					href="#cta"
-					data-hero-item
-					className="group/button bg-foreground/5 hover:bg-foreground/10 mb-7 flex items-center gap-5 rounded-full border px-4 py-1.5 text-sm opacity-0 transition-colors"
-				>
-					<span className="transition-transform duration-300 group-hover/button:translate-x-2">
-						Conheça a IA de crédito
-					</span>
-					<ArrowSwapIcon className="size-3.5 [&>svg]:size-3.5" />
-				</Link>
-
 				<h1
 					data-hero-item
 					className="font-heading max-w-4xl text-5xl leading-[0.95] tracking-tight text-balance opacity-0 min-[810px]:text-[4.75rem]"
 				>
-					Inteligência artificial aplicada à sua operação
+					{t.headline}
 				</h1>
 
 				<p
 					data-hero-item
 					className="text-body-lg text-foreground/70 mt-6 max-w-xl text-balance opacity-0"
 				>
-					Motores de decisão e portais operacionais que transformam
-					dados dispersos em ação — de crédito a atendimento.
+					{t.sub}
 				</p>
 
 				<div
@@ -90,14 +98,14 @@ export function HomeHero() {
 					<Button asChild size="lg" className="px-6">
 						<Link href="#cta">
 							<SplitHoverText as="span">
-								Agende uma demo
+								{t.bookDemo}
 							</SplitHoverText>
 						</Link>
 					</Button>
 					<Button asChild size="lg" variant="ghost" className="px-6">
 						<Link href="#features">
 							<SplitHoverText as="span">
-								Conhecer o produto
+								{t.exploreProduct}
 							</SplitHoverText>
 						</Link>
 					</Button>
@@ -106,14 +114,14 @@ export function HomeHero() {
 
 			{/* Painel de demo em fluxo normal: h-[80svh], metade acima da
 			   dobra na carga; o scroll revela o restante. Bordas retas,
-			   light blue, textura ASCII e a demo interativa (arraste a
-			   planilha → o sistema gera o PDF). */}
+			   light blue, textura ASCII e a conversa de WhatsApp que gera a
+			   cotação em PDF — a mesma cena da headline. */}
 			<div
 				data-hero-item
 				className="relative h-[80svh] w-full overflow-hidden border-y border-[#b3d2ff] bg-[#e0edff] opacity-0"
 			>
 				<AsciiField className="absolute inset-0" />
-				<HeroDemo />
+				<WhatsAppHeroDemo />
 			</div>
 		</section>
 	)

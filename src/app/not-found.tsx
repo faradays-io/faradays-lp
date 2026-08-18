@@ -6,8 +6,31 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useRef } from 'react'
 
+import { useCopy } from '@/components/language-provider'
 import { Button } from '@/components/ui/button'
+import type { Localized } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
+
+/* Termos do readout de diagnóstico (status/path/match, ERR_NO_ROUTE) ficam
+   em inglês nos dois idiomas — estética de terminal. */
+const COPY = {
+	pt: {
+		signalLost: 'Sinal perdido',
+		headline: 'Você saiu do mapa.',
+		body: 'As coordenadas solicitadas não resolvem para nenhuma rota deste build.',
+		returnBase: 'Voltar à base',
+		goBack: 'Voltar',
+		specimen: 'Ou explore a folha de espécimes'
+	},
+	en: {
+		signalLost: 'Signal lost',
+		headline: 'You wandered off the grid.',
+		body: "The coordinates you requested don't resolve to any route in this build.",
+		returnBase: 'Return to base',
+		goBack: 'Go back',
+		specimen: 'Or explore the specimen sheet'
+	}
+} satisfies Localized<Record<string, string>>
 
 /* ------------------------------------------------------------------ *
  * 404 — "SIGNAL LOST". Renders inside the root layout, so the active
@@ -18,6 +41,7 @@ import { cn } from '@/lib/utils'
  * ------------------------------------------------------------------ */
 
 export default function NotFound() {
+	const t = useCopy(COPY)
 	const pathname = usePathname()
 	const router = useRouter()
 	const root = useRef<HTMLElement>(null)
@@ -178,7 +202,7 @@ export default function NotFound() {
 				className="text-muted-foreground absolute top-6 left-1/2 flex -translate-x-1/2 items-center gap-3 font-mono text-xs tracking-widest uppercase"
 			>
 				<span className="bg-foreground inline-block size-1.5 animate-pulse rounded-full" />
-				Signal lost
+				{t.signalLost}
 			</div>
 
 			{/* Content stack. */}
@@ -205,14 +229,13 @@ export default function NotFound() {
 					data-reveal
 					className="text-h5 text-foreground sm:text-h4 mt-2 max-w-md text-balance"
 				>
-					You wandered off the grid.
+					{t.headline}
 				</p>
 				<p
 					data-reveal
 					className="text-body-sm text-muted-foreground mt-3 max-w-sm text-balance"
 				>
-					The coordinates you requested don&apos;t resolve to any
-					route in this build.
+					{t.body}
 				</p>
 
 				{/* Diagnostic readout. */}
@@ -258,7 +281,7 @@ export default function NotFound() {
 								weight="bold"
 								className="transition-transform duration-300 group-hover/home:rotate-45"
 							/>
-							Return to base
+							{t.returnBase}
 						</Link>
 					</Button>
 					<Button
@@ -271,7 +294,7 @@ export default function NotFound() {
 							weight="bold"
 							className="transition-transform duration-300 group-hover/back:-translate-x-0.5"
 						/>
-						Go back
+						{t.goBack}
 					</Button>
 				</div>
 
@@ -280,7 +303,7 @@ export default function NotFound() {
 					href="/fonts"
 					className="text-muted-foreground hover:text-foreground group/link mt-6 inline-flex items-center gap-1 font-mono text-xs tracking-widest uppercase transition-colors"
 				>
-					Or explore the specimen sheet
+					{t.specimen}
 					<ArrowUpRight
 						weight="bold"
 						className="size-3 transition-transform duration-300 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5"

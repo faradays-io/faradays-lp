@@ -1,9 +1,12 @@
-import { ArrowRight } from '@phosphor-icons/react/dist/ssr'
+'use client'
+
+import { ArrowRight } from '@phosphor-icons/react'
 import Link from 'next/link'
 
 import { Reveal } from '@/components/landing/reveal'
 import { SOLUTIONS } from '@/components/landing/solutions-data'
 import { SECTION_TITLE } from '@/components/landing/type'
+import { useLang } from '@/components/language-provider'
 import { cn } from '@/lib/utils'
 
 /**
@@ -13,6 +16,7 @@ import { cn } from '@/lib/utils'
  * linha leva. Disponível navega; "em breve" fica apagado e não clica.
  */
 export function SolutionsIndex() {
+	const { lang } = useLang()
 	return (
 		<section id="solucoes" className="px-7 py-24 md:py-36">
 			<div className="max-w-section mx-auto">
@@ -51,7 +55,7 @@ export function SolutionsIndex() {
 												'text-foreground/50'
 										)}
 									>
-										{solution.name}
+										{solution.name[lang]}
 									</h3>
 									<p
 										className={cn(
@@ -61,7 +65,7 @@ export function SolutionsIndex() {
 												: 'text-foreground/40'
 										)}
 									>
-										{solution.description}
+										{solution.description[lang]}
 									</p>
 								</div>
 								{solution.available ? (
@@ -91,7 +95,15 @@ export function SolutionsIndex() {
 										{inner}
 									</Link>
 								) : (
-									<div className={rowClass}>{inner}</div>
+									<div
+										aria-disabled
+										className={cn(
+											rowClass,
+											'pointer-events-none select-none'
+										)}
+									>
+										{inner}
+									</div>
 								)}
 							</Reveal>
 						)

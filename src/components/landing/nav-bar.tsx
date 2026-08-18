@@ -3,7 +3,7 @@
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -12,14 +12,32 @@ import { CaretDown } from '@phosphor-icons/react'
 import { SplitHoverText } from '@/components/custom-ui/split-hover-text'
 import { FaradaysLockup } from '@/components/landing/faradays-lockup'
 import { SOLUTIONS } from '@/components/landing/solutions-data'
+import { useCopy, useLang } from '@/components/language-provider'
 import { Button } from '@/components/ui/button'
+import type { Localized } from '@/lib/i18n'
 import { usePageReady } from '@/lib/page-ready'
 
-type Language = 'en' | 'pt'
+const COPY = {
+	pt: {
+		solutions: 'Soluções',
+		soon: '(em breve)',
+		/* Design-English mantido no PT (padrão atual do site). */
+		demo: 'See a demo',
+		switchLang: 'Switch to English'
+	},
+	en: {
+		solutions: 'Solutions',
+		soon: '(soon)',
+		demo: 'See a demo',
+		switchLang: 'Ver em português'
+	}
+} satisfies Localized<Record<string, string>>
 
 /* Dropdown "Soluções" — abre por hover/focus (CSS puro via group), painel
    com o nome da solução e a rota em mono; itens "em breve" não clicam. */
 function SolutionsMenu() {
+	const { lang } = useLang()
+	const t = COPY[lang]
 	return (
 		<div data-nav-item className="group relative hidden opacity-0 md:block">
 			<button
@@ -27,7 +45,7 @@ function SolutionsMenu() {
 				aria-haspopup="menu"
 				className="text-foreground/80 hover:text-foreground flex items-center gap-1.5 text-sm transition-colors"
 			>
-				Soluções
+				{t.solutions}
 				<CaretDown className="size-3 transition-transform duration-200 group-hover:rotate-180" />
 			</button>
 			{/* pt-3 faz ponte de hover entre o gatilho e o painel. */}
@@ -40,7 +58,9 @@ function SolutionsMenu() {
 								href={solution.slug}
 								className="hover:bg-foreground/5 flex items-center justify-between gap-8 rounded-[0.3rem] px-3 py-2.5 transition-colors"
 							>
-								<span className="text-sm">{solution.name}</span>
+								<span className="text-sm">
+									{solution.name[lang]}
+								</span>
 								<span className="text-foreground/40 font-mono text-xs">
 									{solution.slug}
 								</span>
@@ -49,13 +69,13 @@ function SolutionsMenu() {
 							<div
 								key={solution.slug}
 								aria-disabled
-								className="flex items-center justify-between gap-8 rounded-[0.3rem] px-3 py-2.5"
+								className="pointer-events-none flex items-center justify-between gap-8 rounded-[0.3rem] px-3 py-2.5 select-none"
 							>
 								<span className="text-foreground/40 text-sm">
-									{solution.name}
+									{solution.name[lang]}
 								</span>
 								<span className="text-foreground/30 font-mono text-xs">
-									(em breve)
+									{t.soon}
 								</span>
 							</div>
 						)
@@ -67,7 +87,9 @@ function SolutionsMenu() {
 }
 
 export function NavBar({ solutions = false }: { solutions?: boolean } = {}) {
-	const [language, setLanguage] = useState<Language>('en')
+	const { lang, setLang } = useLang()
+	const t = useCopy(COPY)
+	const targetLang = lang === 'pt' ? 'en' : 'pt'
 	const headerRef = useRef<HTMLElement>(null)
 	const ready = usePageReady()
 
@@ -132,13 +154,11 @@ export function NavBar({ solutions = false }: { solutions?: boolean } = {}) {
 					<SplitHoverText
 						as="button"
 						data-nav-item
-						aria-label="Switch language"
-						onClick={() =>
-							setLanguage((l) => (l === 'en' ? 'pt' : 'en'))
-						}
+						aria-label={t.switchLang}
+						onClick={() => setLang(targetLang)}
 						className="bg-background text-foreground/80 hover:text-foreground flex size-9 items-center justify-center rounded-md border font-mono text-sm font-semibold uppercase opacity-0 transition-colors"
 					>
-						{language}
+						{lang}
 					</SplitHoverText>
 					<Button
 						asChild
@@ -146,9 +166,7 @@ export function NavBar({ solutions = false }: { solutions?: boolean } = {}) {
 						className="h-9 px-5 font-sans text-base normal-case opacity-0"
 					>
 						<Link href="#cta">
-							<SplitHoverText as="span">
-								See a demo
-							</SplitHoverText>
+							<SplitHoverText as="span">{t.demo}</SplitHoverText>
 						</Link>
 					</Button>
 				</div>

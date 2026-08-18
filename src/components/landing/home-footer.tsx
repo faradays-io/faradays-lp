@@ -7,6 +7,8 @@ import { useEffect, useRef } from 'react'
 import { FaradaysWordmark } from '@/components/landing/faradays-wordmark'
 import { LEGAL_PAGES } from '@/components/landing/legal-data'
 import { SOLUTIONS } from '@/components/landing/solutions-data'
+import { useCopy, useLang } from '@/components/language-provider'
+import type { Lang, Localized } from '@/lib/i18n'
 import { BOOKING_URL } from '@/lib/links'
 import { usePageReady } from '@/lib/page-ready'
 
@@ -17,44 +19,75 @@ gsap.registerPlugin(ScrollTrigger)
    desenrolam até a reta conforme o wordmark sobe na tela. */
 const ARC = 1.5
 
-const LEGAL_LINKS = LEGAL_PAGES.map((page) => ({
-	label: page.label,
-	href: page.slug
-}))
-
-/* Colunas de navegação acima do wordmark. */
-const FOOTER_COLUMNS = [
-	{
-		title: 'Navegue',
-		/* Absolutos: o rodapé aparece em mais de uma rota, e âncora relativa
-		   só funcionaria na página que tem as seções. */
-		links: [
-			{ label: 'Produto', href: '/importacoes#features' },
-			{ label: 'Parceiros', href: '/importacoes#partners' },
-			{ label: 'Relatos', href: '/importacoes#testimonials' },
-			{ label: 'Agende uma demo', href: BOOKING_URL }
-		]
+const COPY = {
+	pt: {
+		tagline: 'Inteligência artificial aplicada à sua operação.',
+		location: 'São Paulo · Brasil',
+		browse: 'Navegue',
+		product: 'Produto',
+		partners: 'Parceiros',
+		testimonials: 'Relatos',
+		bookDemo: 'Agende uma demo',
+		solutions: 'Soluções',
+		contact: 'Contato',
+		email: 'E-mail'
 	},
-	{
-		title: 'Soluções',
-		links: SOLUTIONS.map((solution) => ({
-			label: solution.name,
-			href: solution.slug
-		}))
-	},
-	{
-		title: 'Contato',
-		links: [
-			{
-				label: 'contato@faradays.io',
-				href: 'mailto:contato@faradays.io'
-			},
-			{ label: 'LinkedIn', href: '#' }
-		]
+	en: {
+		tagline: 'Artificial intelligence applied to your operation.',
+		location: 'São Paulo · Brazil',
+		browse: 'Browse',
+		product: 'Product',
+		partners: 'Partners',
+		testimonials: 'Testimonials',
+		bookDemo: 'Book a demo',
+		solutions: 'Solutions',
+		contact: 'Contact',
+		email: 'Email'
 	}
-]
+} satisfies Localized<Record<string, string>>
+
+/* Colunas de navegação acima do wordmark — função do idioma porque toda
+   label troca com o toggle. */
+const footerColumns = (lang: Lang) => {
+	const t = COPY[lang]
+	return [
+		{
+			title: t.browse,
+			/* Absolutos: o rodapé aparece em mais de uma rota, e âncora
+			   relativa só funcionaria na página que tem as seções. */
+			links: [
+				{ label: t.product, href: '/distribuicao#features' },
+				{ label: t.partners, href: '/distribuicao#partners' },
+				{ label: t.testimonials, href: '/distribuicao#testimonials' },
+				{ label: t.bookDemo, href: BOOKING_URL }
+			]
+		},
+		{
+			title: t.solutions,
+			/* Só as soluções com landing publicada — as demais não têm rota. */
+			links: SOLUTIONS.filter((solution) => solution.available).map(
+				(solution) => ({
+					label: solution.name[lang],
+					href: solution.slug
+				})
+			)
+		},
+		{
+			title: t.contact,
+			links: [
+				{
+					label: 'contato@faradays.io',
+					href: 'mailto:contato@faradays.io'
+				},
+				{ label: 'LinkedIn', href: '#' }
+			]
+		}
+	]
+}
 
 export function HomeFooter() {
+	const { lang } = useLang()
+	const t = useCopy(COPY)
 	const rootRef = useRef<HTMLElement>(null)
 	const wordRef = useRef<HTMLDivElement>(null)
 	const ready = usePageReady()
@@ -125,13 +158,13 @@ export function HomeFooter() {
 			<div className="grid gap-12 px-7 pb-24 md:grid-cols-[1fr_repeat(3,auto)] md:gap-20 lg:gap-28">
 				<div className="flex max-w-sm flex-col gap-4">
 					<p className="font-heading text-h4 text-balance">
-						Inteligência artificial aplicada à sua operação.
+						{t.tagline}
 					</p>
 					<p className="text-foreground/60 font-mono text-xs tracking-wide uppercase">
-						São Paulo · Brasil
+						{t.location}
 					</p>
 				</div>
-				{FOOTER_COLUMNS.map((column) => (
+				{footerColumns(lang).map((column) => (
 					<div key={column.title} className="flex flex-col gap-4">
 						<span className="text-foreground/50 font-mono text-xs tracking-widest uppercase">
 							{column.title}
@@ -161,13 +194,13 @@ export function HomeFooter() {
 
 			<div className="flex flex-col items-center gap-3 px-7 font-mono text-sm tracking-widest uppercase lg:flex-row lg:justify-between">
 				<ul className="flex items-center gap-4">
-					{LEGAL_LINKS.map((link) => (
-						<li key={link.label}>
+					{LEGAL_PAGES.map((page) => (
+						<li key={page.slug}>
 							<a
-								href={link.href}
+								href={page.slug}
 								className="link-underline text-foreground/70 hover:text-foreground inline-block transition-colors"
 							>
-								{link.label}
+								{page.label[lang]}
 							</a>
 						</li>
 					))}
@@ -176,12 +209,12 @@ export function HomeFooter() {
 					© 2026 Faradays Consulting LTDA
 				</p>
 				<div className="flex items-center gap-4">
-					<span className="text-foreground/70">Contato</span>
+					<span className="text-foreground/70">{t.contact}</span>
 					<a
 						href="mailto:contato@faradays.io"
 						className="link-underline text-brand inline-block transition-opacity hover:opacity-85"
 					>
-						E-mail
+						{t.email}
 					</a>
 					<a
 						href="#"

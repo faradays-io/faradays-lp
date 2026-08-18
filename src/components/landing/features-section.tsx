@@ -8,6 +8,8 @@ import { FeatureFigures } from '@/components/landing/feature-figures'
 import { FeatureGraphic } from '@/components/landing/feature-graphic'
 import { HOME_FEATURES } from '@/components/landing/home-features-data'
 import { HowItWorks } from '@/components/landing/how-it-works'
+import { MoreFeatures } from '@/components/landing/more-features'
+import { useLang } from '@/components/language-provider'
 import { usePageReady } from '@/lib/page-ready'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -15,6 +17,7 @@ gsap.registerPlugin(ScrollTrigger)
 const FEATURES = HOME_FEATURES
 
 export function FeaturesSection() {
+	const { lang } = useLang()
 	const [active, setActive] = useState(0)
 	const rootRef = useRef<HTMLElement>(null)
 	const ready = usePageReady()
@@ -59,22 +62,27 @@ export function FeaturesSection() {
 				<div className="flex flex-col">
 					{FEATURES.map((feature, i) => (
 						<div
-							key={feature.eyebrow}
+							key={feature.id}
 							data-feature={i}
 							className="flex min-h-svh flex-col items-center justify-center gap-6 py-24 text-left"
 						>
 							<FeatureGraphic
-								index={i}
+								index={feature.graphic}
 								className="mb-2 w-full max-w-sm lg:hidden"
 							/>
 							<span className="text-foreground/50 w-full max-w-md font-mono text-sm tracking-widest uppercase">
-								({feature.eyebrow})
+								({feature.eyebrow[lang]})
 							</span>
 							<h3 className="font-heading text-h2 w-full max-w-md text-balance">
-								{feature.title}
+								{feature.title[lang]}
 							</h3>
 							<p className="text-body-lg text-foreground/70 w-full max-w-md">
-								{feature.description}
+								{feature.description[lang]}
+							</p>
+							{/* Linha técnica (briefing 3.3-b): prova de domínio
+							   em mono, separada da copy de negócio. */}
+							<p className="text-foreground/45 w-full max-w-md font-mono text-xs leading-relaxed">
+								{feature.tech[lang]}
 							</p>
 						</div>
 					))}
@@ -83,10 +91,15 @@ export function FeaturesSection() {
 				{/* Direita: gráfico fixo ao centro que só se transforma. */}
 				<div className="hidden lg:block">
 					<div className="sticky top-0 flex h-svh items-center">
-						<FeatureGraphic index={active} />
+						<FeatureGraphic
+							index={FEATURES[active]?.graphic ?? 0}
+						/>
 					</div>
 				</div>
 			</div>
+
+			{/* Grade "e mais" fecha a seção: o produto inteiro em resumo. */}
+			<MoreFeatures />
 		</section>
 	)
 }

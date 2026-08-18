@@ -122,7 +122,12 @@ export function SplitHoverText({
 
 	return (
 		<Comp ref={rootRef} className={className} {...rest}>
+			{/* key={children}: o SplitText muta o DOM por fora do React (o
+			   revert restaura clones), então atualização de texto via React
+			   cairia em nós órfãos e nunca apareceria. Remontar o wrapper
+			   recria o DOM com o texto novo e o efeito re-splita em cima. */}
 			<span
+				key={children}
 				className={cn(
 					'relative inline-block overflow-hidden align-bottom',
 					textClassName

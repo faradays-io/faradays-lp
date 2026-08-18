@@ -4,7 +4,34 @@
  * isométricas portadas das referências (docs/ref2.tsx e docs/ref.tsx).
  */
 
+'use client'
+
 import { FigMomentum, FigNodes } from '@/components/landing/feature-figures-art'
+import { useCopy } from '@/components/language-provider'
+import type { Localized } from '@/lib/i18n'
+
+const COPY = {
+	pt: {
+		title: 'Uma nova espécie de software operacional.',
+		titleSub:
+			'Sob medida para times modernos, com IA no núcleo, a Faradays define um novo padrão para operar e decidir.',
+		dataTitle: 'IA com os seus dados',
+		dataSub: 'Agentes respondem com o que está no banco — nunca inventam.',
+		speedTitle: 'Feito para velocidade',
+		speedSub: 'Menos planilha e retrabalho: alertas e decisões na hora.'
+	},
+	en: {
+		title: 'A new species of operational software.',
+		titleSub:
+			'Purpose-built for modern teams, with AI at the core, Faradays sets a new standard for operating and deciding.',
+		dataTitle: 'AI with your data',
+		dataSub:
+			'Agents answer with what is in the database — they never make things up.',
+		speedTitle: 'Built for speed',
+		speedSub:
+			'Less spreadsheet work and rework: alerts and decisions on the spot.'
+	}
+} satisfies Localized<Record<string, string>>
 
 /* Fundo pontilhado sutil atrás das células que têm figura. */
 function DottedBackdrop() {
@@ -425,33 +452,26 @@ function FigLabel({ children }: { children: string }) {
 }
 
 function TitleBlock() {
+	const t = useCopy(COPY)
 	return (
 		<>
-			<h3 className="font-heading text-h3 text-balance">
-				Uma nova espécie de software operacional.
-			</h3>
-			<p className="text-body-sm text-foreground/60">
-				Sob medida para times modernos, com IA no núcleo, a Faradays
-				define um novo padrão para operar e decidir.
-			</p>
+			<h3 className="font-heading text-h3 text-balance">{t.title}</h3>
+			<p className="text-body-sm text-foreground/60">{t.titleSub}</p>
 		</>
 	)
 }
 
 function TextBlocks() {
+	const t = useCopy(COPY)
 	return (
 		<>
 			<div className="flex flex-col gap-1.5">
-				<h4 className="text-body font-medium">IA com os seus dados</h4>
-				<p className="text-body-sm text-foreground/60">
-					Agentes respondem com o que está no banco — nunca inventam.
-				</p>
+				<h4 className="text-body font-medium">{t.dataTitle}</h4>
+				<p className="text-body-sm text-foreground/60">{t.dataSub}</p>
 			</div>
 			<div className="flex flex-col gap-1.5">
-				<h4 className="text-body font-medium">Feito para velocidade</h4>
-				<p className="text-body-sm text-foreground/60">
-					Menos planilha e retrabalho: alertas e decisões na hora.
-				</p>
+				<h4 className="text-body font-medium">{t.speedTitle}</h4>
+				<p className="text-body-sm text-foreground/60">{t.speedSub}</p>
 			</div>
 		</>
 	)

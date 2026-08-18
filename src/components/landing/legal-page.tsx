@@ -1,28 +1,53 @@
-import { ArrowLeft } from '@phosphor-icons/react/dist/ssr'
+'use client'
+
+import { ArrowLeft } from '@phosphor-icons/react'
 import Link from 'next/link'
 
 import { LEGAL_PAGES } from '@/components/landing/legal-data'
+import { useCopy, useLang } from '@/components/language-provider'
+import type { Localized } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 
 export type LegalSection = { heading: string; body: string[] }
 
-/**
- * Casca das páginas legais: mesma tipografia e mesmo fundo da home, coluna
- * única de leitura, volta para a raiz e rodapé cruzando as demais políticas.
- * O conteúdo entra por `sections` — cada rota traz o seu.
- */
-export function LegalPage({
-	title,
-	updatedAt,
-	intro,
-	sections
-}: {
+export type LegalContent = {
 	title: string
 	/** Data da última revisão, já formatada (ex.: "27 de julho de 2026"). */
 	updatedAt: string
 	intro: string
 	sections: LegalSection[]
+}
+
+const COPY = {
+	pt: {
+		updatedAt: 'Atualizado em',
+		questions: 'Dúvidas sobre esta política?',
+		ariaPolicies: 'Políticas'
+	},
+	en: {
+		updatedAt: 'Last updated',
+		questions: 'Questions about this policy?',
+		ariaPolicies: 'Policies'
+	}
+} satisfies Localized<Record<string, string>>
+
+/**
+ * Casca das páginas legais: mesma tipografia e mesmo fundo da home, coluna
+ * única de leitura, volta para a raiz e rodapé cruzando as demais políticas.
+ * O conteúdo entra por `content` (variante por idioma) — cada rota traz o
+ * seu; `slug` identifica a página ativa no rodapé.
+ */
+export function LegalPage({
+	slug,
+	content
+}: {
+	slug: string
+	content: Localized<LegalContent>
 }) {
+	const { lang } = useLang()
+	const t = useCopy(COPY)
+	const { title, updatedAt, intro, sections } = content[lang]
+
 	return (
 		<div className="light light-home bg-background text-foreground flex min-h-svh flex-col">
 			<main className="mx-auto w-full max-w-5xl flex-1 px-7 py-16 md:py-24">
@@ -36,7 +61,7 @@ export function LegalPage({
 
 				<h1 className="font-heading text-h2 mt-8">{title}</h1>
 				<p className="text-foreground/50 mt-3 font-mono text-xs">
-					Atualizado em {updatedAt}
+					{t.updatedAt} {updatedAt}
 				</p>
 
 				<p className="text-body-lg text-foreground/70 mt-8">{intro}</p>
@@ -60,7 +85,7 @@ export function LegalPage({
 				</div>
 
 				<p className="text-foreground/60 text-body-sm mt-14">
-					Dúvidas sobre esta política?{' '}
+					{t.questions}{' '}
 					<a
 						href="mailto:contato@faradays.io"
 						className="link-underline hover:text-brand transition-colors"
@@ -74,7 +99,7 @@ export function LegalPage({
 				<div className="text-foreground/50 mx-auto flex w-full max-w-5xl flex-col gap-4 px-7 py-8 font-mono text-xs sm:flex-row sm:items-center sm:justify-between">
 					<span>© {new Date().getFullYear()} Faradays</span>
 					<nav
-						aria-label="Políticas"
+						aria-label={t.ariaPolicies}
 						className="flex flex-wrap gap-4"
 					>
 						{LEGAL_PAGES.map((page) => (
@@ -83,12 +108,12 @@ export function LegalPage({
 								href={page.slug}
 								className={cn(
 									'link-underline transition-colors',
-									page.label === title
+									page.slug === slug
 										? 'text-foreground'
 										: 'hover:text-foreground'
 								)}
 							>
-								{page.label}
+								{page.label[lang]}
 							</Link>
 						))}
 					</nav>

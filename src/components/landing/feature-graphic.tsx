@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from 'react'
 
+import { useLang } from '@/components/language-provider'
+import type { Localized } from '@/lib/i18n'
 import { usePageReady } from '@/lib/page-ready'
 import { cn } from '@/lib/utils'
 
@@ -20,6 +22,49 @@ const HALO = '#f4f4f4'
 const easeOutCubic = (v: number) => 1 - Math.pow(1 - v, 3)
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v))
 
+/* Rótulos desenhados no canvas — chegam às cenas via DrawArgs.t9n (o loop
+   de RAF lê o idioma corrente por ref, sem recriar o efeito). */
+const GRAPHIC_COPY = {
+	pt: {
+		suppA: 'Forn A',
+		suppB: 'Forn B',
+		suppC: 'Forn C',
+		valueA: '$ 1.240',
+		valueB: '$ 1.198',
+		valueC: '$ 1.150',
+		bestPrice: 'Melhor preço',
+		coaExpires: 'COA · vence em 12d',
+		validityCaption: 'validade por documento',
+		question: 'pergunta',
+		price: 'R$ 8,90/kg',
+		radarOrders: 'Pedidos',
+		radarDocs: 'Docs',
+		radarInvoices: 'Boletos',
+		radarPrices: 'Preços',
+		radarCaption: 'radar da operação'
+	},
+	en: {
+		suppA: 'Supp A',
+		suppB: 'Supp B',
+		suppC: 'Supp C',
+		valueA: '$ 1,240',
+		valueB: '$ 1,198',
+		valueC: '$ 1,150',
+		bestPrice: 'Best price',
+		coaExpires: 'COA · expires in 12d',
+		validityCaption: 'validity per document',
+		question: 'question',
+		price: 'R$ 8.90/kg',
+		radarOrders: 'Orders',
+		radarDocs: 'Docs',
+		radarInvoices: 'Invoices',
+		radarPrices: 'Prices',
+		radarCaption: 'operation radar'
+	}
+} satisfies Localized<Record<string, string>>
+
+type GraphicCopy = (typeof GRAPHIC_COPY)['pt']
+
 type DrawArgs = {
 	ctx: CanvasRenderingContext2D
 	w: number
@@ -28,6 +73,7 @@ type DrawArgs = {
 	wave: number
 	mono: string
 	reduced: boolean
+	t9n: GraphicCopy
 	label: (
 		text: string,
 		x: number,
@@ -40,11 +86,11 @@ type DrawArgs = {
 
 /* 0 — Cotações: três barras de preço crescem; a mais barata é a menor,
    ganha o azul e a linha do melhor preço. */
-function drawQuotes({ ctx, w, h, t, wave, label, reduced }: DrawArgs) {
+function drawQuotes({ ctx, w, h, t, wave, label, reduced, t9n }: DrawArgs) {
 	const bars = [
-		{ name: 'Forn A', value: '$ 1.240', frac: 0.92 },
-		{ name: 'Forn B', value: '$ 1.198', frac: 0.82 },
-		{ name: 'Forn C', value: '$ 1.150', frac: 0.62, accent: true }
+		{ name: t9n.suppA, value: t9n.valueA, frac: 0.92 },
+		{ name: t9n.suppB, value: t9n.valueB, frac: 0.82 },
+		{ name: t9n.suppC, value: t9n.valueC, frac: 0.62, accent: true }
 	]
 	const x0 = w * 0.24
 	const maxLen = w * 0.6
@@ -103,14 +149,14 @@ function drawQuotes({ ctx, w, h, t, wave, label, reduced }: DrawArgs) {
 		ctx.lineTo(x, h * 0.78)
 		ctx.stroke()
 		ctx.setLineDash([])
-		label('Melhor preço', x, h * 0.16, 'center', BRAND, best)
+		label(t9n.bestPrice, x, h * 0.16, 'center', BRAND, best)
 	}
 	ctx.globalAlpha = 1
 }
 
 /* 1 — Documentos: anéis concêntricos de validade — quanto falta de arco,
    quanto falta de prazo. O crítico é azul; o vencido, um X vermelho. */
-function drawRings({ ctx, w, h, t, wave, label, reduced }: DrawArgs) {
+function drawRings({ ctx, w, h, t, wave, label, reduced, t9n }: DrawArgs) {
 	const cx = w / 2
 	const cy = h * 0.46
 	const rings = [
@@ -163,9 +209,9 @@ function drawRings({ ctx, w, h, t, wave, label, reduced }: DrawArgs) {
 
 	const caption = easeOutCubic(clamp01((t - 1.1) / 0.5))
 	if (caption > 0) {
-		label('COA · vence em 12d', cx, h * 0.88, 'center', BRAND, caption)
+		label(t9n.coaExpires, cx, h * 0.88, 'center', BRAND, caption)
 		label(
-			'validade por documento',
+			t9n.validityCaption,
 			cx,
 			h * 0.94,
 			'center',
@@ -178,7 +224,7 @@ function drawRings({ ctx, w, h, t, wave, label, reduced }: DrawArgs) {
 
 /* 2 — Atendimento: um sinal ruidoso entra, atravessa o losango do motor
    e sai como resposta limpa, com o preço na ponta. */
-function drawSignal({ ctx, w, h, t, wave, label, reduced }: DrawArgs) {
+function drawSignal({ ctx, w, h, t, wave, label, reduced, t9n }: DrawArgs) {
 	const midY = h * 0.5
 	const xIn = w * 0.08
 	const xCore = w * 0.5
@@ -246,7 +292,7 @@ function drawSignal({ ctx, w, h, t, wave, label, reduced }: DrawArgs) {
 	}
 
 	label(
-		'pergunta',
+		t9n.question,
 		xIn + 4,
 		midY + 34,
 		'left',
@@ -255,7 +301,7 @@ function drawSignal({ ctx, w, h, t, wave, label, reduced }: DrawArgs) {
 	)
 	if (outProgress > 0.7)
 		label(
-			'R$ 8,90/kg',
+			t9n.price,
 			xOut,
 			midY - 16,
 			'right',
@@ -267,7 +313,7 @@ function drawSignal({ ctx, w, h, t, wave, label, reduced }: DrawArgs) {
 
 /* 3 — Visão: radar da operação — a varredura gira e acende os blips dos
    módulos conforme passa por eles. */
-function drawRadar({ ctx, w, h, t, wave, label, reduced }: DrawArgs) {
+function drawRadar({ ctx, w, h, t, wave, label, reduced, t9n }: DrawArgs) {
 	const cx = w / 2
 	const cy = h * 0.47
 	const R = Math.min(w, h) * 0.34
@@ -315,10 +361,10 @@ function drawRadar({ ctx, w, h, t, wave, label, reduced }: DrawArgs) {
 
 	/* Blips dos módulos: brilham quando a varredura acabou de passar. */
 	const blips = [
-		{ ang: 0.7, rf: 0.55, name: 'Pedidos' },
-		{ ang: 2.3, rf: 0.82, name: 'Docs' },
-		{ ang: 3.9, rf: 0.42, name: 'Boletos' },
-		{ ang: 5.4, rf: 0.7, name: 'Preços' }
+		{ ang: 0.7, rf: 0.55, name: t9n.radarOrders },
+		{ ang: 2.3, rf: 0.82, name: t9n.radarDocs },
+		{ ang: 3.9, rf: 0.42, name: t9n.radarInvoices },
+		{ ang: 5.4, rf: 0.7, name: t9n.radarPrices }
 	]
 	const blipIn = easeOutCubic(clamp01((t - 1.1) / 0.5))
 	if (blipIn > 0) {
@@ -357,7 +403,7 @@ function drawRadar({ ctx, w, h, t, wave, label, reduced }: DrawArgs) {
 	ctx.fill()
 
 	label(
-		'radar da operação',
+		t9n.radarCaption,
 		cx,
 		h * 0.93,
 		'center',
@@ -376,10 +422,18 @@ export function FeatureGraphic({
 	index: number
 	className?: string
 }) {
+	const { lang } = useLang()
 	const canvasRef = useRef<HTMLCanvasElement>(null)
 	const sceneRef = useRef(index)
 	const clockRef = useRef<number>(NaN)
+	/* O loop de RAF lê o idioma por ref — trocar de idioma não recria o
+	   efeito nem reinicia a cena. */
+	const langRef = useRef(lang)
 	const ready = usePageReady()
+
+	useEffect(() => {
+		langRef.current = lang
+	}, [lang])
 
 	/* Troca de cena reinicia o relógio de entrada. */
 	useEffect(() => {
@@ -462,25 +516,49 @@ export function FeatureGraphic({
 				wave: now / 1000,
 				mono,
 				reduced,
+				t9n: GRAPHIC_COPY[langRef.current],
 				label
 			})
 		}
 
 		let raf = 0
+		let running = false
 		const loop = (now: number) => {
+			if (!running) return
 			draw(now)
 			raf = requestAnimationFrame(loop)
 		}
+		const start = () => {
+			if (running || !ready) return
+			running = true
+			raf = requestAnimationFrame(loop)
+		}
+		const stop = () => {
+			running = false
+			cancelAnimationFrame(raf)
+		}
+
+		// Só o gráfico em tela roda o loop — a página monta 5 instâncias
+		// (sticky no desktop + uma por feature no mobile) e as escondidas
+		// por display:none nunca intersectam.
+		const visibility = new IntersectionObserver(
+			(entries) => {
+				if (entries.some((entry) => entry.isIntersecting)) start()
+				else stop()
+			},
+			{ rootMargin: '100px' }
+		)
+		visibility.observe(canvas)
 
 		const ro = new ResizeObserver(resize)
 		ro.observe(canvas)
 		resize()
-		// Antes do fim do loader: um frame estático, sem loop.
-		if (ready) raf = requestAnimationFrame(loop)
-		else draw(performance.now())
+		// Frame estático de partida (pré-loader ou fora da viewport).
+		draw(performance.now())
 
 		return () => {
-			cancelAnimationFrame(raf)
+			stop()
+			visibility.disconnect()
 			ro.disconnect()
 			io.disconnect()
 		}

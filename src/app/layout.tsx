@@ -1,12 +1,15 @@
 import './globals.css'
 
 import type { Metadata } from 'next'
+import { cookies } from 'next/headers'
 import type { CSSProperties } from 'react'
 
 import { CustomScrollbar } from '@/components/custom-ui/custom-scrollbar'
+import { LanguageProvider } from '@/components/language-provider'
 import { LenisProvider } from '@/components/lenis-provider'
 import { ThemeProvider } from '@/components/theme-provider'
 import { activeFontVariables, TYPE } from '@/lib/fonts'
+import { DEFAULT_LANG, HTML_LANG, isLang, LANG_COOKIE } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 
 export const metadata: Metadata = {
@@ -28,14 +31,20 @@ const fontRoles = {
 	'--ff-serif': TYPE.serif.style.fontFamily
 } as CSSProperties
 
-export default function RootLayout({
+export default async function RootLayout({
 	children
 }: Readonly<{
 	children: React.ReactNode
 }>) {
+	/* Idioma do request: cookie do toggle ou PT. Ler cookie aqui torna as
+	   rotas dinâmicas — custo aceito para o primeiro paint já sair no
+	   idioma certo (sem flash nem hydration mismatch). */
+	const cookieLang = (await cookies()).get(LANG_COOKIE)?.value
+	const lang = isLang(cookieLang) ? cookieLang : DEFAULT_LANG
+
 	return (
 		<html
-			lang="en"
+			lang={HTML_LANG[lang]}
 			className={cn(activeFontVariables, 'font-sans')}
 			style={fontRoles}
 			suppressHydrationWarning
@@ -47,10 +56,12 @@ export default function RootLayout({
 					forcedTheme="dark"
 					disableTransitionOnChange
 				>
-					<LenisProvider>
-						{children}
-						<CustomScrollbar />
-					</LenisProvider>
+					<LanguageProvider initialLang={lang}>
+						<LenisProvider>
+							{children}
+							<CustomScrollbar />
+						</LenisProvider>
+					</LanguageProvider>
 				</ThemeProvider>
 			</body>
 		</html>
