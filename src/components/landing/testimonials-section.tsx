@@ -19,6 +19,7 @@ type Testimonial = {
 const COPY = {
 	pt: {
 		heading: 'O que os times dizem',
+		eyebrow: '(prova social)',
 		metrics: [
 			{ value: '-70%', label: 'tempo por análise de proposta' },
 			{ value: '3×', label: 'mais cotações comparadas por dia' },
@@ -47,6 +48,7 @@ const COPY = {
 	},
 	en: {
 		heading: 'What teams say',
+		eyebrow: '(social proof)',
 		metrics: [
 			{ value: '-70%', label: 'time per proposal analysis' },
 			{ value: '3×', label: 'more quotes compared per day' },
@@ -87,7 +89,7 @@ export function TestimonialsSection() {
 								{t.heading}
 							</h2>
 							<span className="text-foreground/40 font-mono text-[10px] tracking-[0.2em] uppercase">
-								(social proof)
+								{t.eyebrow}
 							</span>
 						</div>
 

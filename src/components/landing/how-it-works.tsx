@@ -34,8 +34,8 @@ gsap.registerPlugin(SplitText)
 
 const COPY = {
 	pt: {
-		eyebrow: '01 · How it works',
-		heading: 'Connect Your Systems. Command Your Outcomes.',
+		eyebrow: '01 · Como funciona',
+		heading: 'Conecte seus sistemas. Comande seus resultados.',
 		sub: 'Cada sistema da sua operação vira entrada de um motor único — que conecta, aprende e devolve a decisão pronta, feature a feature.',
 		prevFeature: 'Feature anterior',
 		nextFeature: 'Próxima feature'

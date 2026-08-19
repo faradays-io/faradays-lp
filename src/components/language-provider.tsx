@@ -1,19 +1,16 @@
 'use client'
 
-import {
-	createContext,
-	type ReactNode,
-	useCallback,
-	useContext,
-	useState
-} from 'react'
+import { createContext, type ReactNode, useCallback, useContext } from 'react'
 
-import { HTML_LANG, type Lang, LANG_COOKIE, type Localized } from '@/lib/i18n'
+import { type Lang, LANG_COOKIE, type Localized } from '@/lib/i18n'
 
-/* Estado de idioma do cliente. Nasce do cookie lido pelo root layout
-   (initialLang) — assim o SSR e a hidratação sempre concordam. O toggle
-   troca o estado (swap imediato), persiste no cookie e atualiza o atributo
-   lang do <html> para leitores de tela. */
+/* Estado de idioma. Nasce do cookie lido pelo root layout (initialLang) —
+   SSR e hidratação sempre concordam. Trocar de idioma persiste o cookie e
+   NAVEGA para a raiz com reload completo (location.assign, não router):
+   o documento volta já no idioma novo e o HomeLoader roda de novo — mesmo
+   quando já se está na /, pois assign para a própria URL também recarrega.
+   Decisão: em vez de swap in-place (que deixava a troca "seca", sem a
+   entrada coreografada), a troca de idioma re-apresenta o site. */
 
 type LanguageContextValue = {
 	lang: Lang
@@ -29,16 +26,13 @@ export function LanguageProvider({
 	initialLang: Lang
 	children: ReactNode
 }) {
-	const [lang, setLangState] = useState<Lang>(initialLang)
-
 	const setLang = useCallback((next: Lang) => {
-		setLangState(next)
 		document.cookie = `${LANG_COOKIE}=${next}; path=/; max-age=31536000; samesite=lax`
-		document.documentElement.lang = HTML_LANG[next]
+		window.location.assign('/')
 	}, [])
 
 	return (
-		<LanguageContext.Provider value={{ lang, setLang }}>
+		<LanguageContext.Provider value={{ lang: initialLang, setLang }}>
 			{children}
 		</LanguageContext.Provider>
 	)

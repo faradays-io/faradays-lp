@@ -21,8 +21,7 @@ const COPY = {
 	pt: {
 		solutions: 'Soluções',
 		soon: '(em breve)',
-		/* Design-English mantido no PT (padrão atual do site). */
-		demo: 'See a demo',
+		demo: 'Veja uma demo',
 		switchLang: 'Switch to English'
 	},
 	en: {
