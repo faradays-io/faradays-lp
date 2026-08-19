@@ -3,6 +3,7 @@
 import { ArrowLeft } from '@phosphor-icons/react'
 import Link from 'next/link'
 
+import { CopyEmail } from '@/components/landing/copy-email'
 import { LEGAL_PAGES } from '@/components/landing/legal-data'
 import { useCopy, useLang } from '@/components/language-provider'
 import type { Localized } from '@/lib/i18n'
@@ -86,12 +87,7 @@ export function LegalPage({
 
 				<p className="text-foreground/60 text-body-sm mt-14">
 					{t.questions}{' '}
-					<a
-						href="mailto:contato@faradays.io"
-						className="link-underline hover:text-brand transition-colors"
-					>
-						contato@faradays.io
-					</a>
+					<CopyEmail className="link-underline hover:text-brand transition-colors" />
 				</p>
 			</main>
 

@@ -269,7 +269,7 @@ export function CustomScrollbar({
 		<div
 			ref={trackRef}
 			className={cn(
-				'top-0 right-0 z-50 h-full w-2 mix-blend-difference transition-opacity duration-300',
+				'top-0 right-0.5 z-50 h-full w-2 transition-opacity duration-300',
 				isLocal ? 'absolute' : 'fixed',
 				active || isVisible ? 'opacity-100' : 'opacity-0'
 			)}

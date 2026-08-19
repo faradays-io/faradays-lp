@@ -4,12 +4,13 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useEffect, useRef } from 'react'
 
+import { CopyEmail } from '@/components/landing/copy-email'
 import { FaradaysWordmark } from '@/components/landing/faradays-wordmark'
 import { LEGAL_PAGES } from '@/components/landing/legal-data'
 import { SOLUTIONS } from '@/components/landing/solutions-data'
 import { useCopy, useLang } from '@/components/language-provider'
 import type { Lang, Localized } from '@/lib/i18n'
-import { BOOKING_URL } from '@/lib/links'
+import { BOOKING_URL, CONTACT_EMAIL, CONTACT_MAILTO } from '@/lib/links'
 import { usePageReady } from '@/lib/page-ready'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -75,10 +76,7 @@ const footerColumns = (lang: Lang) => {
 		{
 			title: t.contact,
 			links: [
-				{
-					label: 'contato@faradays.io',
-					href: 'mailto:contato@faradays.io'
-				},
+				{ label: CONTACT_EMAIL, href: CONTACT_MAILTO },
 				{ label: 'LinkedIn', href: '#' }
 			]
 		}
@@ -170,16 +168,24 @@ export function HomeFooter() {
 							{column.title}
 						</span>
 						<ul className="flex flex-col gap-2.5">
-							{column.links.map((link) => (
-								<li key={link.label}>
-									<a
-										href={link.href}
-										className="link-underline text-body-sm text-foreground/70 hover:text-foreground inline-block transition-colors"
-									>
-										{link.label}
-									</a>
-								</li>
-							))}
+							{column.links.map((link) => {
+								const linkClass =
+									'link-underline text-body-sm text-foreground/70 hover:text-foreground inline-block transition-colors'
+								return (
+									<li key={link.label}>
+										{link.href === CONTACT_MAILTO ? (
+											<CopyEmail className={linkClass} />
+										) : (
+											<a
+												href={link.href}
+												className={linkClass}
+											>
+												{link.label}
+											</a>
+										)}
+									</li>
+								)
+							})}
 						</ul>
 					</div>
 				))}
@@ -210,12 +216,9 @@ export function HomeFooter() {
 				</p>
 				<div className="flex items-center gap-4">
 					<span className="text-foreground/70">{t.contact}</span>
-					<a
-						href="mailto:contato@faradays.io"
-						className="link-underline text-brand inline-block transition-opacity hover:opacity-85"
-					>
+					<CopyEmail className="link-underline text-brand inline-block transition-opacity hover:opacity-85">
 						{t.email}
-					</a>
+					</CopyEmail>
 					<a
 						href="#"
 						className="link-underline text-brand inline-block transition-opacity hover:opacity-85"

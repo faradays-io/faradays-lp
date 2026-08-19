@@ -6,19 +6,27 @@ import { SplitText } from 'gsap/SplitText'
 import Image from 'next/image'
 import { useEffect, useRef } from 'react'
 
+import { useCopy } from '@/components/language-provider'
+import type { Localized } from '@/lib/i18n'
 import { usePageReady } from '@/lib/page-ready'
 import { cn } from '@/lib/utils'
 
 gsap.registerPlugin(ScrollTrigger, SplitText)
+
+const COPY = {
+	pt: { title: 'Nossos parceiros' },
+	en: { title: 'Our partners' }
+} satisfies Localized<Record<string, string>>
 
 /**
  * Partners — grade técnica de logos (referência: docs/image copy 4.png).
  * Moldura fechada; linhas-fio entre células via `gap-px` sobre fundo
  * `border`; pontos de registro nos cantos de cada célula formam o cluster
  * nas interseções.
- * Repouso: logo monocromática (máscara no alpha do PNG, cor do foreground).
- * Hover: célula em cinza claro e o PNG original por cima devolve a cor da
- * marca.
+ * Repouso: logo monocromática e apagada (máscara no alpha do PNG, foreground
+ * a 50% — sobre o fundo chapado isso lê como cinza médio).
+ * Hover: célula em cinza claro e o PNG original por cima devolve a cor cheia
+ * da marca.
  */
 const PARTNERS = [
 	{ name: 'Monfiza', src: '/company/monfiza.png' },
@@ -71,6 +79,7 @@ function CornerDots() {
 }
 
 export function PartnersSection() {
+	const t = useCopy(COPY)
 	const rootRef = useRef<HTMLElement>(null)
 	const ready = usePageReady()
 
@@ -164,7 +173,7 @@ export function PartnersSection() {
 							y: 24,
 							duration: 0.9,
 							ease: 'power3.out',
-							stagger: 0.06
+							stagger: 0.09
 						},
 						'-=0.35'
 					)
@@ -186,7 +195,7 @@ export function PartnersSection() {
 							data-partners-title
 							className="text-body-lg font-medium uppercase"
 						>
-							Our partners
+							{t.title}
 						</h2>
 					</div>
 
@@ -208,7 +217,7 @@ export function PartnersSection() {
 									<div
 										role="img"
 										aria-label={partner.name}
-										className="bg-foreground absolute inset-0 transition-opacity duration-300 group-hover:opacity-0"
+										className="bg-foreground/50 absolute inset-0 transition-opacity duration-300 group-hover:opacity-0"
 										style={{
 											maskImage: `url(${partner.src})`,
 											maskPosition: 'center',

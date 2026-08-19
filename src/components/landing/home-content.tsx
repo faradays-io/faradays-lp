@@ -3,6 +3,7 @@
 import Link from 'next/link'
 
 import { SplitHoverText } from '@/components/custom-ui/split-hover-text'
+import { CopyEmail } from '@/components/landing/copy-email'
 import { FaradaysComposed } from '@/components/landing/faradays-composed'
 import { HomeLoader } from '@/components/landing/home-loader'
 import { LEGAL_PAGES } from '@/components/landing/legal-data'
@@ -167,12 +168,7 @@ export function HomeContent() {
 						>
 							{t.bookCall}
 						</a>
-						<a
-							href="mailto:contato@faradays.io"
-							className="link-underline text-foreground/70 hover:text-foreground transition-colors"
-						>
-							contato@faradays.io
-						</a>
+						<CopyEmail className="link-underline text-foreground/70 hover:text-foreground transition-colors" />
 					</div>
 				</Reveal>
 			</main>

@@ -1,3 +1,5 @@
+import { CopyEmail } from '@/components/landing/copy-email'
+
 export function Footer() {
 	return (
 		<footer className="bg-background text-foreground">
@@ -8,12 +10,7 @@ export function Footer() {
 					CNPJ 65.590.441/0001-36
 				</p>
 				<p className="sm:text-center">
-					<a
-						href="mailto:contato@faradays.io"
-						className="transition-opacity hover:opacity-70"
-					>
-						contato@faradays.io
-					</a>
+					<CopyEmail className="transition-opacity hover:opacity-70" />
 				</p>
 				<p className="sm:text-right">© 2026 Faradays Consulting LTDA</p>
 			</div>
