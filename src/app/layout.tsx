@@ -5,6 +5,7 @@ import { cookies } from 'next/headers'
 import type { CSSProperties } from 'react'
 
 import { CustomScrollbar } from '@/components/custom-ui/custom-scrollbar'
+import { GrainOverlay } from '@/components/landing/grain-overlay'
 import { LanguageProvider } from '@/components/language-provider'
 import { LenisProvider } from '@/components/lenis-provider'
 import { ThemeProvider } from '@/components/theme-provider'
@@ -59,6 +60,7 @@ export default async function RootLayout({
 					<LanguageProvider initialLang={lang}>
 						<LenisProvider>
 							{children}
+							<GrainOverlay />
 							<CustomScrollbar />
 						</LenisProvider>
 					</LanguageProvider>

@@ -172,13 +172,22 @@
 		width: 0;
 		height: 0;
 	}
+
+	/* Seleção de texto — bege da marca com texto escuro, igual nos dois
+	   temas (o par já contrasta em ambos, então não segue os tokens). A 60%
+	   sobre o #0f0f0e do tema forçado o bege resolve em ~#8a8a84, ~5,4:1
+	   contra o texto escuro. */
+	::selection {
+		background-color: color-mix(in srgb, #dcdcd2 60%, transparent);
+		color: #0f0f0e;
+	}
 }
 
 /* `.light` re-opens the light tokens as a scope, so a subtree (e.g. the
    /credito page) can render light while the forced theme stays dark. */
 :root,
 .light {
-	--background: #f4f4f4;
+	--background: #f8f8f8; /* era #f4f4f4; +4 níveis compensam o véu do grain global (op 0.12 escurece ~4) */
 	--foreground: oklch(0.145 0 0);
 	--card: oklch(1 0 0);
 	--card-foreground: oklch(0.145 0 0);
@@ -205,9 +214,9 @@
 	--chart-4: oklch(0.371 0 0);
 	--chart-5: oklch(0.269 0 0);
 	--radius: 0.45rem;
-	/* Custom scrollbar thumb — constant gray; mix-blend-difference on the
-	   thumb makes it contrast with whatever is behind it. */
-	--scrollbar-thumb: #f2f2f2;
+	/* Custom scrollbar thumb — constant mid-gray, rendered as-is (no blend
+	   mode), so it reads the same over light and dark grounds. */
+	--scrollbar-thumb: #a3a3a3;
 	--sidebar: hsl(0, 0%, 96%);
 	--sidebar-foreground: oklch(0.145 0 0);
 	--sidebar-primary: oklch(0.205 0 0);
@@ -221,7 +230,7 @@
 /* `.light-home` — ground da nova home (usar junto com `.light`): cinza
    claro no tema claro; o escuro segue o `.dark` global (#0f0f0e). */
 .light-home {
-	--background: #f4f4f4;
+	--background: #f8f8f8; /* era #f4f4f4; +4 níveis compensam o véu do grain global (op 0.12 escurece ~4) */
 }
 
 .dark {
@@ -295,6 +304,11 @@
 	transform: scaleX(0);
 	transform-origin: right;
 	transition: transform 0.3s ease;
+	/* Mantém a linha numa camada composta permanente. Sem isso o browser
+	   promove/descarta a camada a cada transição e a linha de 1px é
+	   rasterizada de um jeito durante a animação e de outro em repouso —
+	   o que faz a espessura "pular" quando o hover termina. */
+	will-change: transform;
 }
 .link-underline:hover::after {
 	transform: scaleX(1);
@@ -325,4 +339,30 @@
 			#0f0f0e 80%
 		),
 		#0f0f0e;
+}
+
+/* Film grain global (técnica do bymonolog.com): um tile de ruído num layer
+   fixo 2× o viewport que SALTA de posição em steps() — lê como estática de
+   TV re-gerada a cada frame, mas é sempre a mesma textura teleportando.
+   Só transform anima → roda no compositor, sem layout/paint por frame. */
+@keyframes grain-jump {
+	0%,
+	100% {
+		transform: translate(0, 0);
+	}
+	17% {
+		transform: translate(-5%, -10%);
+	}
+	33% {
+		transform: translate(3%, -15%);
+	}
+	50% {
+		transform: translate(12%, 9%);
+	}
+	67% {
+		transform: translate(9%, 4%);
+	}
+	83% {
+		transform: translate(-1%, 7%);
+	}
 }
