@@ -60,6 +60,7 @@ const footerColumns = (lang: Lang) => {
 				{ label: t.product, href: '/distribuicao#features' },
 				{ label: t.partners, href: '/distribuicao#partners' },
 				{ label: t.testimonials, href: '/distribuicao#testimonials' },
+				{ label: 'Blog', href: '/blog' },
 				{ label: t.bookDemo, href: BOOKING_URL }
 			]
 		},

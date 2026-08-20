@@ -95,8 +95,16 @@ export function BlogIndex({
 
 	return (
 		<div className="grid gap-12 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-16">
-			<Reveal delay={0.1}>
-				<aside aria-label="Filtros">
+			{/* O `aside` é que precisa ser o item da grade: como item ele
+			   ganha a altura da linha inteira como área de sticky, e o
+			   `self-start` o impede de esticar junto — é o que dá margem
+			   para ele grudar enquanto a lista rola ao lado. O Reveal fica
+			   por dentro, para o transform da entrada não brigar com isso. */}
+			<aside
+				aria-label="Filtros"
+				className="lg:sticky lg:top-20 lg:max-h-[calc(100svh-7rem)] lg:self-start lg:overflow-y-auto"
+			>
+				<Reveal delay={0.1}>
 					<BlogFilters
 						category={category}
 						onCategoryChange={(v) => {
@@ -119,8 +127,8 @@ export function BlogIndex({
 							resetPaging()
 						}}
 					/>
-				</aside>
-			</Reveal>
+				</Reveal>
+			</aside>
 
 			<div className="min-w-0">
 				<Reveal delay={0.2}>
@@ -141,7 +149,7 @@ export function BlogIndex({
 							Nenhum post encontrado com esses filtros.
 						</p>
 					) : view === 'grid' ? (
-						<div className="group/cards grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+						<div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
 							<AnimatePresence mode="popLayout">
 								{visible.map((post, i) => (
 									<motion.div
@@ -170,7 +178,7 @@ export function BlogIndex({
 											<th
 												key={col}
 												scope="col"
-												className="text-foreground/40 py-3 pr-6 font-mono text-xs font-normal tracking-widest uppercase last:pr-0"
+												className="text-foreground/40 py-3 pr-6 font-mono text-xs font-normal tracking-widest uppercase first:pl-4 last:pr-0"
 											>
 												{col}
 											</th>

@@ -55,14 +55,25 @@ function countWords(text: string): number {
 }
 
 const DATE_FORMAT = new Intl.DateTimeFormat('pt-BR', {
-	day: 'numeric',
+	day: '2-digit',
 	month: 'short',
 	year: 'numeric'
 })
 
-/** '2026-07-21' → '21 de jul. de 2026'. */
+/**
+ * '2026-07-21' → '21 jul 2026'.
+ *
+ * Montado a partir das partes em vez do `format()` inteiro: em pt-BR ele
+ * costura os literais ('21 de jul. de 2026'), que pesam demais numa linha de
+ * metadados. Ficam só os números, o mês abreviado sem ponto e o espaço.
+ */
 export function formatPostDate(iso: string): string {
-	return DATE_FORMAT.format(new Date(`${iso}T12:00:00`))
+	return DATE_FORMAT.formatToParts(new Date(`${iso}T12:00:00`))
+		.filter((part) => part.type !== 'literal')
+		.map((part) =>
+			part.type === 'month' ? part.value.replace('.', '') : part.value
+		)
+		.join(' ')
 }
 
 const VIEWS_FORMAT = new Intl.NumberFormat('pt-BR', {

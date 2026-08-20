@@ -84,7 +84,10 @@
 	--text-display: 2.986rem;
 	--text-display--line-height: 0.9;
 	--text-display--letter-spacing: -0.03em;
-	--text-h1: 2.488rem;
+	/* Fluido: 2.488rem em >=1280px, encolhendo até 2.074rem (um passo abaixo
+	   na escala) em <=768px, para o h1 não dominar a dobra em telas médias.
+	   rem + vw, nunca vw puro — o termo em rem preserva o zoom do navegador. */
+	--text-h1: clamp(2.074rem, 1.456rem + 1.289vw, 2.488rem);
 	--text-h1--line-height: 0.95;
 	--text-h1--letter-spacing: -0.025em;
 	--text-h2: 2.074rem;

@@ -1,7 +1,6 @@
 'use client'
 
 import { CaretDown, Check, SortAscending } from '@phosphor-icons/react'
-import { Select } from 'radix-ui'
 
 import {
 	BLOG_CATEGORIES,
@@ -9,6 +8,10 @@ import {
 	type BlogCategory,
 	type BlogProduct
 } from '@/components/blog/blog-data'
+import {
+	DropdownItem,
+	DropdownMenu
+} from '@/components/custom-ui/dropdown-menu'
 import { cn } from '@/lib/utils'
 
 export type SortKey = 'date' | 'title' | 'views'
@@ -96,66 +99,65 @@ export function BlogFilters({
 	sort: SortState
 	onSortChange: (value: SortState) => void
 }) {
+	const currentValue = `${sort.key}-${sort.dir}`
+	const current =
+		SORT_OPTIONS.find((option) => option.value === currentValue) ??
+		SORT_OPTIONS[0]
+
 	return (
 		<div className="space-y-8">
 			<div className="space-y-3">
 				<p className="text-foreground/40 font-mono text-xs tracking-widest uppercase">
 					Ordenar por
 				</p>
-				<Select.Root
-					value={`${sort.key}-${sort.dir}`}
-					onValueChange={(value) => {
-						const [key, dir] = value.split('-') as [
-							SortKey,
-							SortDir
-						]
-						onSortChange({ key, dir })
-					}}
-				>
-					<Select.Trigger
-						aria-label="Ordenar por"
-						className={cn(
-							CONTROL_TEXT,
-							'border-border bg-background hover:bg-muted flex w-full cursor-pointer items-center justify-between gap-2 rounded-md border px-3 py-2 transition-colors outline-none',
-							'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-3'
-						)}
-					>
-						<span className="inline-flex items-center gap-2">
-							<SortAscending className="size-4" />
-							<Select.Value />
-						</span>
-						<Select.Icon>
-							<CaretDown className="size-3.5" />
-						</Select.Icon>
-					</Select.Trigger>
-					<Select.Portal>
-						<Select.Content
-							position="popper"
-							sideOffset={6}
-							className="border-border bg-card z-50 w-[var(--radix-select-trigger-width)] rounded-xl border p-1.5 shadow-lg"
+				<DropdownMenu
+					className="w-full"
+					trigger={({ open, toggle }) => (
+						<button
+							type="button"
+							aria-haspopup="menu"
+							aria-expanded={open}
+							aria-label="Ordenar por"
+							onClick={toggle}
+							className={cn(
+								CONTROL_TEXT,
+								'border-border bg-background hover:bg-muted flex w-full cursor-pointer items-center justify-between gap-2 rounded-md border px-3 py-2 transition-colors outline-none',
+								'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-3'
+							)}
 						>
-							<Select.Viewport>
-								{SORT_OPTIONS.map((option) => (
-									<Select.Item
-										key={option.value}
-										value={option.value}
-										className={cn(
-											CONTROL_TEXT,
-											'data-highlighted:bg-muted flex cursor-pointer items-center justify-between gap-2 rounded-md px-2.5 py-2 outline-none'
-										)}
-									>
-										<Select.ItemText>
-											{option.label}
-										</Select.ItemText>
-										<Select.ItemIndicator>
-											<Check className="text-brand size-3.5" />
-										</Select.ItemIndicator>
-									</Select.Item>
-								))}
-							</Select.Viewport>
-						</Select.Content>
-					</Select.Portal>
-				</Select.Root>
+							<span className="inline-flex items-center gap-2">
+								<SortAscending className="size-4" />
+								{current.label}
+							</span>
+							<CaretDown
+								className={cn(
+									'size-3.5 transition-transform duration-300',
+									open && 'rotate-180'
+								)}
+							/>
+						</button>
+					)}
+				>
+					{SORT_OPTIONS.map((option) => (
+						<DropdownItem
+							key={option.value}
+							onClick={() => {
+								const [key, dir] = option.value.split('-') as [
+									SortKey,
+									SortDir
+								]
+								onSortChange({ key, dir })
+							}}
+							trailing={
+								option.value === currentValue ? (
+									<Check className="text-brand size-3.5" />
+								) : null
+							}
+						>
+							{option.label}
+						</DropdownItem>
+					))}
+				</DropdownMenu>
 			</div>
 
 			<FilterGroup label="Categoria">

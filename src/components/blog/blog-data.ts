@@ -420,3 +420,32 @@ export const BLOG_POSTS: readonly BlogPost[] = [
 export function getPostBySlug(slug: string): BlogPost | undefined {
 	return BLOG_POSTS.find((post) => post.slug === slug)
 }
+
+/**
+ * Posts para o rodapé de um artigo. Mesmo produto pesa mais que mesma
+ * categoria; sem afinidade nenhuma, vale o mais recente — então sempre saem
+ * `limit` sugestões, mesmo em post órfão de produto e categoria.
+ */
+export function getRelatedPosts(post: BlogPost, limit = 2): BlogPost[] {
+	return BLOG_POSTS.filter((other) => other.slug !== post.slug)
+		.map((other) => ({
+			post: other,
+			score:
+				(other.product && other.product === post.product ? 2 : 0) +
+				(other.category === post.category ? 1 : 0)
+		}))
+		.sort(
+			(a, b) =>
+				b.score - a.score ||
+				b.post.publishedAt.localeCompare(a.post.publishedAt)
+		)
+		.slice(0, limit)
+		.map((entry) => entry.post)
+}
+
+/** O destaque da capa do blog: o post marcado mais recente. */
+export function getFeaturedPost(): BlogPost | undefined {
+	return BLOG_POSTS.filter((post) => post.featured).toSorted((a, b) =>
+		b.publishedAt.localeCompare(a.publishedAt)
+	)[0]
+}
