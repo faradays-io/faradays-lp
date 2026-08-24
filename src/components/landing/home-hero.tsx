@@ -1,29 +1,28 @@
 'use client'
 
 import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Link from 'next/link'
 import { useEffect, useRef } from 'react'
 
 import { SplitHoverText } from '@/components/custom-ui/split-hover-text'
-import { AsciiField } from '@/components/landing/hero-demo'
-import { WhatsAppHeroDemo } from '@/components/landing/whatsapp-hero-demo'
 import { useCopy } from '@/components/language-provider'
 import { Button } from '@/components/ui/button'
 import type { Localized } from '@/lib/i18n'
 import { usePageReady } from '@/lib/page-ready'
 
+gsap.registerPlugin(ScrollTrigger)
+
 const COPY = {
 	pt: {
-		headline:
-			'Seu representante fecha a cotação pelo WhatsApp. O sistema faz o resto.',
-		sub: 'Cotação formalizada em PDF na conversa, documentos e preços na hora — e o gestor acompanhando tudo no portal. Nada mais preenchido em planilha ou enviado por e-mail.',
+		headline: 'A operação da sua distribuidora, no WhatsApp.',
+		sub: 'O representante pede na conversa e a IA devolve a cotação formalizada em PDF — com o gestor acompanhando tudo no portal.',
 		bookDemo: 'Agende uma demo',
 		exploreProduct: 'Conhecer o produto'
 	},
 	en: {
-		headline:
-			'Your sales rep closes the quote on WhatsApp. The system does the rest.',
-		sub: 'A formalized PDF quote right in the chat, documents and prices on the spot — with managers following everything on the portal. Nothing typed into spreadsheets or sent by e-mail anymore.',
+		headline: 'Your distribution operation, on WhatsApp.',
+		sub: 'Reps ask in the chat and the AI returns the formalized PDF quote — with managers following everything on the portal.',
 		bookDemo: 'Book a demo',
 		exploreProduct: 'Explore the product'
 	}
@@ -32,9 +31,9 @@ const COPY = {
 /**
  * Hero claro (copy no padrão do hero da rota raiz): pill de anúncio,
  * headline display, sub e CTAs com entrada em stagger disparada pelo fim da
- * page transition. Abaixo, o painel escuro de demo em fluxo normal — na
- * carga aparece só a metade de cima (o resto fica além da dobra), o que
- * convida o scroll para a visualização geral.
+ * page transition. O painel ASCII + demo vive logo abaixo, no
+ * HeroFeatureFlow — o min-h de 60svh deixa ~40svh dele visível na dobra,
+ * o que convida o scroll.
  */
 export function HomeHero() {
 	const t = useCopy(COPY)
@@ -68,15 +67,60 @@ export function HomeHero() {
 		return () => ctx.revert()
 	}, [ready])
 
+	/* Saída do CTA por gatilho (não scrub): o primeiro scroll down toca a
+	   animação inteira — o bloco encolhe, desfoca, some e sobe, como se
+	   recuasse para trás — sem esperar cruzar o topo da viewport. Voltar
+	   ao topo reverte. */
+	useEffect(() => {
+		const root = rootRef.current
+		if (!root || !ready) return
+		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+			return
+		const copy = root.querySelector('[data-hero-copy]')
+		if (!copy) return
+
+		const out = gsap.timeline({ paused: true }).to(copy, {
+			autoAlpha: 0,
+			scale: 0.92,
+			y: -64,
+			filter: 'blur(14px)',
+			duration: 0.9,
+			ease: 'power3.out'
+		})
+
+		/* Recarga com scroll restaurado no meio da página: pula direto ao
+		   estado final em vez de animar à vista. */
+		let initial = true
+		const trigger = ScrollTrigger.create({
+			start: 8,
+			end: 'max',
+			onEnter: () => {
+				if (initial) out.progress(1)
+				else out.play()
+			},
+			onLeaveBack: () => out.reverse()
+		})
+		initial = false
+
+		return () => {
+			trigger.kill()
+			out.kill()
+			gsap.set(copy, { clearProps: 'all' })
+		}
+	}, [ready])
+
 	return (
 		<section
 			id="hero"
 			ref={rootRef}
 			className="bg-background relative -mt-23 flex flex-col pt-23"
 		>
-			{/* Copy + CTA — min-h calculado para deixar exatamente metade do
-			   painel (40svh) visível na dobra. */}
-			<div className="flex min-h-[calc(60svh-5.75rem)] w-full flex-col items-center justify-center px-7 pt-12 pb-16 text-center">
+			{/* Copy + CTA — min-h calculado para deixar ~40svh do painel do
+			   HeroFeatureFlow visível na dobra. */}
+			<div
+				data-hero-copy
+				className="flex min-h-[calc(60svh-5.75rem)] w-full flex-col items-center justify-center px-7 pt-12 pb-16 text-center"
+			>
 				<h1
 					data-hero-item
 					className="font-heading max-w-4xl text-5xl leading-[0.95] tracking-tight text-balance opacity-0 min-[810px]:text-[4.75rem]"
@@ -110,18 +154,6 @@ export function HomeHero() {
 						</Link>
 					</Button>
 				</div>
-			</div>
-
-			{/* Painel de demo em fluxo normal: h-[80svh], metade acima da
-			   dobra na carga; o scroll revela o restante. Bordas retas,
-			   light blue, textura ASCII e a conversa de WhatsApp que gera a
-			   cotação em PDF — a mesma cena da headline. */}
-			<div
-				data-hero-item
-				className="relative h-[80svh] w-full overflow-hidden border-y border-[#b3d2ff] bg-[#e0edff] opacity-0"
-			>
-				<AsciiField className="absolute inset-0" />
-				<WhatsAppHeroDemo />
 			</div>
 		</section>
 	)

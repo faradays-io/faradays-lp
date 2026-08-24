@@ -6,9 +6,10 @@
 
 'use client'
 
-import { FigMomentum, FigNodes } from '@/components/landing/feature-figures-art'
 import { useCopy } from '@/components/language-provider'
 import type { Localized } from '@/lib/i18n'
+
+import { FigMomentum, FigNodes } from './feature-figures-art'
 
 const COPY = {
 	pt: {

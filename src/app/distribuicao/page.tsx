@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 import { FeaturesSection } from '@/components/landing/features-section'
+import { HeroFeatureFlow } from '@/components/landing/hero-feature-flow'
 import { HomeCta } from '@/components/landing/home-cta'
 import { HomeFooter } from '@/components/landing/home-footer'
 import { HomeHero } from '@/components/landing/home-hero'
@@ -22,6 +23,7 @@ export default function DistribuicaoPage() {
 			<NavBar />
 			<main className="pt-23">
 				<HomeHero />
+				<HeroFeatureFlow />
 				<FeaturesSection />
 				<PartnersSection />
 				<TestimonialsSection />

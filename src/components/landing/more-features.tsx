@@ -25,7 +25,7 @@ export function MoreFeatures() {
 	const { lang } = useLang()
 	const t = useCopy(COPY)
 	return (
-		<div className="px-7 pb-32">
+		<div className="px-7 py-32">
 			<div className="max-w-section mx-auto">
 				<Reveal>
 					<span className="text-foreground/50 font-mono text-sm tracking-widest uppercase">
