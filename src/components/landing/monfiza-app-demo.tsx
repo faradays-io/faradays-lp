@@ -94,12 +94,6 @@ const COPY = {
 		tileImpostos: 'Total c/ impostos (R$)',
 		tileDolar: 'Dólar da emissão',
 		vendaFoot: 'ICMS SP 18% · PIS/COFINS conforme regime do cliente',
-		dialogTitle: 'Gerar PDF da cotação',
-		dialogBody:
-			'A primeira emissão congela o dólar (PTAX) e a validade da proposta.',
-		dialogCancel: 'Cancelar',
-		dialogConfirm: 'Gerar PDF',
-		vendaToast: 'PDF gerado — COT-V-0187 · dólar congelado R$ 5,4321',
 		// Tela BID / comparativo.
 		rfqStatus: 'respondida',
 		rfqMeta: '3 de 5 respostas',
@@ -177,12 +171,6 @@ const COPY = {
 		tileImpostos: 'Total w/ taxes (R$)',
 		tileDolar: 'Issue-date dollar',
 		vendaFoot: "SP ICMS 18% · PIS/COFINS per the client's tax regime",
-		dialogTitle: 'Generate quote PDF',
-		dialogBody:
-			'The first issue freezes the exchange rate (PTAX) and the quote validity.',
-		dialogCancel: 'Cancel',
-		dialogConfirm: 'Generate PDF',
-		vendaToast: 'PDF issued — COT-V-0187 · rate frozen at R$ 5.4321',
 		rfqStatus: 'answered',
 		rfqMeta: '3 of 5 replies',
 		colExportador: 'Exporter',
@@ -222,10 +210,12 @@ type Copy = (typeof COPY)['pt']
  * - [data-nav-active="id"]              camada ativa do item de nav
  * - [data-crumb="id"]                   breadcrumb da tela
  * - [data-poi="…"]                      alvos do cursor (nav, botões, PDF)
- * - [data-overlay="…"]/[data-overlay-panel]  dialog e toasts
+ * - [data-overlay="…"]                  toasts
  * - [data-check-on] / [data-docs-badge-before|after]  mutações de tela
  * - [data-demo-card] / [data-demo-cursor] / [data-demo-cursor-ring]
  * - [data-feature-card="id"]            cards-eco das features 2–4
+ * - --demo-w (custom property no box)   fator de largura: 1.15 em repouso
+ *                                        (fold), 1 depois da diagonal
  *
  * Todas as camadas ocultas usam opacity (nunca display:none): os alvos
  * precisam ser mensuráveis por getBoundingClientRect antes de aparecer.
@@ -1047,44 +1037,15 @@ function DocsScreen({ t }: { t: Copy }) {
 }
 
 /* ------------------------------------------------------------------ *
- * Overlays (dialog + toasts), pré-renderizados ocultos
+ * Overlays (toasts), pré-renderizados ocultos
  * ------------------------------------------------------------------ */
 
+/* Só o toast do BID: a tela de venda não tem overlay — o clique em
+   "Gerar PDF" responde com o card-eco fora do frame (câmbio congelado),
+   no mesmo padrão do card de PDF do bloco 1. */
 function Overlays({ t }: { t: Copy }) {
 	return (
 		<>
-			<div
-				data-overlay="venda-dialog"
-				className="absolute inset-0 z-30 flex items-center justify-center bg-black/20 p-4 opacity-0"
-			>
-				<div
-					data-overlay-panel
-					className="bg-card w-64 max-w-full rounded-lg border p-3 shadow-xl"
-				>
-					<p className="text-[11px] font-medium">{t.dialogTitle}</p>
-					<p className="text-muted-foreground mt-1 text-[10px]">
-						{t.dialogBody}
-					</p>
-					<div className="mt-2.5 flex justify-end gap-1.5">
-						<span className={BTN_OUTLINE}>{t.dialogCancel}</span>
-						<span data-poi="venda-confirm" className={BTN_PRIMARY}>
-							{t.dialogConfirm}
-						</span>
-					</div>
-				</div>
-			</div>
-
-			<div
-				data-overlay="venda-toast"
-				className="bg-card absolute right-2.5 bottom-2.5 z-40 flex items-center gap-2 rounded-lg border px-2.5 py-2 opacity-0 shadow-lg"
-			>
-				<CheckCircle
-					weight="fill"
-					className="size-3.5 shrink-0 text-green-600"
-				/>
-				<p className="text-[10px]">{t.vendaToast}</p>
-			</div>
-
 			<div
 				data-overlay="rfq-toast"
 				className="bg-card absolute right-2.5 bottom-2.5 z-40 flex items-center gap-2 rounded-lg border px-2.5 py-2 opacity-0 shadow-lg"
@@ -1163,10 +1124,14 @@ export function MonfizaAppDemo({ ref }: { ref?: Ref<MonfizaAppDemoHandle> }) {
 		<div className="relative z-10 flex h-full items-center justify-center p-5 md:p-8">
 			{/* aria-hidden: a demo é ilustração das features — a copy real
 			   está nos blocos de texto ao lado. */}
+			{/* Largura no lg+ multiplicada por --demo-w: 1.15 em repouso (a
+			   demo aparece mais larga na dobra) e o flow tweena para 1
+			   junto com a diagonal — a fórmula fica no CSS (rem/vw), então
+			   resize não descalibra nada. */}
 			<div
 				data-demo-box
 				aria-hidden
-				className="relative h-full max-h-[36rem] w-[min(34rem,100%)] lg:w-[min(46rem,46vw)]"
+				className="relative h-full max-h-[36rem] w-[min(34rem,100%)] [--demo-w:1.15] lg:w-[min(46rem*var(--demo-w),46vw*var(--demo-w))]"
 			>
 				{/* Frame do app — único elemento com overflow-hidden (leaf:
 				   nunca um ancestral do sticky). */}
@@ -1184,8 +1149,9 @@ export function MonfizaAppDemo({ ref }: { ref?: Ref<MonfizaAppDemoHandle> }) {
 					</div>
 				</div>
 
-				{/* Card de preview do PDF — surge no estágio 2 do hold da
-				   feature 0, fora do frame (overhang à esquerda). */}
+				{/* Card de preview do PDF — surge logo depois do clique do
+				   cursor no PDF (bloco 1), fora do frame (overhang à
+				   esquerda). */}
 				<div
 					data-demo-card
 					className="absolute bottom-[16%] -left-40 hidden w-64 opacity-0 lg:block"
@@ -1222,8 +1188,9 @@ export function MonfizaAppDemo({ ref }: { ref?: Ref<MonfizaAppDemoHandle> }) {
 					</div>
 				</div>
 
-				{/* Cards-eco das features 2–4: surgem no meio de cada hold e
-				   saem junto com o texto (o flow decide quando). */}
+				{/* Cards-eco das features 2–4: cada um surge no fim da tour da
+				   sua tela (logo depois do clique, independente do scroll)
+				   e o flow apaga o wrapper no fim do hold. */}
 				<EchoCard
 					name="venda"
 					icon={

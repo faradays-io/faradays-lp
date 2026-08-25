@@ -4,8 +4,6 @@ import type { Localized } from '@/lib/i18n'
    briefing em docs/importacoes-copy-briefing.md). Compartilhadas entre a
    lista com scroll e o showcase do "How it works".
 
-   `tech` é a linha técnica em mono (decisão 3.3-b do briefing): prova de
-   domínio para quem é do ramo, sem contaminar a copy de negócio.
    `graphic` aponta a cena do FeatureGraphic (índice em SCENES).
    Copy localizada campo a campo; `id` é a chave estável entre idiomas. */
 export const HOME_FEATURES = [
@@ -20,10 +18,6 @@ export const HOME_FEATURES = [
 			pt: 'Texto, áudio ou foto: o rep pede, a IA junta o que falta numa pergunta só e devolve a cotação formalizada em PDF no próprio chat — além de preço, estoque, pedidos e boletos. Na dúvida, ela pergunta; número não sai de palpite.',
 			en: 'Text, voice or photo: the rep asks, the AI gathers what is missing in a single question and returns the formalized quote as a PDF right in the chat — plus prices, stock, orders and invoices. When in doubt, it asks; numbers never come from guesswork.'
 		},
-		tech: {
-			pt: 'preço só sai de ferramenta · 2+ marcas viram pergunta · mídia vira texto antes de decidir',
-			en: 'prices only come from tools · 2+ brands become a question · media becomes text before any decision'
-		},
 		graphic: 2
 	},
 	{
@@ -36,10 +30,6 @@ export const HOME_FEATURES = [
 		description: {
 			pt: 'Multi-item, vinculada ao cliente, com ICMS por estado e câmbio do dia calculados pelo sistema. O PDF preenche o modelo Excel que o seu cliente já conhece — e reemitir nunca muda o valor.',
 			en: "Multi-item, tied to the client, with per-state ICMS and the day's exchange rate computed by the system. The PDF fills the Excel template your client already knows — and reissuing never changes the total."
-		},
-		tech: {
-			pt: 'ICMS por UF × regime · PTAX congelada na 1ª emissão · COT-V-NNNN',
-			en: 'ICMS by state × tax regime · PTAX frozen at 1st issue · COT-V-NNNN'
 		},
 		graphic: 0
 	},
@@ -54,10 +44,6 @@ export const HOME_FEATURES = [
 			pt: 'O disparo resolve quem cota o quê, envia por e-mail e WhatsApp e interpreta as respostas automaticamente. Você escolhe a vencedora item a item — e os perdedores recebem contra-oferta sem nunca ver o preço campeão.',
 			en: 'The dispatch works out who quotes what, sends it by e-mail and WhatsApp and interprets the replies automatically. You pick the winner item by item — and the losers get a counter-offer without ever seeing the winning price.'
 		},
-		tech: {
-			pt: 'parser determinístico → IA de fallback → revisão humana · casamento por token [RFQ-XXXXXX]',
-			en: 'deterministic parser → AI fallback → human review · matching by token [RFQ-XXXXXX]'
-		},
 		graphic: 3
 	},
 	{
@@ -71,10 +57,6 @@ export const HOME_FEATURES = [
 			pt: 'Halal, Kosher, alérgenos e COA controlados por produto e fornecedor. A validade é lida por IA direto do PDF, o arquivo é carimbado no drive e um radar diário cobra o que está a vencer — antes de o documento errado chegar ao cliente.',
 			en: 'Halal, Kosher, allergens and COA tracked per product and supplier. Expiry dates are read by AI straight from the PDF, the file is stamped in the drive and a daily radar chases what is about to expire — before the wrong document reaches your client.'
 		},
-		tech: {
-			pt: 'matriz produtos ativos × tipos obrigatórios · carimbo "— VAL DD.MM.AAAA" no SharePoint',
-			en: 'active products × required types matrix · "— VAL DD.MM.YYYY" stamp in SharePoint'
-		},
 		graphic: 1
 	}
 ] as const satisfies readonly {
@@ -82,7 +64,6 @@ export const HOME_FEATURES = [
 	eyebrow: Localized<string>
 	title: Localized<string>
 	description: Localized<string>
-	tech: Localized<string>
 	graphic: number
 }[]
 
