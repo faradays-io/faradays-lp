@@ -14,7 +14,7 @@ import { usePageReady } from '@/lib/page-ready'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const COPY = {
+export const HERO_COPY = {
 	pt: {
 		// "empresa" cobre distribuidora e indústria numa palavra só. O h1
 		// termina em `headlineTail` + ícones das ferramentas (sem ponto).
@@ -43,7 +43,7 @@ const COPY = {
  * o que convida o scroll.
  */
 export function HomeHero() {
-	const t = useCopy(COPY)
+	const t = useCopy(HERO_COPY)
 	const rootRef = useRef<HTMLElement>(null)
 	const ready = usePageReady()
 

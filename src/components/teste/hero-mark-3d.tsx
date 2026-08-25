@@ -62,6 +62,16 @@ export const DEFAULT_SETTINGS: Mark3dSettings = {
 
 type Pointer = { x: number; y: number }
 
+/** Uma marca na cena: posição/escala relativas à marca-base (3.2 u). */
+export type MarkPlacement = {
+	position: [number, number, number]
+	scale?: number
+	/** Velocidade do Float (1 = padrão). */
+	floatSpeed?: number
+}
+
+export const DEFAULT_MARKS: MarkPlacement[] = [{ position: [0, 0, 0] }]
+
 const REDUCED_MQ = '(prefers-reduced-motion: reduce)'
 const subscribeReduced = (cb: () => void) => {
 	const mq = window.matchMedia(REDUCED_MQ)
@@ -144,19 +154,9 @@ function Rig({
  * A marca extrudada
  * ------------------------------------------------------------------ */
 
-function Mark({
-	settings,
-	pointer,
-	reduced
-}: {
-	settings: Mark3dSettings
-	pointer: React.RefObject<Pointer>
-	reduced: boolean
-}) {
-	const group = useRef<THREE.Group>(null)
-	const [hovered, setHovered] = useState(false)
-	useCursor(hovered)
-
+/* Geometria compartilhada por todas as marcas da cena (só depende de
+   espessura e chanfro). Three puro — não precisa estar dentro do Canvas. */
+function useMarkGeometry(settings: Mark3dSettings) {
 	const geometry = useMemo(() => {
 		const data = new SVGLoader().parse(MARK_SVG)
 		const shapes = data.paths.flatMap((path) => path.toShapes())
@@ -172,6 +172,25 @@ function Mark({
 		return geo
 	}, [settings.depth, settings.bevel])
 	useEffect(() => () => geometry.dispose(), [geometry])
+	return geometry
+}
+
+function Mark({
+	settings,
+	pointer,
+	reduced,
+	geometry,
+	placement
+}: {
+	settings: Mark3dSettings
+	pointer: React.RefObject<Pointer>
+	reduced: boolean
+	geometry: THREE.BufferGeometry
+	placement: MarkPlacement
+}) {
+	const group = useRef<THREE.Group>(null)
+	const [hovered, setHovered] = useState(false)
+	useCursor(hovered)
 
 	/* ExtrudeGeometry separa em dois grupos de material: 0 = tampas
 	   (frente/verso), 1 = laterais. O hover muda só a tampa. */
@@ -234,9 +253,13 @@ function Mark({
 	const materials = useMemo(() => [capMat, sideMat], [capMat, sideMat])
 
 	return (
-		<group ref={group}>
+		<group
+			ref={group}
+			position={placement.position}
+			scale={placement.scale ?? 1}
+		>
 			<Float
-				speed={reduced ? 0 : 1.3}
+				speed={reduced ? 0 : 1.3 * (placement.floatSpeed ?? 1)}
 				rotationIntensity={0.18}
 				floatIntensity={0.5}
 				floatingRange={[-0.12, 0.12]}
@@ -368,12 +391,19 @@ function Figures({ reduced }: { reduced: boolean }) {
  */
 export function HeroMark3d({
 	settings = DEFAULT_SETTINGS,
+	marks = DEFAULT_MARKS,
+	shadow = true,
 	className
 }: {
 	settings?: Mark3dSettings
+	/** Marcas na cena (posição/escala); padrão: uma, no centro. */
+	marks?: MarkPlacement[]
+	/** Sombra de contato no "chão" (y = -2.1). */
+	shadow?: boolean
 	className?: string
 }) {
 	const rootRef = useRef<HTMLDivElement>(null)
+	const geometry = useMarkGeometry(settings)
 	const pointer = useRef<Pointer>({ x: 0, y: 0 })
 	const [inView, setInView] = useState(true)
 	const reduced = useSyncExternalStore(
@@ -447,15 +477,26 @@ export function HeroMark3d({
 				<ambientLight intensity={0.9} />
 				<directionalLight position={[4, 6, 6]} intensity={2.2} />
 				<directionalLight position={[-5, -2, 3]} intensity={0.5} />
-				<Mark settings={settings} pointer={pointer} reduced={reduced} />
+				{marks.map((placement, i) => (
+					<Mark
+						key={i}
+						settings={settings}
+						pointer={pointer}
+						reduced={reduced}
+						geometry={geometry}
+						placement={placement}
+					/>
+				))}
 				{settings.figures ? <Figures reduced={reduced} /> : null}
-				<ContactShadows
-					position={[0, -2.1, 0]}
-					opacity={0.3}
-					scale={9}
-					blur={2.6}
-					far={3.2}
-				/>
+				{shadow ? (
+					<ContactShadows
+						position={[0, -2.1, 0]}
+						opacity={0.3}
+						scale={9}
+						blur={2.6}
+						far={3.2}
+					/>
+				) : null}
 			</Canvas>
 		</div>
 	)
