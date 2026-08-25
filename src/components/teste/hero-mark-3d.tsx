@@ -68,6 +68,14 @@ export type MarkPlacement = {
 	scale?: number
 	/** Velocidade do Float (1 = padrão). */
 	floatSpeed?: number
+	/** Rotação Y de repouso (rad) — "para onde a marca olha". */
+	yaw?: number
+	/** Espelha o eixo X do ponteiro (inclinação e parallax) — para marcas
+	   de lados opostos se moverem como reflexo uma da outra. */
+	mirror?: boolean
+	/** Deslocamento máximo da própria marca com o ponteiro (unidades),
+	   somado ao parallax da câmera. */
+	parallax?: number
 }
 
 export const DEFAULT_MARKS: MarkPlacement[] = [{ position: [0, 0, 0] }]
@@ -214,24 +222,36 @@ function Mark({
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- cor vive em efeito próprio
 		[]
 	)
+	/* Hover colore o sólido inteiro: tampa e laterais vão para hoverColor
+	   (a iluminação continua diferenciando as faces). */
 	useEffect(() => {
-		sideMat.color.set(settings.sideColor)
-	}, [sideMat, settings.sideColor])
-	useEffect(() => {
-		const to = new THREE.Color(
+		const cap = new THREE.Color(
 			hovered ? settings.hoverColor : settings.inkColor
 		)
-		const tween = gsap.to(capMat.color, {
-			r: to.r,
-			g: to.g,
-			b: to.b,
-			duration: 0.35,
-			ease: 'power2.out'
-		})
+		const side = new THREE.Color(
+			hovered ? settings.hoverColor : settings.sideColor
+		)
+		const opts = { duration: 0.35, ease: 'power2.out' }
+		const tweens = [
+			gsap.to(capMat.color, { r: cap.r, g: cap.g, b: cap.b, ...opts }),
+			gsap.to(sideMat.color, {
+				r: side.r,
+				g: side.g,
+				b: side.b,
+				...opts
+			})
+		]
 		return () => {
-			tween.kill()
+			tweens.forEach((tween) => tween.kill())
 		}
-	}, [capMat, hovered, settings.hoverColor, settings.inkColor])
+	}, [
+		capMat,
+		sideMat,
+		hovered,
+		settings.hoverColor,
+		settings.inkColor,
+		settings.sideColor
+	])
 	useEffect(
 		() => () => {
 			capMat.dispose()
@@ -240,14 +260,33 @@ function Mark({
 		[capMat, sideMat]
 	)
 
-	// Inclinação seguindo o ponteiro (com damping); zero em reduced motion.
+	/* Inclinação + parallax próprio seguindo o ponteiro (com damping);
+	   `mirror` inverte o eixo X, `yaw` é a rotação de repouso. Zero em
+	   reduced motion. */
 	useFrame((_, dt) => {
 		const g = group.current
 		if (!g) return
-		const tx = reduced ? 0 : -pointer.current.y * settings.tilt
-		const ty = reduced ? 0 : pointer.current.x * settings.tilt
+		const sx = placement.mirror ? -1 : 1
+		const px = reduced ? 0 : pointer.current.x
+		const py = reduced ? 0 : pointer.current.y
+		const tx = -py * settings.tilt
+		const ty = (placement.yaw ?? 0) + sx * px * settings.tilt
 		g.rotation.x = THREE.MathUtils.damp(g.rotation.x, tx, 4, dt)
 		g.rotation.y = THREE.MathUtils.damp(g.rotation.y, ty, 4, dt)
+		const amount = placement.parallax ?? 0
+		const [bx, by] = placement.position
+		g.position.x = THREE.MathUtils.damp(
+			g.position.x,
+			bx + sx * px * amount,
+			4,
+			dt
+		)
+		g.position.y = THREE.MathUtils.damp(
+			g.position.y,
+			by + py * amount,
+			4,
+			dt
+		)
 	})
 
 	const materials = useMemo(() => [capMat, sideMat], [capMat, sideMat])

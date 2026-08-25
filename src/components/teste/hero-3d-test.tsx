@@ -29,35 +29,62 @@ const HeroMark3d = dynamic(
 
 export type Hero3dVariant = 'center' | 'split'
 
-/* Câmera menos inclinada que no lab: com várias marcas, o azimute alto
-   desloca demais a composição na tela. Sem figuras — só a marca. */
+/* Marcas na cor da página: só a iluminação revela as faces (relevo
+   discreto); o hover colore o sólido inteiro. Sem figuras. */
 const SCENE: Mark3dSettings = {
 	...DEFAULT_SETTINGS,
 	azimuth: 18,
 	elevation: 16,
-	figures: false
+	figures: false,
+	inkColor: '#f0f0ee',
+	sideColor: '#d6d6d0',
+	hoverColor: '#0065e0'
 }
+
+/* centro: parallax da câmera desligado — cada marca tem o seu, espelhado
+   entre os lados (o lado esquerdo é reflexo do direito) e com yaw de
+   repouso "olhando" para o centro. */
+const CENTER_SCENE: Mark3dSettings = { ...SCENE, parallax: 0, tilt: 0.28 }
 
 /* Unidades da cena: a marca-base tem 3.2 de largura; a 1440×~800 o canvas
    full-bleed enxerga ~9.8 u de largura e ~5.4 u de altura no plano z = 0.
-   A copy centralizada (max-w-3xl) ocupa ~±2.6 u — as marcas ficam fora. */
+   Marcas bem nos cantos, fora da copy centralizada (~±2.6 u). */
 const CENTER_MARKS: MarkPlacement[] = [
-	// esquerda
-	{ position: [-3.3, 0.1, 0], scale: 0.55, floatSpeed: 0.9 },
-	// direita, grande (abaixo da linha da sub, fora da copy)
-	{ position: [3.2, -1.15, 0], scale: 0.62, floatSpeed: 1.1 },
-	// direita, pequena, no fundo
-	{ position: [2.3, 1.4, -4], scale: 0.42, floatSpeed: 1.4 }
+	// esquerda, meio-alto, espelhada
+	{
+		position: [-3.9, 0.9, 0],
+		scale: 0.58,
+		floatSpeed: 0.9,
+		yaw: 0.35,
+		mirror: true,
+		parallax: 0.35
+	},
+	// direita, canto inferior, grande
+	{
+		position: [3.35, -1.45, 0],
+		scale: 0.6,
+		floatSpeed: 1.1,
+		yaw: -0.35,
+		parallax: 0.35
+	},
+	// direita, canto superior, pequena, no fundo
+	{
+		position: [2.9, 1.65, -4],
+		scale: 0.42,
+		floatSpeed: 1.4,
+		yaw: -0.25,
+		parallax: 0.6
+	}
 ]
 
-/* Coluna direita (~metade da viewport): ~4.8 u de largura visível. */
+/* lado: coluna direita (~metade da viewport, ~4.8 u visíveis). Poucas
+   marcas e discretas — ficam atrás do bloco de ferramentas + CTAs. */
+const SPLIT_SCENE: Mark3dSettings = { ...SCENE, parallax: 0.5, tilt: 0.16 }
 const SPLIT_MARKS: MarkPlacement[] = [
-	// principal
-	{ position: [0, 0.1, 0], scale: 0.7, floatSpeed: 1 },
-	// pequena, no fundo, alto à esquerda
-	{ position: [-1.3, 1.6, -3.5], scale: 0.4, floatSpeed: 1.4 },
-	// média, embaixo à direita, um pouco atrás
-	{ position: [0.75, -2.3, -2.2], scale: 0.4, floatSpeed: 0.85 }
+	// principal, acima do bloco, sem tocar a borda
+	{ position: [0.35, 1.0, -1.2], scale: 0.62, floatSpeed: 0.9, yaw: -0.2 },
+	// pequena, no fundo, abaixo-esquerda do bloco (longe dos botões)
+	{ position: [-2.3, -2.4, -3.5], scale: 0.34, floatSpeed: 1.3, yaw: 0.25 }
 ]
 
 /**
@@ -65,8 +92,8 @@ const SPLIT_MARKS: MarkPlacement[] = [
  * - `center`: CTA centralizado como no hero atual; três marcas ao redor
  *   (esquerda, direita grande, direita pequena no fundo), no canvas
  *   full-bleed atrás da copy.
- * - `split`: copy à esquerda (h1 com os ícones das ferramentas, sub e
- *   CTAs) e o canvas com as três marcas na coluna direita.
+ * - `split`: h1 + sub à esquerda; à direita, o bloco com a animação das
+ *   ferramentas e os CTAs sobre um canvas discreto com duas marcas.
  * Entrada: mesmo stagger do HomeHero, o 3D entra por último. Saída no
  * primeiro scroll (gatilho, não scrub): a copy encolhe, desfoca e sobe;
  * o 3D faz o mesmo efeito, mas DESCENDO. Voltar ao topo reverte.
@@ -171,15 +198,23 @@ export function Hero3dTest({ variant }: { variant: Hero3dVariant }) {
 		}
 	}, [ready])
 
-	const headline = (
-		<>
-			{t.headlineLead}{' '}
-			<span className="whitespace-nowrap">
-				{t.headlineTail}{' '}
-				<HeroToolIcons label={t.toolsLabel} className="ml-[0.05em]" />
-			</span>
-		</>
-	)
+	const headline =
+		variant === 'center' ? (
+			<>
+				{t.headlineLead}{' '}
+				<span className="whitespace-nowrap">
+					{t.headlineTail}{' '}
+					<HeroToolIcons
+						label={t.toolsLabel}
+						className="ml-[0.05em]"
+					/>
+				</span>
+			</>
+		) : (
+			<>
+				{t.headlineLead} {t.headlineTail}
+			</>
+		)
 
 	const ctas = (
 		<div
@@ -217,7 +252,7 @@ export function Hero3dTest({ variant }: { variant: Hero3dVariant }) {
 							className="absolute inset-0 opacity-0 will-change-transform"
 						>
 							<HeroMark3d
-								settings={SCENE}
+								settings={CENTER_SCENE}
 								marks={CENTER_MARKS}
 								shadow={false}
 								className="h-full w-full"
@@ -260,18 +295,39 @@ export function Hero3dTest({ variant }: { variant: Hero3dVariant }) {
 							>
 								{t.sub}
 							</p>
-							{ctas}
 						</div>
-						<div
-							data-hero-3d
-							className="relative hidden h-full opacity-0 will-change-transform lg:block"
-						>
-							<HeroMark3d
-								settings={SCENE}
-								marks={SPLIT_MARKS}
-								shadow={false}
-								className="h-full w-full"
-							/>
+
+						{/* Coluna direita: canvas discreto atrás; na frente, a
+						   animação das ferramentas e os CTAs. O bloco é
+						   pointer-events-none (só botões recebem) para o hover
+						   chegar nas marcas. */}
+						<div className="relative hidden h-full lg:block">
+							<div
+								data-hero-3d
+								className="absolute inset-0 opacity-0 will-change-transform"
+							>
+								<HeroMark3d
+									settings={SPLIT_SCENE}
+									marks={SPLIT_MARKS}
+									shadow={false}
+									className="h-full w-full"
+								/>
+							</div>
+							<div className="pointer-events-none relative z-10 flex h-full flex-col items-start justify-center pl-8">
+								<div
+									data-hero-item
+									className="flex items-center gap-5 opacity-0"
+								>
+									<HeroToolIcons
+										label={t.toolsLabel}
+										className="text-[4.5rem]"
+									/>
+									<p className="text-foreground/50 max-w-[14rem] font-mono text-xs leading-relaxed tracking-widest uppercase">
+										{t.toolsLabel}
+									</p>
+								</div>
+								{ctas}
+							</div>
 						</div>
 					</div>
 				)}
