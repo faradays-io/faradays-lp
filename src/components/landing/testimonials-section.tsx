@@ -1,29 +1,33 @@
 'use client'
 
-import { ArrowLeft, ArrowRight } from '@phosphor-icons/react'
 import gsap from 'gsap'
 import { Draggable } from 'gsap/Draggable'
-import { InertiaPlugin } from 'gsap/InertiaPlugin'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
 import { Reveal } from '@/components/landing/reveal'
 import { useCopy } from '@/components/language-provider'
 import type { Localized } from '@/lib/i18n'
 import { usePageReady } from '@/lib/page-ready'
 
-gsap.registerPlugin(Draggable, InertiaPlugin)
+gsap.registerPlugin(Draggable)
 
 /**
- * Social proof — moldura técnica (mesmo vocabulário da seção de partners)
- * com um LEQUE DE CARDS arrastável, engenharia reversa da seção "Made with
- * Osmo" do osmo.supply: os relatos formam um carrossel circular em arco
- * (slots simétricos de translate/rotate/scale, z-index discreto). O drag
- * escrubba a rotação do leque inteiro — 1 largura de deck ≈ 1 card — e o
- * release faz snap ao slot mais próximo com inércia (Draggable +
- * InertiaPlugin). O card do fundo cruza POR TRÁS do leque no seam (lerp
- * direto entre os slots extremos), sem teleporte. Barra de progresso
- * auto-avança (pausa no hover, fora da viewport e durante o drag), setas
- * manuais e contador. Conteúdo placeholder até termos depoimentos reais.
+ * Social proof — título centralizado e o leque de cards, sem moldura e sem
+ * barra de autoplay (o componente da barra espera em `drafts/`).
+ *
+ * Engenharia reversa do "made with Osmo" (osmo.supply, `initFlickCards`):
+ *  - 7 cards em arco, slots simétricos medidos do original (SLOTS abaixo);
+ *    o próprio script deles exige o mínimo de 7 (5 visíveis + 2 escondidos
+ *    esperando a vez atrás das pontas).
+ *  - o card da frente fica limpo e com outline azul; todos os outros levam
+ *    o mesmo tratamento — véu escuro a 0.40 e conteúdo a 0.60.
+ *  - o drag NÃO troca o card da frente: o gesto interpola os cards entre o
+ *    arranjo atual e o próximo (fator = |x| / largura, com bounds de meia
+ *    largura, então o preview chega no máximo à metade do caminho) e o
+ *    status/véu/z-index ficam parados. Quem decide é o release: passou de
+ *    10% da largura, avança/volta um; senão acomoda de volta.
+ *  - a acomodação usa `elastic.out(1.2, 1)` em 0.6s, o overshoot que dá o
+ *    "flick" do original.
  */
 type Testimonial = {
 	quote: string
@@ -32,23 +36,14 @@ type Testimonial = {
 	company: string
 }
 
-const HOLD_MS = 8000
-
 const COPY = {
 	pt: {
-		heading: 'O que os times dizem',
-		eyebrow: '(prova social)',
-		dragHint: '( arraste os cards )',
-		prevTestimonial: 'Relato anterior',
-		nextTestimonial: 'Próximo relato',
-		metrics: [
-			{ value: '-70%', label: 'tempo por análise de proposta' },
-			{ value: '3×', label: 'mais cotações comparadas por dia' },
-			{ value: '100%', label: 'das decisões com trilha rastreável' }
-		],
+		heading: 'O que nossos clientes dizem',
+		deckLabel:
+			'Relatos de clientes — arraste os cards ou use as setas do teclado',
 		testimonials: [
 			{
-				quote: 'A gente saiu de planilhas espalhadas em três times para um lugar só. O que antes levava uma tarde de conferência hoje resolve em minutos, com histórico de tudo.',
+				quote: 'A gente saiu de planilhas espalhadas em três times para um lugar só. O que antes levava uma tarde de conferência hoje resolve em minutos.',
 				name: 'Nome Sobrenome',
 				role: 'Gerente de operações',
 				company: 'Monfiza'
@@ -60,7 +55,7 @@ const COPY = {
 				company: 'Aventis'
 			},
 			{
-				quote: 'Implantação sem drama: conectaram no que já usávamos — e-mail, Excel — e o time adotou porque parou de fazer trabalho repetido, não porque alguém mandou.',
+				quote: 'Implantação sem drama: conectaram no que já usávamos — e-mail, Excel — e o time adotou porque parou de fazer trabalho repetido.',
 				name: 'Nome Sobrenome',
 				role: 'Head de crédito',
 				company: 'Empresa'
@@ -76,23 +71,27 @@ const COPY = {
 				name: 'Nome Sobrenome',
 				role: 'Coordenadora de qualidade',
 				company: 'Distribuidora'
+			},
+			{
+				quote: 'Meu time responde no WhatsApp e o pedido já entra no sistema com o histórico do cliente. Ninguém mais digita duas vezes a mesma coisa.',
+				name: 'Nome Sobrenome',
+				role: 'Supervisor de vendas',
+				company: 'Atacadista'
+			},
+			{
+				quote: 'Fecho o mês olhando um painel, não catorze arquivos. A margem por pedido aparece no dia em que ela acontece — não trinta dias depois.',
+				name: 'Nome Sobrenome',
+				role: 'Controller',
+				company: 'Indústria'
 			}
 		] as Testimonial[]
 	},
 	en: {
-		heading: 'What teams say',
-		eyebrow: '(social proof)',
-		dragHint: '( drag the cards )',
-		prevTestimonial: 'Previous testimonial',
-		nextTestimonial: 'Next testimonial',
-		metrics: [
-			{ value: '-70%', label: 'time per proposal analysis' },
-			{ value: '3×', label: 'more quotes compared per day' },
-			{ value: '100%', label: 'of decisions with a traceable trail' }
-		],
+		heading: 'What our clients say',
+		deckLabel: 'Customer stories — drag the cards or use the arrow keys',
 		testimonials: [
 			{
-				quote: 'We went from spreadsheets scattered across three teams to a single place. What used to take an afternoon of cross-checking now resolves in minutes, with a history of everything.',
+				quote: 'We went from spreadsheets scattered across three teams to a single place. What used to take an afternoon of cross-checking now resolves in minutes.',
 				name: 'Full Name',
 				role: 'Operations manager',
 				company: 'Monfiza'
@@ -104,7 +103,7 @@ const COPY = {
 				company: 'Aventis'
 			},
 			{
-				quote: 'Rollout without drama: they plugged into what we already used — e-mail, Excel — and the team adopted it because the repeated work stopped, not because someone ordered it.',
+				quote: 'Rollout without drama: they plugged into what we already used — e-mail, Excel — and the team adopted it because the repeated work stopped.',
 				name: 'Full Name',
 				role: 'Head of credit',
 				company: 'Company'
@@ -120,6 +119,18 @@ const COPY = {
 				name: 'Full Name',
 				role: 'Quality coordinator',
 				company: 'Distributor'
+			},
+			{
+				quote: 'My team replies on WhatsApp and the order lands in the system with the customer history attached. Nobody types the same thing twice anymore.',
+				name: 'Full Name',
+				role: 'Sales supervisor',
+				company: 'Wholesaler'
+			},
+			{
+				quote: 'I close the month looking at one dashboard, not fourteen files. Margin per order shows up the day it happens — not thirty days later.',
+				name: 'Full Name',
+				role: 'Controller',
+				company: 'Manufacturer'
 			}
 		] as Testimonial[]
 	}
@@ -127,163 +138,161 @@ const COPY = {
 
 const TOTAL = COPY.pt.testimonials.length
 
-/* Slots do leque (medidos no osmo.supply): índice 0 = frente, 1 = vizinho,
-   2 = ponta. x/y em % do próprio card, rotação em graus. */
-const MAX_SLOT = 2
-const SLOT_X = [0, 25, 45]
-const SLOT_Y = [0, 5, 7]
-const SLOT_R = [0, 5, 10]
-const SLOT_S = [1, 0.9, 0.75]
-const SLOT_Z = [5, 4, 3]
+/* Slots do leque, medidos no osmo.supply (índice = distância até a frente).
+   x/y em % do próprio card, rotação em graus. O slot 3 é o esconderijo:
+   opacidade 0, esperando a vez atrás da ponta. */
+const SLOTS = [
+	{ x: 0, y: 0, r: 0, s: 1, o: 1, z: 5, status: 'active' },
+	{ x: 25, y: 5, r: 5, s: 0.9, o: 1, z: 4, status: 'near' },
+	{ x: 45, y: 7, r: 10, s: 0.75, o: 1, z: 3, status: 'far' },
+	{ x: 55, y: 5, r: 15, s: 0.6, o: 0, z: 2, status: 'hidden' }
+] as const
 
-/* Posição assinada do card i em relação à frente, em [-TOTAL/2, TOTAL/2).
-   O intervalo aberto é o seam: é ali que o card do fundo troca de lado. */
-const wrapPos = (v: number) =>
-	((((v + TOTAL / 2) % TOTAL) + TOTAL) % TOTAL) - TOTAL / 2
+const LAST_SLOT = SLOTS.length - 1
 
-/* Parâmetros de um slot INTEIRO k (com wrap circular: k=3 ≡ k=-2). */
-const slotOf = (k: number) => {
-	const w = wrapPos(k)
-	const m = Math.abs(w)
-	const sign = w < 0 ? -1 : 1
+/* Slot do card i quando a frente é `head`, com o lado mais curto do
+   círculo (o card do fundo cruza por trás, não dá a volta pela frente). */
+function slotOf(i: number, head: number) {
+	let d = i - head
+	if (d > TOTAL / 2) d -= TOTAL
+	else if (d < -TOTAL / 2) d += TOTAL
+	const slot = SLOTS[Math.min(Math.abs(d), LAST_SLOT)]
+	const sign = d < 0 ? -1 : 1
 	return {
-		x: sign * SLOT_X[m],
-		y: SLOT_Y[m],
-		r: sign * SLOT_R[m],
-		s: SLOT_S[m]
+		xPercent: sign * slot.x,
+		yPercent: slot.y,
+		rotation: sign * slot.r,
+		scale: slot.s,
+		opacity: slot.o,
+		z: slot.z,
+		status: slot.status
 	}
 }
 
-/* Posiciona o leque inteiro para uma "cabeça" contínua (fração = card em
-   trânsito entre slots; no seam o lerp cruza direto de +ponta a -ponta,
-   fazendo o card do fundo deslizar por trás do leque, como no osmo). */
-function renderDeck(cards: (HTMLElement | null)[], head: number) {
-	cards.forEach((card, i) => {
-		if (!card) return
-		const pos = wrapPos(i - head)
-		const k0 = Math.floor(pos)
-		const f = pos - k0
-		const a = slotOf(k0)
-		const b = slotOf(k0 + 1)
-		const lerp = (u: number, v: number) => u + (v - u) * f
-		gsap.set(card, {
-			xPercent: lerp(a.x, b.x),
-			yPercent: lerp(a.y, b.y),
-			rotation: lerp(a.r, b.r),
-			scale: lerp(a.s, b.s),
-			zIndex: SLOT_Z[Math.min(Math.abs(Math.round(pos)), MAX_SLOT)]
-		})
-	})
+/* Avatar de quem falou — monograma enquanto os relatos são placeholder;
+   troca por <img> quando tivermos as fotos. */
+function Avatar({ name }: { name: string }) {
+	const initials = name
+		.split(' ')
+		.map((part) => part.charAt(0))
+		.slice(0, 2)
+		.join('')
+		.toUpperCase()
+	return (
+		<span
+			aria-hidden
+			className="bg-muted text-foreground/70 border-border flex size-12 shrink-0 items-center justify-center rounded-full border font-mono text-xs tracking-widest"
+		>
+			{initials}
+		</span>
+	)
 }
 
 export function TestimonialsSection() {
 	const t = useCopy(COPY)
-	const [index, setIndex] = useState(0)
-	const rootRef = useRef<HTMLDivElement>(null)
-	const deckRef = useRef<HTMLDivElement>(null)
+	const wrapRef = useRef<HTMLDivElement>(null)
+	const draggerRef = useRef<HTMLDivElement>(null)
 	const cardRefs = useRef<(HTMLElement | null)[]>([])
-	const barRef = useRef<HTMLDivElement>(null)
-	const headRef = useRef({ v: 0 })
-	const tweenRef = useRef<gsap.core.Tween | null>(null)
-	const spinTweenRef = useRef<gsap.core.Tween | null>(null)
-	const spinRef = useRef<((direction: number) => void) | null>(null)
-	const hoveredRef = useRef(false)
-	const offscreenRef = useRef(false)
-	const transitioningRef = useRef(false)
+	const headRef = useRef(0)
+	const goRef = useRef<((direction: number) => void) | null>(null)
 	const ready = usePageReady()
 
 	const go = useCallback((direction: number) => {
-		if (transitioningRef.current) return
-		spinRef.current?.(direction)
+		goRef.current?.(direction)
 	}, [])
 
-	/* Leque + drag (Draggable com proxy fora do DOM, padrão GSAP): o x do
-	   proxy escrubba a cabeça do leque — 1 largura de deck = 1 slot — e o
-	   snap da inércia projeta o release para o slot inteiro mais próximo. */
 	useEffect(() => {
-		const deck = deckRef.current
-		if (!deck || !ready) return
+		const wrap = wrapRef.current
+		const dragger = draggerRef.current
+		if (!wrap || !dragger || !ready) return
 		const reduce = window.matchMedia(
 			'(prefers-reduced-motion: reduce)'
 		).matches
 		const cards = cardRefs.current
-		renderDeck(cards, headRef.current.v)
+		let width = wrap.offsetWidth
 
-		const slotPx = () => Math.max(deck.offsetWidth, 480)
-		let startX = 0
-		let startHead = 0
-
-		const settle = () => {
-			transitioningRef.current = false
-			const next =
-				((Math.round(headRef.current.v) % TOTAL) + TOTAL) % TOTAL
-			setIndex((prev) => {
-				if (prev === next) {
-					// Mesmo card da frente: o efeito da barra não re-roda,
-					// então ela re-arma aqui.
-					if (!hoveredRef.current && !offscreenRef.current)
-						tweenRef.current?.restart()
-					return prev
-				}
-				return next
+		/* Acomoda o leque nos slots inteiros de `head` — é aqui (e só aqui)
+		   que status, véu e z-index trocam de card. */
+		const settle = (instant = false) => {
+			cards.forEach((card, i) => {
+				if (!card) return
+				const slot = slotOf(i, headRef.current)
+				card.dataset.status = slot.status
+				card.style.zIndex = String(slot.z)
+				gsap.to(card, {
+					xPercent: slot.xPercent,
+					yPercent: slot.yPercent,
+					rotation: slot.rotation,
+					scale: slot.scale,
+					opacity: slot.opacity,
+					duration: instant || reduce ? 0 : 0.6,
+					ease: 'elastic.out(1.2, 1)',
+					overwrite: 'auto'
+				})
 			})
 		}
 
-		const spin = (direction: number) => {
-			transitioningRef.current = true
-			spinTweenRef.current?.kill()
-			drag.tween?.kill()
-			spinTweenRef.current = gsap.to(headRef.current, {
-				v: Math.round(headRef.current.v) + direction,
-				duration: reduce ? 0 : 0.9,
-				ease: 'power3.inOut',
-				onUpdate: () => renderDeck(cards, headRef.current.v),
-				onComplete: settle
-			})
-		}
-		spinRef.current = spin
+		settle(true)
 
-		const proxy = document.createElement('div')
-		const [drag] = Draggable.create(proxy, {
-			trigger: deck,
+		goRef.current = (direction: number) => {
+			headRef.current = (headRef.current + direction + TOTAL) % TOTAL
+			settle()
+		}
+
+		const [drag] = Draggable.create(dragger, {
 			type: 'x',
-			inertia: true,
-			maxDuration: 1,
-			cursor: 'grab',
-			activeCursor: 'grabbing',
+			edgeResistance: 0.8,
+			bounds: { minX: -width / 2, maxX: width / 2 },
+			inertia: false,
 			allowNativeTouchScrolling: true,
-			onPress() {
-				transitioningRef.current = true
-				spinTweenRef.current?.kill()
-				tweenRef.current?.pause()
-				startX = this.x
-				startHead = headRef.current.v
-			},
 			onDrag() {
-				headRef.current.v = startHead - (this.x - startX) / slotPx()
-				renderDeck(cards, headRef.current.v)
+				/* Preview do gesto: cada card caminha do arranjo atual para o
+				   do vizinho na direção arrastada. O status não muda — o card
+				   da frente segue em destaque até o release. */
+				const ratio = this.x / width
+				const f = Math.min(1, Math.abs(ratio))
+				const next =
+					(headRef.current + (ratio > 0 ? -1 : 1) + TOTAL) % TOTAL
+				cards.forEach((card, i) => {
+					if (!card) return
+					const a = slotOf(i, headRef.current)
+					const b = slotOf(i, next)
+					const lerp = (u: number, v: number) => u + (v - u) * f
+					gsap.set(card, {
+						xPercent: lerp(a.xPercent, b.xPercent),
+						yPercent: lerp(a.yPercent, b.yPercent),
+						rotation: lerp(a.rotation, b.rotation),
+						scale: lerp(a.scale, b.scale),
+						opacity: lerp(a.opacity, b.opacity)
+					})
+				})
 			},
-			snap: {
-				x: (value: number) => {
-					const target = Math.round(
-						startHead - (value - startX) / slotPx()
-					)
-					return startX + (startHead - target) * slotPx()
-				}
-			},
-			onThrowUpdate() {
-				headRef.current.v = startHead - (this.x - startX) / slotPx()
-				renderDeck(cards, headRef.current.v)
-			},
-			// Com inertia + snap o release SEMPRE vira um tween de
-			// acomodação (mesmo parado), então o settle é garantido aqui.
-			onThrowComplete: settle
+			onRelease() {
+				const ratio = this.x / width
+				// Limiar do osmo: 10% da largura decide se o leque anda.
+				if (ratio > 0.1)
+					headRef.current = (headRef.current - 1 + TOTAL) % TOTAL
+				else if (ratio < -0.1)
+					headRef.current = (headRef.current + 1) % TOTAL
+				settle()
+				gsap.to(this.target, {
+					x: 0,
+					duration: reduce ? 0 : 0.3,
+					ease: 'power1.out'
+				})
+			}
 		})
 
+		const onResize = () => {
+			width = wrap.offsetWidth
+			drag.applyBounds({ minX: -width / 2, maxX: width / 2 })
+		}
+		window.addEventListener('resize', onResize)
+
 		return () => {
+			window.removeEventListener('resize', onResize)
 			drag.kill()
-			spinTweenRef.current?.kill()
-			spinRef.current = null
+			goRef.current = null
 			const staged = cards.filter((card): card is HTMLElement =>
 				Boolean(card)
 			)
@@ -291,169 +300,99 @@ export function TestimonialsSection() {
 		}
 	}, [ready])
 
-	useEffect(() => {
-		const bar = barRef.current
-		// O autoplay não pode consumir relatos enquanto a página carrega.
-		if (!bar || !ready) return
-		const tween = gsap.fromTo(
-			bar,
-			{ width: '0%' },
-			{
-				width: '100%',
-				duration: HOLD_MS / 1000,
-				ease: 'none',
-				onComplete: () => spinRef.current?.(1)
-			}
-		)
-		if (hoveredRef.current || offscreenRef.current) tween.pause()
-		tweenRef.current = tween
-		return () => {
-			tween.kill()
-			tweenRef.current = null
-		}
-	}, [index, ready])
-
-	/* Fora da viewport o autoplay pausa — senão a seção consome relatos e
-	   gira o leque sem ninguém vendo. */
-	useEffect(() => {
-		const root = rootRef.current
-		if (!root) return
-		const io = new IntersectionObserver((entries) => {
-			const visible = entries.some((entry) => entry.isIntersecting)
-			offscreenRef.current = !visible
-			if (!visible) tweenRef.current?.pause()
-			else if (!hoveredRef.current) tweenRef.current?.play()
-		})
-		io.observe(root)
-		return () => io.disconnect()
-	}, [])
-
-	const counter = `${String(index + 1).padStart(2, '0')}/${String(TOTAL).padStart(2, '0')}`
-
 	return (
-		<section id="testimonials" className="px-7 py-24 md:py-36">
-			<div className="w-full">
-				<Reveal>
-					<div className="border-border border">
-						<div className="border-border flex flex-wrap items-baseline justify-between gap-2 border-b px-5 py-4">
-							<h2 className="text-body-lg font-medium uppercase">
-								{t.heading}
-							</h2>
-							<span className="text-foreground/40 font-mono text-[10px] tracking-[0.2em] uppercase">
-								{t.eyebrow}
-							</span>
-						</div>
+		<section
+			id="testimonials"
+			className="overflow-hidden px-7 py-24 md:py-36"
+		>
+			<Reveal className="mb-12 text-center md:mb-16">
+				{/* Uma linha só: o clamp é dimensionado para caber sem
+				   quebra da largura de mobile para cima. */}
+				<h2 className="font-heading text-[clamp(1.2rem,3.2vw,2.75rem)] leading-[1.05] tracking-tight">
+					{t.heading}
+				</h2>
+			</Reveal>
 
-						{/* Faixa de métricas — números placeholder. */}
-						<div className="bg-border border-border grid grid-cols-1 gap-px border-b md:grid-cols-3">
-							{t.metrics.map((metric) => (
-								<div
-									key={metric.value}
-									className="bg-background flex flex-col gap-1 px-5 py-6"
-								>
-									<span className="font-heading text-h3">
-										{metric.value}
-									</span>
-									<span className="text-body-sm text-foreground/60">
-										{metric.label}
-									</span>
-								</div>
-							))}
-						</div>
-
-						{/* Leque de relatos arrastável — barra auto-avança
-						   (pausa no hover, fora da viewport e no drag),
-						   setas manuais, contador. */}
-						<div
-							ref={rootRef}
-							className="bg-background"
-							onMouseEnter={() => {
-								hoveredRef.current = true
-								tweenRef.current?.pause()
+			<Reveal>
+				{/* O deck: cards absolutos centrados, espalhados nos slots
+				   pelo settle/onDrag. O dragger é a camada invisível que o
+				   Draggable move — o x dele é o único input do gesto. */}
+				<div
+					ref={wrapRef}
+					className="relative mx-auto h-[26rem] w-full max-w-[64rem] md:h-[30rem]"
+				>
+					{t.testimonials.map((item, i) => (
+						<article
+							key={`${item.company}-${i}`}
+							ref={(el) => {
+								cardRefs.current[i] = el
 							}}
-							onMouseLeave={() => {
-								hoveredRef.current = false
-								tweenRef.current?.play()
-							}}
+							data-status="hidden"
+							className="group bg-card border-border absolute inset-0 m-auto flex h-[23rem] w-[min(42rem,86vw)] flex-col items-center justify-center rounded-2xl border p-8 text-center shadow-lg will-change-transform data-[status=active]:shadow-2xl md:h-[27rem] md:p-12"
 						>
-							<div className="px-5 pt-7 md:px-7 md:pt-9">
-								{/* Barra de progresso — fio em tom escuro único. */}
-								<div className="bg-foreground/15 relative h-px w-full">
-									<div
-										ref={barRef}
+							{/* Conteúdo: a opacidade vive aqui, não no card —
+							   se a plate ficasse translúcida o texto dos
+							   cards de trás vazaria. */}
+							<div className="flex flex-col items-center gap-8 opacity-60 transition-opacity duration-500 group-data-[status=active]:opacity-100 md:gap-10">
+								{/* Aspa gigante de fundo (Aspekta, a sans ativa),
+							   centrada na citação. -z-10 fica acima do
+							   `bg-card` e abaixo do texto — o card já é um
+							   contexto de empilhamento por causa do
+							   will-change. O -translate-y compensa a tinta
+							   da aspa morar no topo da caixa da linha: o que
+							   fica centrado é o glifo, não o box. */}
+								<div className="relative flex items-center justify-center">
+									<span
 										aria-hidden
-										className="bg-foreground absolute top-0 left-0 h-px"
-										style={{ width: '0%' }}
-									/>
+										className="text-foreground/[0.07] pointer-events-none absolute top-1/2 left-1/2 -z-10 -translate-x-1/2 -translate-y-[34%] font-sans text-[14rem] leading-none font-semibold select-none md:text-[20rem]"
+									>
+										&ldquo;
+									</span>
+									<blockquote className="text-body-lg md:text-h4 lg:text-h3 font-serif leading-[1.4] font-semibold text-pretty md:leading-[1.35]">
+										{item.quote}
+									</blockquote>
 								</div>
-
-								<div className="mt-5 flex items-center justify-between gap-4">
-									<div className="flex items-center gap-5">
-										<button
-											aria-label={t.prevTestimonial}
-											onClick={() => go(-1)}
-											className="text-foreground/60 hover:text-foreground transition-colors"
-										>
-											<ArrowLeft className="size-5" />
-										</button>
-										<button
-											aria-label={t.nextTestimonial}
-											onClick={() => go(1)}
-											className="text-foreground/60 hover:text-foreground transition-colors"
-										>
-											<ArrowRight className="size-5" />
-										</button>
+								<footer className="flex items-center justify-center gap-3">
+									<Avatar name={item.name} />
+									<div className="flex flex-col text-left">
+										<span className="text-body font-medium">
+											{item.name}
+										</span>
+										<span className="text-foreground/60 font-mono text-xs tracking-wide uppercase">
+											{item.role} · {item.company}
+										</span>
 									</div>
-									<span className="text-foreground/40 font-mono text-[10px] tracking-[0.2em] uppercase">
-										{t.dragHint}
-									</span>
-									<span className="text-muted-foreground font-mono text-sm">
-										{counter}
-									</span>
-								</div>
+								</footer>
 							</div>
+							{/* Véu: some no card da frente e escurece todo o
+							   resto por igual. */}
+							<div
+								aria-hidden
+								className="pointer-events-none absolute inset-0 rounded-[inherit] bg-[#0f0f0e] opacity-40 transition-opacity duration-500 group-data-[status=active]:opacity-0"
+							/>
+							{/* Outline azul — só no card em destaque. */}
+							<div
+								aria-hidden
+								className="border-brand pointer-events-none absolute inset-0 rounded-[inherit] border-2 opacity-0 transition-opacity duration-500 group-data-[status=active]:opacity-100"
+							/>
+						</article>
+					))}
 
-							{/* O deck: cards absolutos centrados; quem os
-							   espalha nos slots é o renderDeck. overflow
-							   escondido — as pontas do leque cortam na
-							   moldura, não criam scroll horizontal. */}
-							<div className="relative overflow-hidden pt-10 pb-12">
-								<div
-									ref={deckRef}
-									className="relative mx-auto h-[23rem] w-full max-w-5xl cursor-grab touch-pan-y select-none"
-								>
-									{t.testimonials.map((item, i) => (
-										<article
-											key={`${item.company}-${i}`}
-											ref={(el) => {
-												cardRefs.current[i] = el
-											}}
-											className="bg-card absolute inset-0 m-auto flex h-[21rem] w-[min(32rem,84vw)] flex-col justify-between gap-4 rounded-xl border p-6 shadow-xl will-change-transform md:p-7"
-										>
-											<div className="flex flex-col gap-4">
-												<span className="text-foreground/40 font-mono text-[10px] tracking-[0.2em] uppercase">
-													{`REL_${String(i + 1).padStart(2, '0')}`}
-												</span>
-												<blockquote className="text-body-sm md:text-body text-foreground/80 text-pretty">
-													“{item.quote}”
-												</blockquote>
-											</div>
-											<footer className="flex flex-col gap-0.5">
-												<span className="text-body-sm font-medium">
-													{item.name}
-												</span>
-												<span className="text-foreground/60 font-mono text-xs tracking-wide uppercase">
-													{item.role} · {item.company}
-												</span>
-											</footer>
-										</article>
-									))}
-								</div>
-							</div>
-						</div>
-					</div>
-				</Reveal>
-			</div>
+					<div
+						ref={draggerRef}
+						role="group"
+						tabIndex={0}
+						aria-label={t.deckLabel}
+						onKeyDown={(event) => {
+							if (event.key === 'ArrowLeft') go(-1)
+							else if (event.key === 'ArrowRight') go(1)
+							else return
+							event.preventDefault()
+						}}
+						className="absolute inset-0 z-10 cursor-grab touch-pan-y select-none active:cursor-grabbing"
+					/>
+				</div>
+			</Reveal>
 		</section>
 	)
 }
