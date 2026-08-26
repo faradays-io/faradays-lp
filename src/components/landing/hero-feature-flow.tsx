@@ -687,7 +687,7 @@ export function HeroFeatureFlow() {
 			])
 			initial = false
 
-			/* Traço do b.svg — ÚNICO efeito com scrub da seção. Começa no
+			/* Traço (fonte: docs/assets/feature-flow-stroke.svg) — ÚNICO efeito com scrub da seção. Começa no
 			   mesmo ponto da diagonal da demo (scroll 8, absoluto) com o
 			   início do path no topo da viewport e termina 0.4vh antes do
 			   sticky soltar (fim da seção). Dois tweens na mesma timeline:
@@ -817,7 +817,7 @@ export function HeroFeatureFlow() {
 				</div>
 			</div>
 
-			{/* Traço decorativo (public/b.svg inline): camada sticky atrás
+			{/* Traço decorativo (docs/assets/feature-flow-stroke.svg, inline): camada sticky atrás
 			   dos textos e da demo. Sobe 60svh (a altura do HomeHero) para
 			   o sticky engajar já no topo da página — o path nasce no topo
 			   da viewport no primeiro scroll. A svg é larga (62vw, ~2.4× de

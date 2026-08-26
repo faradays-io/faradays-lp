@@ -1,20 +1,18 @@
 'use client'
 
 import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Link from 'next/link'
 import { useEffect, useRef } from 'react'
 
 import { SplitHoverText } from '@/components/custom-ui/split-hover-text'
 import { HeroToolIcons } from '@/components/landing/hero-tool-icons'
+import { useRecedeOut } from '@/components/landing/recede-out'
 import { useCopy } from '@/components/language-provider'
 import { Button } from '@/components/ui/button'
 import type { Localized } from '@/lib/i18n'
 import { usePageReady } from '@/lib/page-ready'
 
-gsap.registerPlugin(ScrollTrigger)
-
-const COPY = {
+export const HERO_COPY = {
 	pt: {
 		// "empresa" cobre distribuidora e indústria numa palavra só. O h1
 		// termina em `headlineTail` + ícones das ferramentas (sem ponto).
@@ -43,8 +41,9 @@ const COPY = {
  * o que convida o scroll.
  */
 export function HomeHero() {
-	const t = useCopy(COPY)
+	const t = useCopy(HERO_COPY)
 	const rootRef = useRef<HTMLElement>(null)
+	const copyRef = useRef<HTMLDivElement>(null)
 	const ready = usePageReady()
 
 	useEffect(() => {
@@ -74,47 +73,8 @@ export function HomeHero() {
 		return () => ctx.revert()
 	}, [ready])
 
-	/* Saída do CTA por gatilho (não scrub): o primeiro scroll down toca a
-	   animação inteira — o bloco encolhe, desfoca, some e sobe, como se
-	   recuasse para trás — sem esperar cruzar o topo da viewport. Voltar
-	   ao topo reverte. */
-	useEffect(() => {
-		const root = rootRef.current
-		if (!root || !ready) return
-		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches)
-			return
-		const copy = root.querySelector('[data-hero-copy]')
-		if (!copy) return
-
-		const out = gsap.timeline({ paused: true }).to(copy, {
-			autoAlpha: 0,
-			scale: 0.92,
-			y: -64,
-			filter: 'blur(14px)',
-			duration: 0.9,
-			ease: 'power3.out'
-		})
-
-		/* Recarga com scroll restaurado no meio da página: pula direto ao
-		   estado final em vez de animar à vista. */
-		let initial = true
-		const trigger = ScrollTrigger.create({
-			start: 8,
-			end: 'max',
-			onEnter: () => {
-				if (initial) out.progress(1)
-				else out.play()
-			},
-			onLeaveBack: () => out.reverse()
-		})
-		initial = false
-
-		return () => {
-			trigger.kill()
-			out.kill()
-			gsap.set(copy, { clearProps: 'all' })
-		}
-	}, [ready])
+	/* Saída: o primeiro scroll down recua o bloco inteiro. */
+	useRecedeOut(copyRef, { start: 8 })
 
 	/* z-10 na section (sem fundo próprio — o wrapper da página já pinta o
 	   bg-background): a camada do traço do HeroFeatureFlow sobe até o topo
@@ -130,6 +90,7 @@ export function HomeHero() {
 			   (pt > pb) empurra o bloco ~40px abaixo do centro, mais perto
 			   da demo. */}
 			<div
+				ref={copyRef}
 				data-hero-copy
 				className="flex min-h-[calc(60svh-5.75rem)] w-full flex-col items-center justify-center px-7 pt-24 pb-8 text-center"
 			>
@@ -164,13 +125,6 @@ export function HomeHero() {
 						<Link href="#cta">
 							<SplitHoverText as="span">
 								{t.bookDemo}
-							</SplitHoverText>
-						</Link>
-					</Button>
-					<Button asChild size="lg" variant="ghost" className="px-6">
-						<Link href="#features">
-							<SplitHoverText as="span">
-								{t.exploreProduct}
 							</SplitHoverText>
 						</Link>
 					</Button>

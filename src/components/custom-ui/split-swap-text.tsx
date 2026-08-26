@@ -2,7 +2,7 @@
 
 import gsap from 'gsap'
 import { SplitText } from 'gsap/SplitText'
-import type { ElementType, HTMLAttributes, Ref } from 'react'
+import type { HTMLAttributes, Ref } from 'react'
 import { useEffect, useImperativeHandle, useRef } from 'react'
 
 import { cn } from '@/lib/utils'
@@ -25,7 +25,8 @@ type SplitSwapTextProps = {
 	/** `true` → o rótulo `to` está à frente. */
 	swapped: boolean
 	/** Elemento do rótulo — 'span' (default), 'a', 'button'… */
-	as?: ElementType
+	/** Tag HTML do wrapper (elemento intrínseco, não componente). */
+	as?: keyof HTMLElementTagNameMap
 	ref?: Ref<SplitSwapHandle>
 	className?: string
 	/** Classes só do rótulo de troca — normalmente a cor. */
@@ -63,7 +64,10 @@ export function SplitSwapText({
 	srLabel,
 	...rest
 }: SplitSwapTextProps) {
-	const Comp = (as ?? 'span') as ElementType
+	/* Cast para uma tag concreta: com os intrínsecos do three (R3F) no
+	   JSX.IntrinsicElements, um ElementType genérico faz as props do JSX
+	   colapsarem em `never`. */
+	const Comp = (as ?? 'span') as 'span'
 	const rollRef = useRef<HTMLSpanElement>(null)
 	const timelineRef = useRef<gsap.core.Timeline | null>(null)
 	// A timeline nasce depois de `document.fonts.ready`; se a troca chegar

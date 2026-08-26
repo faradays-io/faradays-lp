@@ -72,6 +72,15 @@ const COPY = {
 		navQualidade: 'Qualidade',
 		navDocs: 'Documentos',
 		account: 'Representante',
+		// Breadcrumbs do header — um par (grupo / folha) por tela.
+		crumbWhatsapp: 'whatsapp',
+		crumbConversas: 'conversas',
+		crumbVendas: 'vendas',
+		crumbVenda: 'cotacao-venda',
+		crumbCompras: 'compras',
+		crumbRfq: 'cotacao-compra',
+		crumbQualidade: 'qualidade',
+		crumbDocs: 'documentos',
 		cardVendaTitle: 'R$ 5,4321 / USD',
 		cardVendaMeta: 'PTAX congelada · 12/08/2026',
 		cardVendaLabel: 'câmbio da emissão',
@@ -150,6 +159,14 @@ const COPY = {
 		navQualidade: 'Quality',
 		navDocs: 'Documents',
 		account: 'Sales rep',
+		crumbWhatsapp: 'whatsapp',
+		crumbConversas: 'conversations',
+		crumbVendas: 'sales',
+		crumbVenda: 'sales-quote',
+		crumbCompras: 'purchasing',
+		crumbRfq: 'purchase-rfq',
+		crumbQualidade: 'quality',
+		crumbDocs: 'documents',
 		cardVendaTitle: 'R$ 5.4321 / USD',
 		cardVendaMeta: 'PTAX frozen · 12/08/2026',
 		cardVendaLabel: 'issue-date rate',
@@ -385,11 +402,11 @@ function AppSidebar({ t }: { t: Copy }) {
  * Header (breadcrumbs empilhados, um por tela)
  * ------------------------------------------------------------------ */
 
-const CRUMBS: { id: string; group: string; leaf: string }[] = [
-	{ id: 'whatsapp', group: 'whatsapp', leaf: 'conversas' },
-	{ id: 'venda', group: 'vendas', leaf: 'cotacao-venda' },
-	{ id: 'rfq', group: 'compras', leaf: 'cotacao-compra' },
-	{ id: 'docs', group: 'qualidade', leaf: 'documentos' }
+const CRUMBS: { id: string; group: keyof Copy; leaf: keyof Copy }[] = [
+	{ id: 'whatsapp', group: 'crumbWhatsapp', leaf: 'crumbConversas' },
+	{ id: 'venda', group: 'crumbVendas', leaf: 'crumbVenda' },
+	{ id: 'rfq', group: 'crumbCompras', leaf: 'crumbRfq' },
+	{ id: 'docs', group: 'crumbQualidade', leaf: 'crumbDocs' }
 ]
 
 function AppHeader({ t }: { t: Copy }) {
@@ -406,12 +423,10 @@ function AppHeader({ t }: { t: Copy }) {
 						)}
 					>
 						<span className="truncate">
-							monfiza{' '}
-							<span className="text-muted-foreground/40">/</span>{' '}
-							{crumb.group}{' '}
+							{t[crumb.group]}{' '}
 							<span className="text-muted-foreground/40">/</span>{' '}
 							<span className="text-foreground font-medium">
-								{crumb.leaf}
+								{t[crumb.leaf]}
 							</span>
 						</span>
 					</span>

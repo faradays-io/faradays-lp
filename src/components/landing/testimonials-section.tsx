@@ -4,6 +4,7 @@ import gsap from 'gsap'
 import { Draggable } from 'gsap/Draggable'
 import { useCallback, useEffect, useRef } from 'react'
 
+import { FibonacciSpiral } from '@/components/landing/fibonacci-spiral'
 import { Reveal } from '@/components/landing/reveal'
 import { useCopy } from '@/components/language-provider'
 import type { Localized } from '@/lib/i18n'
@@ -38,7 +39,7 @@ type Testimonial = {
 
 const COPY = {
 	pt: {
-		heading: 'O que nossos clientes dizem',
+		heading: 'Usado por times que levam velocidade e rigor a sério',
 		deckLabel:
 			'Relatos de clientes — arraste os cards ou use as setas do teclado',
 		testimonials: [
@@ -87,7 +88,7 @@ const COPY = {
 		] as Testimonial[]
 	},
 	en: {
-		heading: 'What our clients say',
+		heading: 'Trusted by teams that care about speed and rigor',
 		deckLabel: 'Customer stories — drag the cards or use the arrow keys',
 		testimonials: [
 			{
@@ -303,17 +304,35 @@ export function TestimonialsSection() {
 	return (
 		<section
 			id="testimonials"
-			className="overflow-hidden px-7 py-24 md:py-36"
+			/* Painel escuro (o mesmo #0f0f0e do véu dos cards): o deck de
+			   cards claros vira o único ponto de luz da seção. Ocupa uma tela
+			   cheia, com o conteúdo centrado — em viewport baixa a seção passa
+			   de svh e cresce com o conteúdo, sem comprimir o deck. */
+			className="relative flex min-h-svh flex-col justify-center overflow-hidden bg-[#0f0f0e] px-7 py-24 md:py-36"
 		>
-			<Reveal className="mb-12 text-center md:mb-16">
-				{/* Uma linha só: o clamp é dimensionado para caber sem
-				   quebra da largura de mobile para cima. */}
-				<h2 className="font-heading text-[clamp(1.2rem,3.2vw,2.75rem)] leading-[1.05] tracking-tight">
+			{/* Textura de fundo. A espiral é maior que a seção de propósito:
+			   assim as voltas internas crescem para fora do deck em vez de
+			   ficarem escondidas atrás dele, e as externas saem de quadro —
+			   quem corta é o `overflow-hidden` da seção. Sem máscara: nesta
+			   escala o degradê cairia todo fora da área visível.
+			   O translate põe o OLHO da espiral no centro da seção — ele
+			   fica em (28.1%, 72.7%) do viewBox, e não no meio dele, então
+			   centrar o svg não centraria a espiral. Os dois `-scale-*-100`
+			   espelham nos dois eixos, o que leva o olho de (28.1%, 72.7%)
+			   para (71.9%, 27.3%) da caixa — daí os translates serem esses
+			   valores e não os do viewBox. Espelhamento e translate são um
+			   só ajuste: mexer num pede recalcular o outro. */}
+			<FibonacciSpiral className="absolute top-1/2 left-1/2 h-[150%] w-auto -translate-x-[71.9%] -translate-y-[27.3%] -scale-x-100 -scale-y-100 text-white/[0.11]" />
+
+			<Reveal className="relative mb-12 text-center md:mb-16">
+				{/* O clamp mantém uma linha só de ~560px para cima; abaixo
+				   disso a copy quebra em duas, com balance. */}
+				<h2 className="font-heading text-background mx-auto text-[clamp(1.2rem,3.8vw,4rem)] leading-[1.15] tracking-tight text-balance">
 					{t.heading}
 				</h2>
 			</Reveal>
 
-			<Reveal>
+			<Reveal className="relative">
 				{/* O deck: cards absolutos centrados, espalhados nos slots
 				   pelo settle/onDrag. O dragger é a camada invisível que o
 				   Draggable move — o x dele é o único input do gesto. */}
@@ -328,7 +347,7 @@ export function TestimonialsSection() {
 								cardRefs.current[i] = el
 							}}
 							data-status="hidden"
-							className="group bg-card border-border absolute inset-0 m-auto flex h-[23rem] w-[min(42rem,86vw)] flex-col items-center justify-center rounded-2xl border p-8 text-center shadow-lg will-change-transform data-[status=active]:shadow-2xl md:h-[27rem] md:p-12"
+							className="group bg-card border-border absolute inset-0 m-auto flex h-[23rem] w-[min(42rem,86vw)] flex-col items-center justify-center rounded-2xl border p-8 text-center shadow-lg will-change-transform select-none data-[status=active]:shadow-2xl md:h-[27rem] md:p-12"
 						>
 							{/* Conteúdo: a opacidade vive aqui, não no card —
 							   se a plate ficasse translúcida o texto dos

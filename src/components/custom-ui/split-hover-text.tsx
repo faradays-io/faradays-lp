@@ -2,7 +2,7 @@
 
 import gsap from 'gsap'
 import { SplitText } from 'gsap/SplitText'
-import type { ElementType, HTMLAttributes } from 'react'
+import type { HTMLAttributes } from 'react'
 import { useEffect, useRef } from 'react'
 
 import { cn } from '@/lib/utils'
@@ -11,7 +11,8 @@ gsap.registerPlugin(SplitText)
 
 type SplitHoverTextProps = {
 	/** Elemento raiz — normalmente 'a', 'button' ou 'span' (default). */
-	as?: ElementType
+	/** Tag HTML do wrapper (elemento intrínseco, não componente). */
+	as?: keyof HTMLElementTagNameMap
 	/** Texto a animar (uma string; o roll precisa de conteúdo estável). */
 	children: string
 	className?: string
@@ -40,7 +41,10 @@ export function SplitHoverText({
 	textClassName,
 	...rest
 }: SplitHoverTextProps) {
-	const Comp = (as ?? 'span') as ElementType
+	/* Cast para uma tag concreta: com os intrínsecos do three (R3F) no
+	   JSX.IntrinsicElements, um ElementType genérico faz as props do JSX
+	   colapsarem em `never`. */
+	const Comp = (as ?? 'span') as 'span'
 	const rootRef = useRef<HTMLElement>(null)
 
 	useEffect(() => {

@@ -11,10 +11,10 @@ import { cn } from '@/lib/utils'
    entrar mais uma no ciclo (ex.: Corp), basta um item aqui. `next/image`
    serve .svg sem passar pelo otimizador (unoptimized automático). */
 const TOOLS = [
-	{ name: 'WhatsApp', src: '/icons/Digital_Glyph_Green_RGB_2026.svg' },
-	{ name: 'SharePoint', src: '/icons/icons8-sharepoint.svg' },
-	{ name: 'OneDrive', src: '/icons/icons8-onedrive.svg' },
-	{ name: 'Excel', src: '/icons/icons8-excel.svg' }
+	{ name: 'WhatsApp', src: '/icons/whatsapp.svg' },
+	{ name: 'SharePoint', src: '/icons/sharepoint.svg' },
+	{ name: 'OneDrive', src: '/icons/onedrive.svg' },
+	{ name: 'Excel', src: '/icons/excel.svg' }
 ]
 
 const HOLD = 1.2 // s que cada ícone fica parado
