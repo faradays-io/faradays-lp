@@ -540,3 +540,255 @@ export function HeroMark3d({
 		</div>
 	)
 }
+
+/* ------------------------------------------------------------------ *
+ * SpinMark3d — uma marca só, azul, girando sozinha em todos os eixos;
+ * o usuário arrasta para girar (trackball: rotação em eixos do MUNDO,
+ * então o gesto é sempre "puxar a face para onde o dedo vai").
+ * ------------------------------------------------------------------ */
+
+const SPIN_COLOR = '#0065e0'
+const SPIN_SIDE = '#0a56c2'
+const SPIN_HOVER = '#1f7cff'
+/** Velocidade do giro automático por eixo (rad/s). */
+const AUTO_SPIN = new THREE.Vector3(0.22, 0.42, 0.12)
+/** Sensibilidade do arrasto (rad por px). */
+const DRAG_SENS = 0.007
+
+/* Estado do arrasto, escrito só pelos listeners do wrapper (pai) e lido
+   pela cena (filho) — a inércia vive num ref local do filho. */
+type Drag = {
+	active: boolean
+	x: number
+	y: number
+	/** Totais acumulados de deslocamento do ponteiro (px). */
+	tx: number
+	ty: number
+}
+
+const AXIS_X = new THREE.Vector3(1, 0, 0)
+const AXIS_Y = new THREE.Vector3(0, 1, 0)
+const AXIS_Z = new THREE.Vector3(0, 0, 1)
+
+function SpinningMark({
+	geometry,
+	drag,
+	reduced
+}: {
+	geometry: THREE.BufferGeometry
+	drag: React.RefObject<Drag>
+	reduced: boolean
+}) {
+	const group = useRef<THREE.Group>(null)
+	const [hovered, setHovered] = useState(false)
+	const capMat = useMemo(
+		() =>
+			new THREE.MeshStandardMaterial({
+				color: SPIN_COLOR,
+				roughness: 0.6,
+				metalness: 0.1
+			}),
+		[]
+	)
+	const sideMat = useMemo(
+		() =>
+			new THREE.MeshStandardMaterial({
+				color: SPIN_SIDE,
+				roughness: 0.7,
+				metalness: 0.1
+			}),
+		[]
+	)
+	const materials = useMemo(() => [capMat, sideMat], [capMat, sideMat])
+	useEffect(
+		() => () => {
+			capMat.dispose()
+			sideMat.dispose()
+		},
+		[capMat, sideMat]
+	)
+	useEffect(() => {
+		const to = new THREE.Color(hovered ? SPIN_HOVER : SPIN_COLOR)
+		const tween = gsap.to(capMat.color, {
+			r: to.r,
+			g: to.g,
+			b: to.b,
+			duration: 0.3,
+			ease: 'power2.out'
+		})
+		return () => {
+			tween.kill()
+		}
+	}, [capMat, hovered])
+
+	/* Pesos: 0 = só o giro automático, 1 = só a inércia do arrasto. Sobe
+	   na hora ao arrastar e volta com damping depois de soltar — o giro
+	   automático "retoma" sem salto. */
+	const blend = useRef(0)
+	// Último total consumido + velocidade residual (px/frame) da inércia.
+	const local = useRef({ tx: 0, ty: 0, vx: 0, vy: 0 })
+
+	useFrame((_, dt) => {
+		const g = group.current
+		if (!g) return
+		const d = drag.current
+		const l = local.current
+		const dx = d.tx - l.tx
+		const dy = d.ty - l.ty
+		l.tx = d.tx
+		l.ty = d.ty
+		if (d.active) {
+			blend.current = 1
+			// Arrasto: gira em eixos do mundo pela distância percorrida.
+			g.rotateOnWorldAxis(AXIS_Y, dx * DRAG_SENS)
+			g.rotateOnWorldAxis(AXIS_X, dy * DRAG_SENS)
+			// Velocidade suavizada para a inércia ao soltar.
+			l.vx = THREE.MathUtils.lerp(l.vx, dx, 0.5)
+			l.vy = THREE.MathUtils.lerp(l.vy, dy, 0.5)
+			return
+		}
+		// Inércia do arrasto decaindo…
+		l.vx = THREE.MathUtils.damp(l.vx, 0, 2.5, dt)
+		l.vy = THREE.MathUtils.damp(l.vy, 0, 2.5, dt)
+		g.rotateOnWorldAxis(AXIS_Y, l.vx * DRAG_SENS)
+		g.rotateOnWorldAxis(AXIS_X, l.vy * DRAG_SENS)
+		// …enquanto o giro automático volta.
+		blend.current = THREE.MathUtils.damp(blend.current, 0, 1.5, dt)
+		if (!reduced) {
+			const k = (1 - blend.current) * dt
+			g.rotateOnWorldAxis(AXIS_X, AUTO_SPIN.x * k)
+			g.rotateOnWorldAxis(AXIS_Y, AUTO_SPIN.y * k)
+			g.rotateOnWorldAxis(AXIS_Z, AUTO_SPIN.z * k)
+		}
+	})
+
+	return (
+		<group ref={group}>
+			{/* rotation.x = π desfaz o y-para-baixo do SVG; a extrusão fica
+			   centrada em z (geo.center()), então o giro é em torno do
+			   centro do sólido. */}
+			<mesh
+				geometry={geometry}
+				material={materials}
+				scale={MARK_SIZE / MARK_W}
+				rotation={[Math.PI, 0, 0]}
+				onPointerOver={() => setHovered(true)}
+				onPointerOut={() => setHovered(false)}
+			/>
+		</group>
+	)
+}
+
+/**
+ * Uma marca 3D azul girando sozinha em todos os eixos; arrastar (mouse
+ * ou toque) gira no modo trackball com inércia, e o giro automático
+ * retoma sozinho ao soltar. Câmera de frente. Para o hero "lado".
+ */
+export function SpinMark3d({
+	depth = 26,
+	bevel = 1.2,
+	className
+}: {
+	/** Espessura da extrusão (unidades do SVG; 139 = largura). */
+	depth?: number
+	bevel?: number
+	className?: string
+}) {
+	const rootRef = useRef<HTMLDivElement>(null)
+	const settings = useMemo(
+		() => ({ ...DEFAULT_SETTINGS, depth, bevel }),
+		[depth, bevel]
+	)
+	const geometry = useMarkGeometry(settings)
+	const drag = useRef<Drag>({ active: false, x: 0, y: 0, tx: 0, ty: 0 })
+	const [inView, setInView] = useState(true)
+	const [grabbing, setGrabbing] = useState(false)
+	const reduced = useSyncExternalStore(
+		subscribeReduced,
+		getReduced,
+		() => false
+	)
+
+	useEffect(() => {
+		const root = rootRef.current
+		if (!root) return
+		const io = new IntersectionObserver(
+			(entries) => setInView(entries.some((e) => e.isIntersecting)),
+			{ rootMargin: '100px' }
+		)
+		io.observe(root)
+		return () => io.disconnect()
+	}, [])
+
+	/* Arrasto no wrapper inteiro (não só no sólido): pointerdown arma,
+	   move acumula o delta que o useFrame consome, up/cancel solta. */
+	useEffect(() => {
+		const root = rootRef.current
+		if (!root) return
+		const d = drag.current
+		const onDown = (e: PointerEvent) => {
+			if (e.button !== 0 && e.pointerType === 'mouse') return
+			d.active = true
+			d.x = e.clientX
+			d.y = e.clientY
+			root.setPointerCapture(e.pointerId)
+			setGrabbing(true)
+		}
+		const onMove = (e: PointerEvent) => {
+			if (!d.active) return
+			d.tx += e.clientX - d.x
+			d.ty += e.clientY - d.y
+			d.x = e.clientX
+			d.y = e.clientY
+		}
+		const onUp = (e: PointerEvent) => {
+			if (!d.active) return
+			d.active = false
+			if (root.hasPointerCapture(e.pointerId))
+				root.releasePointerCapture(e.pointerId)
+			setGrabbing(false)
+		}
+		root.addEventListener('pointerdown', onDown)
+		root.addEventListener('pointermove', onMove)
+		root.addEventListener('pointerup', onUp)
+		root.addEventListener('pointercancel', onUp)
+		return () => {
+			root.removeEventListener('pointerdown', onDown)
+			root.removeEventListener('pointermove', onMove)
+			root.removeEventListener('pointerup', onUp)
+			root.removeEventListener('pointercancel', onUp)
+		}
+	}, [])
+
+	return (
+		<div
+			ref={rootRef}
+			className={cn(
+				'relative touch-none select-none',
+				grabbing ? 'cursor-grabbing' : 'cursor-grab',
+				className
+			)}
+		>
+			<Canvas
+				className="absolute inset-0"
+				dpr={[1, 1.5]}
+				frameloop={inView ? 'always' : 'never'}
+				gl={{
+					antialias: true,
+					alpha: true,
+					powerPreference: 'high-performance'
+				}}
+				camera={{ fov: 24, near: 0.1, far: 100, position: [0, 0, 14] }}
+			>
+				<ambientLight intensity={0.8} />
+				<directionalLight position={[4, 6, 6]} intensity={2.4} />
+				<directionalLight position={[-5, -3, 4]} intensity={0.8} />
+				<SpinningMark
+					geometry={geometry}
+					drag={drag}
+					reduced={reduced}
+				/>
+			</Canvas>
+		</div>
+	)
+}

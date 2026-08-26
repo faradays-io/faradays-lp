@@ -26,6 +26,10 @@ const HeroMark3d = dynamic(
 	() => import('@/components/teste/hero-mark-3d').then((m) => m.HeroMark3d),
 	{ ssr: false }
 )
+const SpinMark3d = dynamic(
+	() => import('@/components/teste/hero-mark-3d').then((m) => m.SpinMark3d),
+	{ ssr: false }
+)
 
 export type Hero3dVariant = 'center' | 'split'
 
@@ -77,23 +81,14 @@ const CENTER_MARKS: MarkPlacement[] = [
 	}
 ]
 
-/* lado: coluna direita (~metade da viewport, ~4.8 u visíveis). Poucas
-   marcas e discretas — ficam atrás do bloco de ferramentas + CTAs. */
-const SPLIT_SCENE: Mark3dSettings = { ...SCENE, parallax: 0.5, tilt: 0.16 }
-const SPLIT_MARKS: MarkPlacement[] = [
-	// principal, acima do bloco, sem tocar a borda
-	{ position: [0.35, 1.0, -1.2], scale: 0.62, floatSpeed: 0.9, yaw: -0.2 },
-	// pequena, no fundo, abaixo-esquerda do bloco (longe dos botões)
-	{ position: [-2.3, -2.4, -3.5], scale: 0.34, floatSpeed: 1.3, yaw: 0.25 }
-]
-
 /**
  * Página de teste do hero com a marca 3D (duas variantes):
  * - `center`: CTA centralizado como no hero atual; três marcas ao redor
  *   (esquerda, direita grande, direita pequena no fundo), no canvas
  *   full-bleed atrás da copy.
- * - `split`: h1 + sub à esquerda; à direita, o bloco com a animação das
- *   ferramentas e os CTAs sobre um canvas discreto com duas marcas.
+ * - `split`: copy completa à esquerda (h1 com os ícones das ferramentas,
+ *   sub, CTAs); à direita uma marca só, azul, girando em todos os eixos
+ *   e arrastável (SpinMark3d).
  * Entrada: mesmo stagger do HomeHero, o 3D entra por último. Saída no
  * primeiro scroll (gatilho, não scrub): a copy encolhe, desfoca e sobe;
  * o 3D faz o mesmo efeito, mas DESCENDO. Voltar ao topo reverte.
@@ -198,23 +193,15 @@ export function Hero3dTest({ variant }: { variant: Hero3dVariant }) {
 		}
 	}, [ready])
 
-	const headline =
-		variant === 'center' ? (
-			<>
-				{t.headlineLead}{' '}
-				<span className="whitespace-nowrap">
-					{t.headlineTail}{' '}
-					<HeroToolIcons
-						label={t.toolsLabel}
-						className="ml-[0.05em]"
-					/>
-				</span>
-			</>
-		) : (
-			<>
-				{t.headlineLead} {t.headlineTail}
-			</>
-		)
+	const headline = (
+		<>
+			{t.headlineLead}{' '}
+			<span className="whitespace-nowrap">
+				{t.headlineTail}{' '}
+				<HeroToolIcons label={t.toolsLabel} className="ml-[0.05em]" />
+			</span>
+		</>
+	)
 
 	const ctas = (
 		<div
@@ -295,39 +282,14 @@ export function Hero3dTest({ variant }: { variant: Hero3dVariant }) {
 							>
 								{t.sub}
 							</p>
+							{ctas}
 						</div>
-
-						{/* Coluna direita: canvas discreto atrás; na frente, a
-						   animação das ferramentas e os CTAs. O bloco é
-						   pointer-events-none (só botões recebem) para o hover
-						   chegar nas marcas. */}
-						<div className="relative hidden h-full lg:block">
-							<div
-								data-hero-3d
-								className="absolute inset-0 opacity-0 will-change-transform"
-							>
-								<HeroMark3d
-									settings={SPLIT_SCENE}
-									marks={SPLIT_MARKS}
-									shadow={false}
-									className="h-full w-full"
-								/>
-							</div>
-							<div className="pointer-events-none relative z-10 flex h-full flex-col items-start justify-center pl-8">
-								<div
-									data-hero-item
-									className="flex items-center gap-5 opacity-0"
-								>
-									<HeroToolIcons
-										label={t.toolsLabel}
-										className="text-[4.5rem]"
-									/>
-									<p className="text-foreground/50 max-w-[14rem] font-mono text-xs leading-relaxed tracking-widest uppercase">
-										{t.toolsLabel}
-									</p>
-								</div>
-								{ctas}
-							</div>
+						{/* Uma marca só, azul, girando; arrastar gira. */}
+						<div
+							data-hero-3d
+							className="relative hidden h-full opacity-0 will-change-transform lg:block"
+						>
+							<SpinMark3d className="h-full w-full" />
 						</div>
 					</div>
 				)}
