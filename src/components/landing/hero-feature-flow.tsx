@@ -820,9 +820,9 @@ export function HeroFeatureFlow() {
 			{/* Traço decorativo (public/b.svg inline): camada sticky atrás
 			   dos textos e da demo. Sobe 60svh (a altura do HomeHero) para
 			   o sticky engajar já no topo da página — o path nasce no topo
-			   da viewport no primeiro scroll. A svg é larga (56vw, ~1.9× de
-			   altura) e o flow a desliza para cima enquanto desenha; a
-			   cauda do path sai por baixo. Fita clara, grossa e com blur
+			   da viewport no primeiro scroll. A svg é larga (62vw, ~2.4× de
+			   altura — viewBox 1660×4015, a cauda cabe dentro) e o flow a
+			   desliza para cima enquanto desenha. Fita clara, grossa e com blur
 			   leve; a máscara na base do sticky faz o traço esmaecer antes
 			   da borda — nunca termina "seco", nem quando o sticky solta.
 			   Só desktop. O layer clipa a própria svg, não é ancestral do
@@ -834,9 +834,9 @@ export function HeroFeatureFlow() {
 				<div className="sticky top-0 h-svh overflow-hidden [mask-image:linear-gradient(to_bottom,black_62%,transparent)]">
 					<svg
 						data-flow-stroke-svg
-						viewBox="0 0 1660 3160"
+						viewBox="0 0 1660 4015"
 						fill="none"
-						className="text-foreground/[0.07] absolute top-0 left-[22vw] w-[56vw] blur-[3px] will-change-transform"
+						className="text-foreground/[0.07] absolute top-0 left-[19vw] w-[62vw] blur-[3px] will-change-transform"
 					>
 						<path
 							data-flow-stroke
@@ -844,7 +844,7 @@ export function HeroFeatureFlow() {
 							strokeDasharray="1000 1100"
 							d="M1452.05 76.002C1452.05 76.002 571.55 120.044 571.55 826.886C571.55 1640.23 1683.54 1555.39 1576.66 2338.76C1488.31 2986.22 -224.502 3491.8 122.147 2338.76C468.796 1185.72 967.215 3938 967.215 3938"
 							stroke="currentColor"
-							strokeWidth={130}
+							strokeWidth={170}
 							strokeLinecap="round"
 						/>
 					</svg>
