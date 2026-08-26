@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useEffect, useRef } from 'react'
 
 import { SplitHoverText } from '@/components/custom-ui/split-hover-text'
+import { HeroToolIcons } from '@/components/landing/hero-tool-icons'
 import { useCopy } from '@/components/language-provider'
 import { Button } from '@/components/ui/button'
 import type { Localized } from '@/lib/i18n'
@@ -15,14 +16,20 @@ gsap.registerPlugin(ScrollTrigger)
 
 const COPY = {
 	pt: {
-		headline: 'A operação da sua distribuidora, no WhatsApp.',
-		sub: 'O representante pede na conversa e a IA devolve a cotação formalizada em PDF — com o gestor acompanhando tudo no portal.',
+		// "empresa" cobre distribuidora e indústria numa palavra só. O h1
+		// termina em `headlineTail` + ícones das ferramentas (sem ponto).
+		headlineLead: 'A operação da sua empresa, onde o seu time já',
+		headlineTail: 'trabalha',
+		toolsLabel: 'WhatsApp, SharePoint, OneDrive e Excel',
+		sub: 'Uma IA que conhece o seu negócio e trabalha onde o time já está, tirando da rotina o que hoje depende de alguém lembrar, conferir e digitar.',
 		bookDemo: 'Agende uma demo',
 		exploreProduct: 'Conhecer o produto'
 	},
 	en: {
-		headline: 'Your distribution operation, on WhatsApp.',
-		sub: 'Reps ask in the chat and the AI returns the formalized PDF quote — with managers following everything on the portal.',
+		headlineLead: "Your company's operation, where your team already",
+		headlineTail: 'works',
+		toolsLabel: 'WhatsApp, SharePoint, OneDrive and Excel',
+		sub: 'An AI that knows your business and works where your team already is, taking off your plate whatever still depends on someone remembering, checking and retyping.',
 		bookDemo: 'Book a demo',
 		exploreProduct: 'Explore the product'
 	}
@@ -109,23 +116,37 @@ export function HomeHero() {
 		}
 	}, [ready])
 
+	/* z-10 na section (sem fundo próprio — o wrapper da página já pinta o
+	   bg-background): a camada do traço do HeroFeatureFlow sobe até o topo
+	   da página; a copy fica acima dela e o traço aparece por baixo. */
 	return (
 		<section
 			id="hero"
 			ref={rootRef}
-			className="bg-background relative -mt-23 flex flex-col pt-23"
+			className="relative z-10 -mt-23 flex flex-col pt-23"
 		>
 			{/* Copy + CTA — min-h calculado para deixar ~40svh do painel do
-			   HeroFeatureFlow visível na dobra. */}
+			   HeroFeatureFlow visível na dobra. O padding assimétrico
+			   (pt > pb) empurra o bloco ~40px abaixo do centro, mais perto
+			   da demo. */}
 			<div
 				data-hero-copy
-				className="flex min-h-[calc(60svh-5.75rem)] w-full flex-col items-center justify-center px-7 pt-12 pb-16 text-center"
+				className="flex min-h-[calc(60svh-5.75rem)] w-full flex-col items-center justify-center px-7 pt-24 pb-8 text-center"
 			>
 				<h1
 					data-hero-item
-					className="font-heading max-w-4xl text-5xl leading-[0.95] tracking-tight text-balance opacity-0 min-[810px]:text-[4.75rem]"
+					className="font-heading max-w-3xl text-6xl text-balance opacity-0"
 				>
-					{t.headline}
+					{t.headlineLead}{' '}
+					{/* Última palavra + ícones num nowrap: o slot nunca cai
+					   sozinho na linha de baixo. */}
+					<span className="whitespace-nowrap">
+						{t.headlineTail}{' '}
+						<HeroToolIcons
+							label={t.toolsLabel}
+							className="ml-[0.05em]"
+						/>
+					</span>
 				</h1>
 
 				<p

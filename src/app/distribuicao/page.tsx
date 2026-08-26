@@ -13,7 +13,7 @@ import { TestimonialsSection } from '@/components/landing/testimonials-section'
 export const metadata: Metadata = {
 	title: 'Distribuição — Faradays',
 	description:
-		'A operação da sua distribuidora no WhatsApp: cotação formalizada em PDF na conversa, RFQ de compra automática, laudos com validade viva — e uma IA que nunca inventa número.'
+		'IA para distribuidoras e indústrias que trabalha onde o time já está — WhatsApp, SharePoint, OneDrive e Corp: cotações, compras e documentos resolvidos na rotina, com o gestor acompanhando tudo no portal.'
 }
 
 export default function DistribuicaoPage() {

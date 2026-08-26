@@ -25,25 +25,29 @@ gsap.registerPlugin(ScrollTrigger)
  * trava no centro da viewport.
  *
  * Coreografia (desktop, tudo por gatilho — nada de scrub):
- * 1. O primeiro scroll down toca a diagonal da demo até a metade direita,
+ * 1. Em repouso a demo está um pouco mais larga (--demo-w 1.15) e mais
+ *    alta que a posição pinada. O primeiro scroll down toca a diagonal
+ *    até a metade direita — e, junto, a largura volta a 1 e o lift some —
  *    em sincronia com a saída do CTA no HomeHero.
  * 2. O texto 1 sobe pela esquerda e SEGURA no centro (container de 300svh
- *    com conteúdo sticky). O scroll extra alimenta os estágios do hold:
- *    um cursor animado clica no PDF da conversa → surge o card de preview
- *    → o texto 1 sai com o mesmo efeito do CTA (encolhe, desfoca, sobe)
- *    enquanto, em sincronia, a travessia direita → esquerda roda inteira.
+ *    com conteúdo sticky). No início do hold um cursor animado clica no
+ *    PDF da conversa e o card de preview surge logo em seguida (mesma
+ *    timeline — independe do scroll); o scroll extra dispara a saída do
+ *    texto 1 com o mesmo efeito do CTA (encolhe, desfoca, sobe) enquanto,
+ *    em sincronia, a travessia direita → esquerda roda inteira.
  * 3. Os textos 2–4 sobem pela direita com a demo parada à esquerda, cada
- *    um no mesmo hold do bloco 1 (300svh com conteúdo sticky; card-eco na
- *    metade, texto sai em +1.3vh, card em +1.65vh) — a "trava" que impede
- *    atravessar as features numa tacada só. Quando cada bloco cruza o
- *    gatilho, uma "tour" roda na demo: o cursor viaja até o item da
- *    sidebar, clica, a tela troca e a micro-interação da feature acontece
- *    (Gerar PDF → dialog PTAX → toast; marcar vencedora → fechar cotação →
- *    toast; cobrar documento vencido → badge muda). Dentro do hold, um
- *    card-eco surge fora do frame (câmbio congelado / melhor oferta /
- *    alerta de vencimento), o texto sai com o efeito do CTA e o card
- *    segura sozinho até o fim do hold. O card de PDF segue exclusivo do
- *    hold do bloco 1. No fim da seção o sticky solta sozinho.
+ *    um no mesmo hold do bloco 1 (300svh com conteúdo sticky; texto sai
+ *    em +1.3vh, card em +1.65vh) — a "trava" que impede atravessar as
+ *    features numa tacada só. Quando cada bloco cruza o gatilho, uma
+ *    "tour" roda na demo: o cursor viaja até o item da sidebar, clica, a
+ *    tela troca e a micro-interação da feature acontece (Gerar PDF →
+ *    card; marcar vencedora → fechar cotação → toast + card; cobrar
+ *    documento vencido → badge muda + card). O card-eco (câmbio congelado
+ *    / melhor oferta / alerta de vencimento) faz parte da tour: surge logo
+ *    depois do clique, nunca por posição de scroll. Dentro do hold o texto
+ *    sai com o efeito do CTA e o card segura sozinho até o fim. O card de
+ *    PDF segue exclusivo do hold do bloco 1. No fim da seção o sticky
+ *    solta sozinho.
  *
  * Os alvos do cursor são medidos por getBoundingClientRect relativos ao
  * [data-demo-box] (valores function-based + invalidate no refresh), então
@@ -117,13 +121,18 @@ export function HeroFeatureFlow() {
 			// +/- 25vw centraliza a demo em cada metade da viewport.
 			const shift = () => window.innerWidth / 4
 			const vh = () => window.innerHeight
+			// Lift de repouso: na dobra a demo fica ~5svh acima do centro
+			// da sua camada (mais perto do CTA); some conforme a diagonal
+			// avança, então a posição pinada continua a de sempre.
+			const lift = () => Math.round(vh() * 0.05)
 
-			// Compensador de pin: aplica o y da diagonal a cada frame.
+			// Compensador de pin: aplica o y da diagonal a cada frame,
+			// misturado com o lift de repouso pelo mesmo progresso.
 			const proxy = { p: 0 }
 			let lastY = 0
 			const applyY = () => {
 				const top = Math.max(0, root.getBoundingClientRect().top)
-				const y = -proxy.p * top
+				const y = -proxy.p * top - (1 - proxy.p) * lift()
 				if (y !== lastY) {
 					lastY = y
 					gsap.set(stage, { y })
@@ -131,11 +140,20 @@ export function HeroFeatureFlow() {
 			}
 			gsap.ticker.add(applyY)
 
-			// Diagonal centro → direita/cima, disparada no gatilho.
+			// Diagonal centro → direita/cima, disparada no gatilho. No mesmo
+			// movimento a demo volta à largura pinada (--demo-w 1.15 → 1;
+			// a fórmula da largura vive no CSS do box).
 			const out = gsap
 				.timeline({ paused: true })
 				.to(stage, { x: shift, duration: 1.1, ease: 'power3.inOut' }, 0)
 				.to(proxy, { p: 1, duration: 1.1, ease: 'power3.inOut' }, 0)
+			if (box) {
+				out.to(
+					box,
+					{ '--demo-w': 1, duration: 1.1, ease: 'power3.inOut' },
+					0
+				)
+			}
 
 			/* Alvo do cursor: ponto do [data-poi] medido na hora (function-
 			   based), em coordenadas relativas ao [data-demo-box] — ambos os
@@ -210,8 +228,37 @@ export function HeroFeatureFlow() {
 				)
 			}
 
+			/* Pop de um card fora do frame (preview do PDF ou card-eco):
+			   entrada pelo elemento externo — a saída é sempre pelo wrapper
+			   de fade, propriedade separada, então toggles revertidos num
+			   salto único nunca disputam o mesmo autoAlpha. */
+			const addPop = (
+				tl: gsap.core.Timeline,
+				el: HTMLElement | null,
+				rotate: number,
+				position?: gsap.Position
+			) => {
+				if (!el) return
+				tl.fromTo(
+					el,
+					{ autoAlpha: 0, y: 28, scale: 0.9, rotate: -rotate / 2 },
+					{
+						autoAlpha: 1,
+						y: 0,
+						scale: 1,
+						rotate,
+						duration: 0.6,
+						ease: 'back.out(1.6)',
+						immediateRender: false
+					},
+					position
+				)
+			}
+
 			/* Estágio 1 do hold: o cursor entra de baixo, desliza até o PDF
-			   na conversa e "clica" (pulso + anel). */
+			   na conversa, "clica" (pulso + anel) e o card de preview surge
+			   ao lado da demo — na mesma timeline, logo depois do clique,
+			   sem depender de quanto o usuário rolou. */
 			const cursorTl = gsap.timeline({ paused: true })
 			if (cursor && ring && box) {
 				const pdf = poi('chat-pdf', 0.55, 0.6)
@@ -232,26 +279,10 @@ export function HeroFeatureFlow() {
 					}
 				)
 				addClick(cursorTl)
+				addPop(cursorTl, card, -4, '+=0.15')
 			}
 
-			// Estágio 2: o card de preview surge ao lado da demo.
-			const cardTl = gsap.timeline({ paused: true })
-			if (card) {
-				cardTl.fromTo(
-					card,
-					{ autoAlpha: 0, y: 28, scale: 0.9, rotate: 2 },
-					{
-						autoAlpha: 1,
-						y: 0,
-						scale: 1,
-						rotate: -4,
-						duration: 0.6,
-						ease: 'back.out(1.6)'
-					}
-				)
-			}
-
-			/* Estágio 3: o texto 1 sai com o efeito do CTA e, JUNTO com ele
+			/* Estágio 2: o texto 1 sai com o efeito do CTA e, JUNTO com ele
 			   (mesma timeline, ambos na posição 0), a demo atravessa para a
 			   esquerda — a animação roda inteira, sem seguir o scroll. */
 			const exitTl = gsap.timeline({ paused: true })
@@ -296,10 +327,13 @@ export function HeroFeatureFlow() {
 			}
 
 			/* Tours das features 2–4: o cursor clica no item da sidebar, a
-			   tela troca e a micro-interação roda. Cada tour é HERMÉTICA —
-			   começa e termina com o cursor invisível e overlays fechados —
-			   então progress(0)/progress(1) são estados canônicos e a cadeia
-			   pode ser forçada em qualquer ordem de scroll. */
+			   tela troca, a micro-interação roda e o card-eco da feature
+			   surge fora do frame logo depois do clique — o card faz parte
+			   da tour, não de um gatilho de scroll. Cada tour é HERMÉTICA —
+			   começa e termina com o cursor invisível e overlays fechados
+			   (o card fica; quem o apaga é o fadeTl do hold) — então
+			   progress(0)/progress(1) são estados canônicos e a cadeia pode
+			   ser forçada em qualquer ordem de scroll. */
 			const screenIds = HOME_FEATURES.map((feature) => feature.id)
 			const buildTour = (index: number) => {
 				const tl = gsap.timeline({ paused: true })
@@ -311,6 +345,7 @@ export function HeroFeatureFlow() {
 				const navPrev = q(`[data-nav-active="${prevId}"]`)
 				const crumbCur = q(`[data-crumb="${id}"]`)
 				const crumbPrev = q(`[data-crumb="${prevId}"]`)
+				const echo = q(`[data-feature-card="${id}"]`)
 				if (!box || !cursor || !ring || !cur || !prev) return tl
 
 				// 1 · o cursor entra e clica no item do menu.
@@ -412,72 +447,13 @@ export function HeroFeatureFlow() {
 					swap
 				)
 
-				// 3 · micro-interação da tela.
+				// 3 · micro-interação da tela (+ card-eco logo após o clique).
 				if (id === 'venda') {
-					const dialog = q('[data-overlay="venda-dialog"]')
-					const panel = q('[data-overlay-panel]')
-					const toast = q('[data-overlay="venda-toast"]')
+					// Gerar PDF → o card do câmbio congelado responde direto,
+					// sem dialog de confirmação nem toast.
 					travel(tl, poi('venda-gerar'), 0.8, 1.8)
 					addClick(tl, 2.6)
-					if (dialog && panel) {
-						tl.fromTo(
-							dialog,
-							{ autoAlpha: 0 },
-							{
-								autoAlpha: 1,
-								duration: 0.25,
-								ease: 'power2.out',
-								immediateRender: false
-							},
-							3.0
-						)
-						tl.fromTo(
-							panel,
-							{ scale: 0.92, y: 14 },
-							{
-								scale: 1,
-								y: 0,
-								duration: 0.45,
-								ease: 'back.out(1.6)',
-								immediateRender: false
-							},
-							3.0
-						)
-						travel(tl, poi('venda-confirm'), 0.6, 3.4)
-						addClick(tl, 4.0)
-						tl.to(
-							dialog,
-							{
-								autoAlpha: 0,
-								duration: 0.3,
-								ease: 'power2.out'
-							},
-							4.4
-						)
-					}
-					if (toast) {
-						tl.fromTo(
-							toast,
-							{ autoAlpha: 0, y: 16 },
-							{
-								autoAlpha: 1,
-								y: 0,
-								duration: 0.4,
-								ease: 'back.out(1.4)',
-								immediateRender: false
-							},
-							4.55
-						)
-						tl.to(
-							toast,
-							{
-								autoAlpha: 0,
-								duration: 0.35,
-								ease: 'power2.out'
-							},
-							6.0
-						)
-					}
+					addPop(tl, echo, 4, 3.0)
 				} else if (id === 'rfq') {
 					const checkOn = q('[data-check-on]')
 					const toast = q('[data-overlay="rfq-toast"]')
@@ -522,6 +498,7 @@ export function HeroFeatureFlow() {
 							5.8
 						)
 					}
+					addPop(tl, echo, 4, 4.5)
 				} else if (id === 'docs') {
 					const before = q('[data-docs-badge-before]')
 					const after = q('[data-docs-badge-after]')
@@ -550,6 +527,7 @@ export function HeroFeatureFlow() {
 							3.0
 						)
 					}
+					addPop(tl, echo, 4, 3.3)
 				}
 
 				// 4 · o cursor sai de cena — a tour termina "limpa".
@@ -562,36 +540,21 @@ export function HeroFeatureFlow() {
 			}
 			const tours = blocks.slice(1).map((_, i) => buildTour(i + 1))
 
-			/* Estágios dos holds 2–4: o card-eco surge fora do frame na
-			   METADE do hold e tem trava própria — o texto sai primeiro
-			   (mesmo ponto do bloco 1) e o card segura sozinho até perto do
-			   fim, quando o fade dele dispara. */
+			/* Estágios dos holds 2–4: o card-eco já entrou pela tour; aqui
+			   ficam só as saídas — o texto sai primeiro (mesmo ponto do
+			   bloco 1) e o card segura sozinho até perto do fim, quando o
+			   fade dele dispara. */
 			const stages = blocks.slice(1).map((block, i) => {
 				const id = screenIds[i + 1]
 				const copyEl = block.querySelector<HTMLElement>(
 					'[data-feature-copy]'
 				)
-				const echo = q(`[data-feature-card="${id}"]`)
-				// Saída pelo wrapper de fade, entrada pelo card — mesma
-				// separação de propriedades do card de PDF do bloco 1.
-				const echoFade = echo?.querySelector<HTMLElement>(
-					'[data-feature-card-fade]'
+				// Saída pelo wrapper de fade (a entrada, na tour, anima o
+				// card externo) — mesma separação de propriedades do card
+				// de PDF do bloco 1.
+				const echoFade = q(
+					`[data-feature-card="${id}"] [data-feature-card-fade]`
 				)
-				const echoTl = gsap.timeline({ paused: true })
-				if (echo) {
-					echoTl.fromTo(
-						echo,
-						{ autoAlpha: 0, y: 28, scale: 0.9, rotate: -2 },
-						{
-							autoAlpha: 1,
-							y: 0,
-							scale: 1,
-							rotate: 4,
-							duration: 0.6,
-							ease: 'back.out(1.6)'
-						}
-					)
-				}
 				const byeTl = gsap.timeline({ paused: true })
 				if (copyEl) {
 					byeTl.to(
@@ -615,7 +578,7 @@ export function HeroFeatureFlow() {
 						0
 					)
 				}
-				return { echoTl, byeTl, fadeTl }
+				return { byeTl, fadeTl }
 			})
 
 			/* Recarga com scroll restaurado (ou reduced motion): estado
@@ -635,10 +598,11 @@ export function HeroFeatureFlow() {
 			})
 
 			/* Gatilhos do hold, medidos no container de 300svh do bloco 1:
-			   o sticky engaja em 'top top' (texto seguro no centro) e os
-			   estágios disparam conforme o scroll avança dentro do hold.
-			   O primeiro também congela o chat no quadro final — o PDF
-			   precisa estar em cena quando o cursor clicar. */
+			   o sticky engaja em 'top top' (texto seguro no centro) e toca
+			   cursor + clique + card de uma vez; a saída dispara conforme o
+			   scroll avança dentro do hold. O primeiro também congela o
+			   chat no quadro final — o PDF precisa estar em cena quando o
+			   cursor clicar. */
 			const holdTriggers = [
 				ScrollTrigger.create({
 					trigger: blocks[0],
@@ -652,18 +616,6 @@ export function HeroFeatureFlow() {
 					onLeaveBack: () => {
 						demoRef.current?.holdChat(false)
 						if (!reduce) cursorTl.reverse()
-					}
-				}),
-				ScrollTrigger.create({
-					trigger: blocks[0],
-					start: () => `top+=${vh() * 0.7} top`,
-					onEnter: () => {
-						if (initial || reduce) cardTl.progress(1)
-						else cardTl.play()
-					},
-					onLeaveBack: () => {
-						if (reduce) cardTl.progress(0)
-						else cardTl.reverse()
 					}
 				}),
 				ScrollTrigger.create({
@@ -704,22 +656,10 @@ export function HeroFeatureFlow() {
 				})
 			)
 
-			/* Gatilhos dos estágios dos holds 2–4: card-eco na metade do
-			   hold, saída do texto em +1.3vh (como no bloco 1) e fade do
-			   card só em +1.65vh — a trava própria do card. */
+			/* Gatilhos dos estágios dos holds 2–4: saída do texto em +1.3vh
+			   (como no bloco 1) e fade do card só em +1.65vh — a trava
+			   própria do card. */
 			const stageTriggers = blocks.slice(1).flatMap((block, i) => [
-				ScrollTrigger.create({
-					trigger: block,
-					start: () => `top+=${vh() * 1.0} top`,
-					onEnter: () => {
-						if (initial || reduce) stages[i].echoTl.progress(1)
-						else stages[i].echoTl.play()
-					},
-					onLeaveBack: () => {
-						if (reduce) stages[i].echoTl.progress(0)
-						else stages[i].echoTl.reverse()
-					}
-				}),
 				ScrollTrigger.create({
 					trigger: block,
 					start: () => `top+=${vh() * 1.3} top`,
@@ -747,6 +687,60 @@ export function HeroFeatureFlow() {
 			])
 			initial = false
 
+			/* Traço do b.svg — ÚNICO efeito com scrub da seção. Começa no
+			   mesmo ponto da diagonal da demo (scroll 8, absoluto) com o
+			   início do path no topo da viewport e termina 0.4vh antes do
+			   sticky soltar (fim da seção). Dois tweens na mesma timeline:
+			   - stroke-dashoffset 1010 (nada) → 0 (completo). pathLength=
+			     "1000" normaliza as unidades em mil passos (o CSSPlugin do
+			     GSAP arredonda px para inteiro — autoRound — e com
+			     pathLength=1 o traço pulava de 1 a 0); gap 1100 > 1000
+			     garante que o próximo dash nunca entra; os 10 extras
+			     escondem o cap redondo (raio 50 ≈ 8 unidades normalizadas)
+			     antes do início.
+			   - y da svg: ela é mais alta que a viewport, então desliza de
+			     "topo alinhado" a "base alinhada" enquanto desenha — o path
+			     inteiro passa pela tela. */
+			const stroke = q('[data-flow-stroke]')
+			const strokeSvg = q('[data-flow-stroke-svg]')
+			const strokeTl =
+				stroke && strokeSvg
+					? reduce
+						? gsap.timeline().set(stroke, { strokeDashoffset: 0 })
+						: gsap
+								.timeline({
+									defaults: { ease: 'none' },
+									scrollTrigger: {
+										start: 8,
+										endTrigger: root,
+										end: () =>
+											`bottom-=${vh() * 0.4} bottom`,
+										scrub: 0.8,
+										invalidateOnRefresh: true
+									}
+								})
+								.fromTo(
+									stroke,
+									{ strokeDashoffset: 1010 },
+									{ strokeDashoffset: 0, autoRound: false },
+									0
+								)
+								.fromTo(
+									strokeSvg,
+									{ y: 0 },
+									{
+										y: () =>
+											Math.min(
+												0,
+												vh() -
+													strokeSvg.getBoundingClientRect()
+														.height
+											)
+									},
+									0
+								)
+					: null
+
 			// Resize/reflow: re-mede os alvos das timelines paradas.
 			const timelines = [cursorTl, ...tours]
 			const onRefresh = () => {
@@ -759,28 +753,31 @@ export function HeroFeatureFlow() {
 			return () => {
 				gsap.ticker.remove(applyY)
 				ScrollTrigger.removeEventListener('refresh', onRefresh)
+				strokeTl?.scrollTrigger?.kill()
+				strokeTl?.kill()
+				if (stroke) gsap.set(stroke, { clearProps: 'strokeDashoffset' })
+				if (strokeSvg) gsap.set(strokeSvg, { clearProps: 'transform' })
 				trigger.kill()
 				holdTriggers.forEach((holdTrigger) => holdTrigger.kill())
 				tourTriggers.forEach((tourTrigger) => tourTrigger.kill())
 				stageTriggers.forEach((stageTrigger) => stageTrigger.kill())
 				out.kill()
 				cursorTl.kill()
-				cardTl.kill()
 				exitTl.kill()
 				tours.forEach((tour) => tour.kill())
 				stages.forEach((stage2) => {
-					stage2.echoTl.kill()
 					stage2.byeTl.kill()
 					stage2.fadeTl.kill()
 				})
 				demoRef.current?.holdChat(false)
 				gsap.set(stage, { clearProps: 'transform' })
+				if (box) gsap.set(box, { clearProps: '--demo-w' })
 				const staged = [copy1, cursor, ring, card].filter(
 					(el): el is HTMLElement => Boolean(el)
 				)
 				if (staged.length) gsap.set(staged, { clearProps: 'all' })
 				const layers = root.querySelectorAll<HTMLElement>(
-					'[data-screen], [data-nav-active], [data-crumb], [data-overlay], [data-overlay-panel], [data-check-on], [data-docs-badge-before], [data-docs-badge-after], [data-feature-copy], [data-feature-card], [data-feature-card-fade], [data-demo-card-fade]'
+					'[data-screen], [data-nav-active], [data-crumb], [data-overlay], [data-check-on], [data-docs-badge-before], [data-docs-badge-after], [data-feature-copy], [data-feature-card], [data-feature-card-fade], [data-demo-card-fade]'
 				)
 				if (layers.length) gsap.set(layers, { clearProps: 'all' })
 			}
@@ -803,11 +800,6 @@ export function HeroFeatureFlow() {
 			<p className="text-body-lg text-foreground/70 w-full max-w-md">
 				{feature.description[lang]}
 			</p>
-			{/* Linha técnica (briefing 3.3-b): prova de domínio em mono,
-			   separada da copy de negócio. */}
-			<p className="text-foreground/45 w-full max-w-md font-mono text-xs leading-relaxed">
-				{feature.tech[lang]}
-			</p>
 		</>
 	)
 
@@ -822,6 +814,40 @@ export function HeroFeatureFlow() {
 					<div data-flow-intro className="h-full opacity-0">
 						<AsciiFieldGl className="[mask-image:linear-gradient(to_bottom,transparent,black_18%,black_82%,transparent)]" />
 					</div>
+				</div>
+			</div>
+
+			{/* Traço decorativo (public/b.svg inline): camada sticky atrás
+			   dos textos e da demo. Sobe 60svh (a altura do HomeHero) para
+			   o sticky engajar já no topo da página — o path nasce no topo
+			   da viewport no primeiro scroll. A svg é larga (62vw, ~2.4× de
+			   altura — viewBox 1660×4015, a cauda cabe dentro) e o flow a
+			   desliza para cima enquanto desenha. Fita clara, grossa e com blur
+			   leve; a máscara na base do sticky faz o traço esmaecer antes
+			   da borda — nunca termina "seco", nem quando o sticky solta.
+			   Só desktop. O layer clipa a própria svg, não é ancestral do
+			   sticky da demo. */}
+			<div
+				aria-hidden
+				className="pointer-events-none absolute inset-x-0 top-[-60svh] bottom-0 z-0 hidden lg:block"
+			>
+				<div className="sticky top-0 h-svh overflow-hidden [mask-image:linear-gradient(to_bottom,black_62%,transparent)]">
+					<svg
+						data-flow-stroke-svg
+						viewBox="0 0 1660 4015"
+						fill="none"
+						className="text-foreground/[0.07] absolute top-0 left-[19vw] w-[62vw] blur-[3px] will-change-transform"
+					>
+						<path
+							data-flow-stroke
+							pathLength={1000}
+							strokeDasharray="1000 1100"
+							d="M1452.05 76.002C1452.05 76.002 571.55 120.044 571.55 826.886C571.55 1640.23 1683.54 1555.39 1576.66 2338.76C1488.31 2986.22 -224.502 3491.8 122.147 2338.76C468.796 1185.72 967.215 3938 967.215 3938"
+							stroke="currentColor"
+							strokeWidth={170}
+							strokeLinecap="round"
+						/>
+					</svg>
 				</div>
 			</div>
 
