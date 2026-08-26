@@ -54,13 +54,13 @@ const CENTER_SCENE: Mark3dSettings = { ...SCENE, parallax: 0, tilt: 0.18 }
    full-bleed enxerga ~9.8 u de largura e ~5.4 u de altura no plano z = 0.
    Marcas bem nos cantos, fora da copy centralizada (~±2.6 u). */
 const CENTER_MARKS: MarkPlacement[] = [
-	// esquerda, meio-alto, espelhada; yaw de 90° vira a face para o outro
-	// lado (a extrusão fica de frente), pitch positivo mira o centro
+	// esquerda, meio-alto, espelhada; yaw de 60° vira a face para o outro
+	// lado (extrusão quase de frente), pitch positivo mira o centro
 	{
 		position: [-3.9, 0.9, 0],
 		scale: 0.58,
 		floatSpeed: 0.9,
-		yaw: Math.PI / 2,
+		yaw: Math.PI / 3,
 		pitch: 0.22,
 		mirror: true,
 		parallax: 0.22,
@@ -293,7 +293,7 @@ export function Hero3dTest({ variant }: { variant: Hero3dVariant }) {
 						{/* pl no lg+ empurra a copy para perto do objeto. */}
 						<div
 							data-hero-copy
-							className="flex h-full flex-col justify-center text-left lg:pl-16"
+							className="flex h-full flex-col justify-center text-left lg:pl-28"
 						>
 							<h1
 								data-hero-item
