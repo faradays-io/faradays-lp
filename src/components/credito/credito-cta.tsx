@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 import { SplitHoverText } from '@/components/custom-ui/split-hover-text'
-import { ArrowSwapIcon } from '@/components/landing/arrow-swap-icon'
+import { ArrowCtaButton } from '@/components/landing/arrow-cta-button'
 import { AsciiField } from '@/components/landing/hero-demo'
 import { Reveal } from '@/components/landing/reveal'
 import { SECTION_TITLE } from '@/components/landing/type'
@@ -46,19 +46,9 @@ export function CreditoCta() {
 								</SplitHoverText>
 							</Link>
 						</Button>
-						<Button
-							asChild
-							size="lg"
-							variant="ghost"
-							className="gap-6 px-6 hover:bg-transparent dark:hover:bg-transparent"
-						>
-							<Link href="/importacoes">
-								<span className="transition-transform duration-300 group-hover/button:translate-x-2">
-									Conheça as outras soluções
-								</span>
-								<ArrowSwapIcon />
-							</Link>
-						</Button>
+						<ArrowCtaButton href="/importacoes">
+							Conheça as outras soluções
+						</ArrowCtaButton>
 					</div>
 				</Reveal>
 			</div>

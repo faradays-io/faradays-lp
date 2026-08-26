@@ -288,6 +288,45 @@
 			transform: scale(1.14) translateY(-2.5%);
 		}
 	}
+
+	/* Levitação de um nó da grade de features no hover: sobe, paira e volta.
+	   O ciclo fecha em translateY(0) de propósito — sair do hover no meio da
+	   animação a corta seco, e um keyframe simétrico esconde o corte. As
+	   unidades são do sistema do viewBox, não pixels de tela. */
+	/* Pisca da marca na chapa da FIG 04: dois apagões rápidos e fica azul.
+	   `steps(1, end)` é o que faz piscar — com interpolação cada troca viraria
+	   um crossfade. `forwards` segura o azul enquanto o cursor está na figura. */
+	--animate-mark-blink: mark-blink 0.6s steps(1, end) forwards;
+	@keyframes mark-blink {
+		0% {
+			fill: #4d8dff;
+		}
+		11% {
+			fill: #545454;
+		}
+		22% {
+			fill: #4d8dff;
+		}
+		33% {
+			fill: #545454;
+		}
+		44%,
+		100% {
+			fill: #4d8dff;
+		}
+	}
+
+	--animate-node-float: node-float 2.8s ease-in-out infinite;
+	@keyframes node-float {
+		0%,
+		100% {
+			transform: translateY(0);
+		}
+		42%,
+		58% {
+			transform: translateY(-12px);
+		}
+	}
 }
 
 /* Underline animado: no hover a linha desenha da esquerda para a direita;
