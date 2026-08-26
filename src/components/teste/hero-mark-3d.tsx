@@ -70,6 +70,10 @@ export type MarkPlacement = {
 	floatSpeed?: number
 	/** Rotação Y de repouso (rad) — "para onde a marca olha". */
 	yaw?: number
+	/** Rotação X de repouso (rad): positivo inclina a face para baixo. */
+	pitch?: number
+	/** Multiplica a inclinação com o ponteiro (1 = settings.tilt). */
+	tiltScale?: number
 	/** Espelha o eixo X do ponteiro (inclinação e parallax) — para marcas
 	   de lados opostos se moverem como reflexo uma da outra. */
 	mirror?: boolean
@@ -269,8 +273,9 @@ function Mark({
 		const sx = placement.mirror ? -1 : 1
 		const px = reduced ? 0 : pointer.current.x
 		const py = reduced ? 0 : pointer.current.y
-		const tx = -py * settings.tilt
-		const ty = (placement.yaw ?? 0) + sx * px * settings.tilt
+		const tilt = settings.tilt * (placement.tiltScale ?? 1)
+		const tx = (placement.pitch ?? 0) - py * tilt
+		const ty = (placement.yaw ?? 0) + sx * px * tilt
 		g.rotation.x = THREE.MathUtils.damp(g.rotation.x, tx, 4, dt)
 		g.rotation.y = THREE.MathUtils.damp(g.rotation.y, ty, 4, dt)
 		const amount = placement.parallax ?? 0

@@ -45,39 +45,49 @@ const SCENE: Mark3dSettings = {
 	hoverColor: '#0065e0'
 }
 
-/* centro: parallax da câmera desligado — cada marca tem o seu, espelhado
-   entre os lados (o lado esquerdo é reflexo do direito) e com yaw de
-   repouso "olhando" para o centro. */
-const CENTER_SCENE: Mark3dSettings = { ...SCENE, parallax: 0, tilt: 0.28 }
+/* centro: parallax da câmera desligado — cada marca tem o seu (pequeno e
+   diferente por marca), espelhado entre os lados (o esquerdo é reflexo do
+   direito) e com yaw/pitch de repouso "olhando" para o centro. */
+const CENTER_SCENE: Mark3dSettings = { ...SCENE, parallax: 0, tilt: 0.18 }
 
 /* Unidades da cena: a marca-base tem 3.2 de largura; a 1440×~800 o canvas
    full-bleed enxerga ~9.8 u de largura e ~5.4 u de altura no plano z = 0.
    Marcas bem nos cantos, fora da copy centralizada (~±2.6 u). */
 const CENTER_MARKS: MarkPlacement[] = [
-	// esquerda, meio-alto, espelhada
+	// esquerda, meio-alto, espelhada; pitch positivo mira o centro (está
+	// acima dele) e o yaw vira a face para a direita
 	{
 		position: [-3.9, 0.9, 0],
 		scale: 0.58,
 		floatSpeed: 0.9,
 		yaw: 0.35,
+		pitch: 0.22,
 		mirror: true,
-		parallax: 0.35
+		parallax: 0.22,
+		tiltScale: 0.8
 	},
-	// direita, canto inferior, grande
+	// direita, canto inferior, grande — a menos reativa das da frente
 	{
 		position: [3.35, -1.45, 0],
 		scale: 0.6,
 		floatSpeed: 1.1,
 		yaw: -0.35,
-		parallax: 0.35
-	},
-	// direita, canto superior, pequena, no fundo
+		parallax: 0.16,
+		tiltScale: 0.65
+	}
+]
+
+/* A pequena do fundo vai num canvas próprio, atrás, com blur leve em CSS
+   (não há como desfocar um mesh isolado sem pós-processamento). Reage
+   bem menos: está longe. */
+const CENTER_BACK_MARKS: MarkPlacement[] = [
 	{
 		position: [2.9, 1.65, -4],
 		scale: 0.42,
 		floatSpeed: 1.4,
 		yaw: -0.25,
-		parallax: 0.6
+		parallax: 0.07,
+		tiltScale: 0.35
 	}
 ]
 
@@ -238,11 +248,18 @@ export function Hero3dTest({ variant }: { variant: Hero3dVariant }) {
 							data-hero-3d
 							className="absolute inset-0 opacity-0 will-change-transform"
 						>
+							{/* Fundo desfocado (só a marca pequena) + frente nítida. */}
+							<HeroMark3d
+								settings={CENTER_SCENE}
+								marks={CENTER_BACK_MARKS}
+								shadow={false}
+								className="absolute inset-0 blur-[1.5px]"
+							/>
 							<HeroMark3d
 								settings={CENTER_SCENE}
 								marks={CENTER_MARKS}
 								shadow={false}
-								className="h-full w-full"
+								className="absolute inset-0"
 							/>
 						</div>
 						<div
@@ -265,7 +282,7 @@ export function Hero3dTest({ variant }: { variant: Hero3dVariant }) {
 						</div>
 					</>
 				) : (
-					<div className="max-w-section mx-auto grid h-full grid-cols-1 gap-x-12 px-7 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
+					<div className="max-w-section mx-auto grid h-full grid-cols-1 gap-x-4 px-7 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
 						<div
 							data-hero-copy
 							className="flex h-full flex-col justify-center text-left"
@@ -285,9 +302,11 @@ export function Hero3dTest({ variant }: { variant: Hero3dVariant }) {
 							{ctas}
 						</div>
 						{/* Uma marca só, azul, girando; arrastar gira. */}
+						{/* Margem negativa puxa o objeto para perto da copy (a
+						   coluna da copy tem folga à direita do max-w-2xl). */}
 						<div
 							data-hero-3d
-							className="relative hidden h-full opacity-0 will-change-transform lg:block"
+							className="relative hidden h-full opacity-0 will-change-transform lg:-ml-24 lg:block"
 						>
 							<SpinMark3d className="h-full w-full" />
 						</div>
