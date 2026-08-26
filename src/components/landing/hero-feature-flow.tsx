@@ -687,6 +687,37 @@ export function HeroFeatureFlow() {
 			])
 			initial = false
 
+			/* Traço do b.svg — ÚNICO efeito com scrub da seção: o
+			   stroke-dashoffset segue o scroll de 1050 (nada desenhado) a 0
+			   (completo), da travessia da demo para a esquerda (bloco 1,
+			   +1.3vh) até o hold da última feature. pathLength="1000" no
+			   path normaliza as unidades (mil passos: o CSSPlugin do GSAP
+			   arredonda px para inteiro — autoRound — e com pathLength=1 o
+			   traço pulava de 1 a 0); o gap 1100 > 1000 garante que o
+			   próximo dash nunca entra; os 50 extras escondem o cap redondo
+			   antes do início. */
+			const stroke = q('[data-flow-stroke]')
+			const strokeTween = stroke
+				? reduce
+					? gsap.set(stroke, { strokeDashoffset: 0 })
+					: gsap.fromTo(
+							stroke,
+							{ strokeDashoffset: 1050 },
+							{
+								strokeDashoffset: 0,
+								ease: 'none',
+								autoRound: false,
+								scrollTrigger: {
+									trigger: blocks[0],
+									start: () => `top+=${vh() * 1.3} top`,
+									endTrigger: blocks[blocks.length - 1],
+									end: () => `top+=${vh() * 0.5} top`,
+									scrub: 0.8
+								}
+							}
+						)
+				: null
+
 			// Resize/reflow: re-mede os alvos das timelines paradas.
 			const timelines = [cursorTl, ...tours]
 			const onRefresh = () => {
@@ -699,6 +730,9 @@ export function HeroFeatureFlow() {
 			return () => {
 				gsap.ticker.remove(applyY)
 				ScrollTrigger.removeEventListener('refresh', onRefresh)
+				strokeTween?.scrollTrigger?.kill()
+				strokeTween?.kill()
+				if (stroke) gsap.set(stroke, { clearProps: 'strokeDashoffset' })
 				trigger.kill()
 				holdTriggers.forEach((holdTrigger) => holdTrigger.kill())
 				tourTriggers.forEach((tourTrigger) => tourTrigger.kill())
@@ -756,6 +790,34 @@ export function HeroFeatureFlow() {
 					<div data-flow-intro className="h-full opacity-0">
 						<AsciiFieldGl className="[mask-image:linear-gradient(to_bottom,transparent,black_18%,black_82%,transparent)]" />
 					</div>
+				</div>
+			</div>
+
+			{/* Traço decorativo (public/b.svg inline): camada sticky atrás
+			   dos textos e da demo, centrada, um pouco maior que a viewport
+			   (a cauda do path sai por baixo). Só desktop — é o flow que o
+			   desenha com scrub. O layer clipa a própria svg, não é
+			   ancestral do sticky da demo. */}
+			<div
+				aria-hidden
+				className="pointer-events-none absolute inset-0 z-0 hidden lg:block"
+			>
+				<div className="sticky top-0 h-svh overflow-hidden">
+					<svg
+						viewBox="0 0 1660 3160"
+						fill="none"
+						className="text-foreground/10 absolute top-[-12svh] left-1/2 h-[124svh] w-auto -translate-x-1/2"
+					>
+						<path
+							data-flow-stroke
+							pathLength={1000}
+							strokeDasharray="1000 1100"
+							d="M1452.05 76.002C1452.05 76.002 571.55 120.044 571.55 826.886C571.55 1640.23 1683.54 1555.39 1576.66 2338.76C1488.31 2986.22 -224.502 3491.8 122.147 2338.76C468.796 1185.72 967.215 3938 967.215 3938"
+							stroke="currentColor"
+							strokeWidth={152}
+							strokeLinecap="round"
+						/>
+					</svg>
 				</div>
 			</div>
 
