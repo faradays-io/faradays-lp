@@ -54,13 +54,13 @@ const CENTER_SCENE: Mark3dSettings = { ...SCENE, parallax: 0, tilt: 0.18 }
    full-bleed enxerga ~9.8 u de largura e ~5.4 u de altura no plano z = 0.
    Marcas bem nos cantos, fora da copy centralizada (~±2.6 u). */
 const CENTER_MARKS: MarkPlacement[] = [
-	// esquerda, meio-alto, espelhada; pitch positivo mira o centro (está
-	// acima dele) e o yaw vira a face para a direita
+	// esquerda, meio-alto, espelhada; yaw de 90° vira a face para o outro
+	// lado (a extrusão fica de frente), pitch positivo mira o centro
 	{
 		position: [-3.9, 0.9, 0],
 		scale: 0.58,
 		floatSpeed: 0.9,
-		yaw: 0.35,
+		yaw: Math.PI / 2,
 		pitch: 0.22,
 		mirror: true,
 		parallax: 0.22,
@@ -106,6 +106,8 @@ const CENTER_BACK_MARKS: MarkPlacement[] = [
 export function Hero3dTest({ variant }: { variant: Hero3dVariant }) {
 	const t = useCopy(HERO_COPY)
 	const rootRef = useRef<HTMLElement>(null)
+	// Fonte de eventos compartilhada pelos dois canvases da variante centro.
+	const sceneRef = useRef<HTMLDivElement>(null)
 	const ready = usePageReady()
 
 	// Entrada em stagger (copy) + 3D por último.
@@ -245,20 +247,25 @@ export function Hero3dTest({ variant }: { variant: Hero3dVariant }) {
 						   pointer-events-none (só os botões recebem) para o
 						   hover chegar nas marcas. */}
 						<div
+							ref={sceneRef}
 							data-hero-3d
 							className="absolute inset-0 opacity-0 will-change-transform"
 						>
-							{/* Fundo desfocado (só a marca pequena) + frente nítida. */}
+							{/* Fundo desfocado (só a marca pequena) + frente nítida.
+							   Os dois ouvem o ponteiro no wrapper (eventSource),
+							   senão o canvas de cima engole o hover do de baixo. */}
 							<HeroMark3d
 								settings={CENTER_SCENE}
 								marks={CENTER_BACK_MARKS}
 								shadow={false}
+								eventSource={sceneRef}
 								className="absolute inset-0 blur-[1.5px]"
 							/>
 							<HeroMark3d
 								settings={CENTER_SCENE}
 								marks={CENTER_MARKS}
 								shadow={false}
+								eventSource={sceneRef}
 								className="absolute inset-0"
 							/>
 						</div>
@@ -283,9 +290,10 @@ export function Hero3dTest({ variant }: { variant: Hero3dVariant }) {
 					</>
 				) : (
 					<div className="max-w-section mx-auto grid h-full grid-cols-1 gap-x-4 px-7 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
+						{/* pl no lg+ empurra a copy para perto do objeto. */}
 						<div
 							data-hero-copy
-							className="flex h-full flex-col justify-center text-left"
+							className="flex h-full flex-col justify-center text-left lg:pl-16"
 						>
 							<h1
 								data-hero-item

@@ -437,6 +437,7 @@ export function HeroMark3d({
 	settings = DEFAULT_SETTINGS,
 	marks = DEFAULT_MARKS,
 	shadow = true,
+	eventSource,
 	className
 }: {
 	settings?: Mark3dSettings
@@ -444,6 +445,10 @@ export function HeroMark3d({
 	marks?: MarkPlacement[]
 	/** Sombra de contato no "chão" (y = -2.1). */
 	shadow?: boolean
+	/** Elemento que recebe os eventos de ponteiro no lugar do canvas —
+	   para vários canvases empilhados (ex.: fundo desfocado + frente)
+	   fazerem hover ao mesmo tempo, todos apontam para o mesmo wrapper. */
+	eventSource?: React.RefObject<HTMLElement | null>
 	className?: string
 }) {
 	const rootRef = useRef<HTMLDivElement>(null)
@@ -516,6 +521,14 @@ export function HeroMark3d({
 					far: 100,
 					position: [0, 0, CAM_DIST]
 				}}
+				// O tipo do R3F não aceita `| null` no ref; em runtime é o
+				// mesmo objeto.
+				eventSource={
+					eventSource
+						? (eventSource as React.RefObject<HTMLElement>)
+						: undefined
+				}
+				eventPrefix={eventSource ? 'client' : undefined}
 			>
 				<Rig settings={settings} pointer={pointer} />
 				<ambientLight intensity={0.9} />
