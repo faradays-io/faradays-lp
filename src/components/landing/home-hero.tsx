@@ -116,11 +116,14 @@ export function HomeHero() {
 		}
 	}, [ready])
 
+	/* z-10 na section (sem fundo próprio — o wrapper da página já pinta o
+	   bg-background): a camada do traço do HeroFeatureFlow sobe até o topo
+	   da página; a copy fica acima dela e o traço aparece por baixo. */
 	return (
 		<section
 			id="hero"
 			ref={rootRef}
-			className="bg-background relative -mt-23 flex flex-col pt-23"
+			className="relative z-10 -mt-23 flex flex-col pt-23"
 		>
 			{/* Copy + CTA — min-h calculado para deixar ~40svh do painel do
 			   HeroFeatureFlow visível na dobra. O padding assimétrico
