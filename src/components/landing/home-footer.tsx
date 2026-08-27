@@ -28,6 +28,7 @@ const COPY = {
 		product: 'Produto',
 		partners: 'Parceiros',
 		testimonials: 'Relatos',
+		pricing: 'Preços',
 		bookDemo: 'Agende uma demo',
 		solutions: 'Soluções',
 		contact: 'Contato',
@@ -40,6 +41,7 @@ const COPY = {
 		product: 'Product',
 		partners: 'Partners',
 		testimonials: 'Testimonials',
+		pricing: 'Pricing',
 		bookDemo: 'Book a demo',
 		solutions: 'Solutions',
 		contact: 'Contact',
@@ -60,6 +62,7 @@ const footerColumns = (lang: Lang) => {
 				{ label: t.product, href: '/distribuicao#features' },
 				{ label: t.partners, href: '/distribuicao#partners' },
 				{ label: t.testimonials, href: '/distribuicao#testimonials' },
+				{ label: t.pricing, href: '/distribuicao/precos' },
 				{ label: 'Blog', href: '/blog' },
 				{ label: t.bookDemo, href: BOOKING_URL }
 			]

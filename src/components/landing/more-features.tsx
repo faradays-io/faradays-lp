@@ -48,7 +48,7 @@ function FeatureCell({
 				className
 			)}
 		>
-			<h3 className="text-body-lg font-medium">{item.title[lang]}</h3>
+			<h3 className="text-h4 font-medium">{item.title[lang]}</h3>
 			<p className="text-body-sm text-foreground/60 max-w-sm">
 				{item.description[lang]}
 			</p>
@@ -233,10 +233,14 @@ export function MoreFeatures() {
 							   2×2 · feature num 1×2 ao rodapé. */}
 							<div className="border-border col-start-1 row-start-11 border-r border-b" />
 							<div className="border-border col-start-1 row-start-12 border-r border-b" />
+							{/* `group/figs`: a célula inteira é o gatilho de hover
+							   da figura — o cursor em qualquer ponto dela (não
+							   só sobre o desenho) acende os traços e levita o
+							   nó. Quem lê o grupo é a FigNodes. */}
 							<FigureCell
 								figure={FigNodes}
 								figureClassName="h-80"
-								className="col-span-2 col-start-2 row-span-2 row-start-11 border-r border-b"
+								className="group/figs col-span-2 col-start-2 row-span-2 row-start-11 border-r border-b"
 							/>
 							<FeatureCell
 								index={7}
@@ -268,7 +272,7 @@ export function MoreFeatures() {
 											'sm:[&:nth-child(odd)]:border-r sm:[&:nth-last-child(-n+2)]:border-b-0'
 										)}
 									>
-										<h3 className="text-body-lg font-medium">
+										<h3 className="text-h4 font-medium">
 											{item.title[lang]}
 										</h3>
 										<p className="text-body-sm text-foreground/60">

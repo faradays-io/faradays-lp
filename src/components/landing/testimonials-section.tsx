@@ -306,23 +306,26 @@ export function TestimonialsSection() {
 			id="testimonials"
 			/* Painel escuro (o mesmo #0f0f0e do véu dos cards): o deck de
 			   cards claros vira o único ponto de luz da seção. Ocupa uma tela
-			   cheia, com o conteúdo centrado — em viewport baixa a seção passa
-			   de svh e cresce com o conteúdo, sem comprimir o deck. */
-			className="relative flex min-h-svh flex-col justify-center overflow-hidden bg-[#0f0f0e] px-7 py-24 md:py-36"
+			   cheia (no mínimo 68rem, o mesmo painel do FAQ de preços), com o
+			   conteúdo centrado — em viewport baixa a seção passa do mínimo e
+			   cresce com o conteúdo, sem comprimir o deck. */
+			className="relative flex min-h-[max(100svh,68rem)] flex-col justify-center overflow-hidden bg-[#0f0f0e] px-7 py-32 md:py-44"
 		>
-			{/* Textura de fundo. A espiral é maior que a seção de propósito:
-			   assim as voltas internas crescem para fora do deck em vez de
-			   ficarem escondidas atrás dele, e as externas saem de quadro —
-			   quem corta é o `overflow-hidden` da seção. Sem máscara: nesta
-			   escala o degradê cairia todo fora da área visível.
-			   O translate põe o OLHO da espiral no centro da seção — ele
-			   fica em (28.1%, 72.7%) do viewBox, e não no meio dele, então
-			   centrar o svg não centraria a espiral. Os dois `-scale-*-100`
-			   espelham nos dois eixos, o que leva o olho de (28.1%, 72.7%)
-			   para (71.9%, 27.3%) da caixa — daí os translates serem esses
-			   valores e não os do viewBox. Espelhamento e translate são um
-			   só ajuste: mexer num pede recalcular o outro. */}
-			<FibonacciSpiral className="absolute top-1/2 left-1/2 h-[150%] w-auto -translate-x-[71.9%] -translate-y-[27.3%] -scale-x-100 -scale-y-100 text-white/[0.11]" />
+			{/* Textura de fundo — a mesma do FAQ de preços: 12 voltas, traço
+			   muito largo e quase na cor do fundo, com o olho tapado
+			   (`capEye`, ver o comentário no componente). Entra inteira: a
+			   caixa ocupa 88% da largura (bbox 233×144, proporção áurea →
+			   ~78% da altura) e é centrada por translate (-1/2, -1/2); o svg
+			   é `overflow-visible` para o traço grosso não ser cortado reto
+			   nas bordas do viewBox. A discrição vem de `opacity` no svg, não
+			   do alfa da cor: espiral e disco se sobrepõem e, com alfa na
+			   cor, a sobreposição somaria e apareceria mais clara. */}
+			<FibonacciSpiral
+				terms={12}
+				strokeWidth={120}
+				capEye
+				className="absolute top-1/2 left-1/2 w-[88%] -translate-x-1/2 -translate-y-1/2 -scale-x-100 -scale-y-100 overflow-visible text-white opacity-[0.025]"
+			/>
 
 			<Reveal className="relative mb-12 text-center md:mb-16">
 				{/* O clamp mantém uma linha só de ~560px para cima; abaixo

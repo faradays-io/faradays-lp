@@ -20,7 +20,7 @@ export default function DistribuicaoPage() {
 	return (
 		<div className="light light-home bg-background text-foreground min-h-svh">
 			<PageTransition />
-			<NavBar />
+			<NavBar pricing />
 			<main className="pt-23">
 				<HomeHero />
 				<HeroFeatureFlow />

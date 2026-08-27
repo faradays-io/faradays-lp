@@ -528,10 +528,16 @@ export function FigNodes({ className }: { className?: string }) {
 				// `stroke` de cada path, para a transição existir. Os dois tons
 				// de repouso são diferentes (vinco mais claro que silhueta) e
 				// chegam no mesmo azul.
-				'[&_.fig-lid]:stroke-[#DBDFE5] [&_.fig-lid]:transition-[stroke] [&_.fig-lid]:duration-700 hover:[&_.fig-lid]:stroke-[#4d8dff]',
-				'[&_.fig-edge]:stroke-[#C4C8D0] [&_.fig-edge]:transition-[stroke] [&_.fig-edge]:duration-700 hover:[&_.fig-edge]:stroke-[#4d8dff]',
-				// Nó de cima à direita levita enquanto o cursor está na figura.
-				'hover:[&_.fig-float]:animate-node-float motion-reduce:[&_.fig-float]:animate-none',
+				//
+				// O gatilho é duplo: `hover:` (o cursor sobre o desenho) e
+				// `group-hover/figs:` (o cursor em qualquer ponto da CÉLULA,
+				// que leva o grupo `figs` na MoreFeatures). Sem um ancestral
+				// `group/figs` — o uso solto em drafts/ — a segunda variante
+				// só não casa, e o hover direto continua valendo.
+				'[&_.fig-lid]:stroke-[#DBDFE5] [&_.fig-lid]:transition-[stroke] [&_.fig-lid]:duration-700 group-hover/figs:[&_.fig-lid]:stroke-[#4d8dff] hover:[&_.fig-lid]:stroke-[#4d8dff]',
+				'[&_.fig-edge]:stroke-[#C4C8D0] [&_.fig-edge]:transition-[stroke] [&_.fig-edge]:duration-700 group-hover/figs:[&_.fig-edge]:stroke-[#4d8dff] hover:[&_.fig-edge]:stroke-[#4d8dff]',
+				// Nó de cima à direita levita enquanto o cursor está na célula.
+				'hover:[&_.fig-float]:animate-node-float group-hover/figs:[&_.fig-float]:animate-node-float motion-reduce:[&_.fig-float]:animate-none',
 				className
 			)}
 			xmlns="http://www.w3.org/2000/svg"
