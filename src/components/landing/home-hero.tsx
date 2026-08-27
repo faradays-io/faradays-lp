@@ -96,7 +96,7 @@ export function HomeHero() {
 			>
 				<h1
 					data-hero-item
-					className="font-heading max-w-3xl text-6xl text-balance opacity-0"
+					className="font-heading max-w-3xl text-6xl font-medium text-balance opacity-0"
 				>
 					{t.headlineLead}{' '}
 					{/* Última palavra + ícones num nowrap: o slot nunca cai

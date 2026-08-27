@@ -1,10 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { useRef } from 'react'
 
 import { SplitHoverText } from '@/components/custom-ui/split-hover-text'
-import { useRecedeOut } from '@/components/landing/recede-out'
 import { Reveal } from '@/components/landing/reveal'
 import { SECTION_TITLE } from '@/components/landing/type'
 import { useCopy } from '@/components/language-provider'
@@ -34,60 +32,37 @@ const COPY = {
  */
 export function HomeCta() {
 	const t = useCopy(COPY)
-	const sectionRef = useRef<HTMLElement>(null)
-	const copyRef = useRef<HTMLDivElement>(null)
 
-	/* Mesma saída do hero. A ida é medida no próprio bloco: ele recua quando
-	   o topo passa do quarto superior da tela — depois de ter sido lido
-	   inteiro, no scroll que já vai para o rodapé.
-	   A volta é medida na seção, não no bloco: dispara quando o rodapé da
-	   seção desce de volta para 40% da tela, ou seja, com o CTA ainda bem
-	   fora de vista — assim ele chega restaurado em vez de se montar à
-	   vista de quem sobe. */
-	useRecedeOut(copyRef, {
-		start: 'top 25%',
-		triggerRef: copyRef,
-		back: { ref: sectionRef, start: 'bottom 40%' }
-	})
-
+	/* Sem o recuo na saída (o gesto do hero): o CTA é o último bloco antes do
+	   rodapé e sumir no scroll tirava a chamada da vista bem na hora de
+	   clicar. Ele fica onde está. */
 	return (
-		<section
-			id="cta"
-			ref={sectionRef}
-			className="bg-background relative overflow-hidden"
-		>
+		<section id="cta" className="bg-background relative overflow-hidden">
 			<div className="relative flex min-h-svh flex-col items-center justify-center px-7 py-28 text-center">
-				<div ref={copyRef} data-cta-copy>
-					<Reveal>
-						<span className="text-foreground/50 font-mono text-sm tracking-widest uppercase">
-							{t.eyebrow}
-						</span>
-						<h2
-							className={cn(
-								SECTION_TITLE,
-								'mx-auto mt-4 max-w-4xl'
-							)}
-						>
-							{t.heading}
-						</h2>
-						<p className="text-body-lg text-foreground/70 mx-auto mt-6 max-w-xl text-balance">
-							{t.sub}
-						</p>
-						<div className="mt-9 flex justify-center">
-							<Button asChild size="lg" className="px-6">
-								<Link
-									href={BOOKING_URL}
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									<SplitHoverText as="span">
-										{t.bookDemo}
-									</SplitHoverText>
-								</Link>
-							</Button>
-						</div>
-					</Reveal>
-				</div>
+				<Reveal>
+					<span className="text-foreground/50 font-mono text-sm tracking-widest uppercase">
+						{t.eyebrow}
+					</span>
+					<h2 className={cn(SECTION_TITLE, 'mx-auto mt-4 max-w-4xl')}>
+						{t.heading}
+					</h2>
+					<p className="text-body-lg text-foreground/70 mx-auto mt-6 max-w-xl text-balance">
+						{t.sub}
+					</p>
+					<div className="mt-9 flex justify-center">
+						<Button asChild size="lg" className="px-6">
+							<Link
+								href={BOOKING_URL}
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								<SplitHoverText as="span">
+									{t.bookDemo}
+								</SplitHoverText>
+							</Link>
+						</Button>
+					</div>
+				</Reveal>
 			</div>
 		</section>
 	)

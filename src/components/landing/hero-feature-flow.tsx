@@ -118,8 +118,12 @@ export function HeroFeatureFlow() {
 			const reduce = window.matchMedia(
 				'(prefers-reduced-motion: reduce)'
 			).matches
-			// +/- 25vw centraliza a demo em cada metade da viewport.
-			const shift = () => window.innerWidth / 4
+			// Deslocamento da diagonal. 25vw centralizaria a demo na metade
+			// direita; são 22vw porque a caixa hoje mede 52vw — com 25 ela
+			// encostaria na borda da tela (a margem é 50% - largura/2 -
+			// shift). Com 22vw sobram ~29px de respiro à direita, os mesmos
+			// de quando a caixa era mais estreita.
+			const shift = () => window.innerWidth * 0.22
 			const vh = () => window.innerHeight
 			// Lift de repouso: na dobra a demo fica ~5svh acima do centro
 			// da sua camada (mais perto do CTA); some conforme a diagonal

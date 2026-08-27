@@ -644,7 +644,11 @@ function ConversasScreen({
 					</span>
 				</div>
 
-				<div className="bg-muted/40 flex min-h-0 flex-1 flex-col justify-end gap-2 p-3">
+				{/* `overflow-hidden`: a coluna é `justify-end`, então quando as
+				   mensagens não cabem o excedente sai POR CIMA (e pintava sobre
+				   o header do contato). Cortando na borda, o que sobra sai de
+				   cena como o scrollback de um chat de verdade. */}
+				<div className="bg-muted/40 flex min-h-0 flex-1 flex-col justify-end gap-2 overflow-hidden p-3">
 					<Bubble from={1} step={step} side="rep">
 						<p className="text-body-sm">{t.ask}</p>
 						<span className="mt-0.5 flex items-center justify-end gap-1 font-mono text-[9px] opacity-70">
@@ -1097,7 +1101,12 @@ function EchoCard({
 	return (
 		<div
 			data-feature-card={name}
-			className="absolute -right-40 bottom-[16%] hidden w-64 opacity-0 lg:block"
+			/* Beiral de 4rem (não 10): nos blocos 2-4 a demo fica na metade
+			   ESQUERDA e o card é o que chega mais perto da copy da direita.
+			   Com a caixa em 52vw, um beiral maior põe o card por cima do
+			   parágrafo — a soma "margem + caixa + beiral" tem de caber antes
+			   do texto da coluna da direita. */
+			className="absolute -right-16 bottom-[16%] hidden w-64 opacity-0 lg:block"
 		>
 			{/* Wrapper de fade separado do pop: a entrada (echoTl) anima o
 			   card externo e a saída (byeTl) anima este wrapper —
@@ -1146,11 +1155,11 @@ export function MonfizaAppDemo({ ref }: { ref?: Ref<MonfizaAppDemoHandle> }) {
 			<div
 				data-demo-box
 				aria-hidden
-				className="relative h-full max-h-[36rem] w-[min(34rem,100%)] [--demo-w:1.15] lg:w-[min(46rem*var(--demo-w),46vw*var(--demo-w))]"
+				className="relative h-full max-h-[36rem] w-[min(34rem,100%)] [--demo-w:1.15] lg:w-[min(52rem*var(--demo-w),52vw*var(--demo-w))]"
 			>
 				{/* Frame do app — único elemento com overflow-hidden (leaf:
 				   nunca um ancestral do sticky). */}
-				<div className="bg-card/95 flex h-full overflow-hidden rounded-xl border shadow-2xl">
+				<div className="bg-card/95 flex h-full overflow-hidden rounded-lg border shadow-2xl">
 					<AppSidebar t={t} />
 					<div className="flex min-w-0 flex-1 flex-col">
 						<AppHeader t={t} />
