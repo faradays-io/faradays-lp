@@ -3,6 +3,7 @@
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useEffect, useRef } from 'react'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -16,16 +17,19 @@ import { useCopy, useLang } from '@/components/language-provider'
 import { Button } from '@/components/ui/button'
 import type { Localized } from '@/lib/i18n'
 import { usePageReady } from '@/lib/page-ready'
+import { cn } from '@/lib/utils'
 
 const COPY = {
 	pt: {
 		solutions: 'Soluções',
+		pricing: 'Preços',
 		soon: '(em breve)',
 		demo: 'Veja uma demo',
 		switchLang: 'Switch to English'
 	},
 	en: {
 		solutions: 'Solutions',
+		pricing: 'Pricing',
 		soon: '(soon)',
 		demo: 'See a demo',
 		switchLang: 'Ver em português'
@@ -85,7 +89,35 @@ function SolutionsMenu() {
 	)
 }
 
-export function NavBar({ solutions = false }: { solutions?: boolean } = {}) {
+export const PRICING_HREF = '/distribuicao/precos'
+
+/* Link "Preços" ao lado da logo — opt-in por página (`pricing`), porque a
+   nav também serve blog e rotas de teste, onde ele não faz sentido. Fica
+   marcado quando é a própria rota. Só em md+ (como o SolutionsMenu): em
+   390px ele empurra o botão de demo para fora da tela; no mobile o link
+   fica no rodapé. */
+function PricingLink() {
+	const t = useCopy(COPY)
+	const active = usePathname() === PRICING_HREF
+	return (
+		<Link
+			href={PRICING_HREF}
+			data-nav-item
+			aria-current={active ? 'page' : undefined}
+			className={cn(
+				'hover:text-foreground hidden text-base opacity-0 transition-colors md:block',
+				active ? 'text-foreground' : 'text-foreground/80'
+			)}
+		>
+			{t.pricing}
+		</Link>
+	)
+}
+
+export function NavBar({
+	solutions = false,
+	pricing = false
+}: { solutions?: boolean; pricing?: boolean } = {}) {
 	const { lang, setLang } = useLang()
 	const t = useCopy(COPY)
 	const targetLang = lang === 'pt' ? 'en' : 'pt'
@@ -147,6 +179,7 @@ export function NavBar({ solutions = false }: { solutions?: boolean } = {}) {
 						<FaradaysLockup className="h-6 w-auto" />
 					</Link>
 					{solutions && <SolutionsMenu />}
+					{pricing && <PricingLink />}
 				</div>
 
 				<div className="flex items-center gap-3">
