@@ -29,7 +29,10 @@ const T = {
 	blue600: '#155dfc',
 	blue700: '#1447e6'
 }
-const STAGE = '#333333' // fundo da prancha (cinza)
+// Fundo da prancha = ground da LP (`.light-home`: #f8f8f8, que com o film grain a .12 lê como #f4f4f4).
+const STAGE = '#f8f8f8'
+// Film grain da LP (grain-overlay.tsx): tile feTurbulence 0.25 saltando em steps(6).
+const NOISE_URI = `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.25' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")`
 const R = { sm: '4.32px', md: '5.76px', lg: '7.2px', xl: '10.08px', '2xl': '12.96px' }
 const MONO = "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace"
 const HEAD = "Geist, 'Helvetica Neue', Arial, system-ui, sans-serif"
@@ -304,7 +307,7 @@ const comparativoBody = `<div class="mc {{c.cmp}}" style="position:absolute;inse
 			anhuiRow(),
 			cmpRow('VITASWEET CO.', badge('neutral', 'marca cotada: HANSONG'), preco('5,02', 'KG', 'CFR'), '4,88', 'T/T 30 days', ['info', 'Planilha · IA']),
 			cmpRow('ENSIGN INDUSTRY', null, preco('5,11', 'KG', 'FOB'), '5,11', 'L/C at sight', ['info', 'E-mail · IA']),
-			cmpRow('CHENGXIN CHEMICAL', badge('warning', 'rascunho da IA'), preco('5,20', 'KG', 'FOB'), '5,20', '30% adiantado', ['info', 'E-mail · IA'], { draft: true })
+			cmpRow('CHENGXIN CHEMICAL', null, preco('5,20', 'KG', 'FOB'), '5,20', '30% adiantado', ['info', 'E-mail · IA'])
 		])}
 		${cmpBox('SUCRALOSE', 'ANHUI JINHE', '56038-13-2', '5.000 KG', [
 			cmpRow('ANHUI JINHE FOOD', null, preco('38,40', 'KG', 'FOB'), '38,40', 'T/T 90 days', ['info', 'E-mail · IA']),
@@ -378,8 +381,13 @@ const waPage = `<div class="vf {{c.pgWa}}" style="position:absolute;inset:0;disp
 
 /* ---------------- painel SharePoint (fora da janela) -------------------- */
 // Linha com checkbox: o roteiro SELECIONA os três arquivos antes de arrastar.
+// Linha do drive. As três primeiras trocam a linha de meta por "sincronizando…" → "sincronizado".
+const spMeta = (meta, k) =>
+	k < 3
+		? `<span style="position:relative;height:17px;font-size:11.1px;line-height:17px"><span class="vf {{c.spM${k}}}" style="position:absolute;left:0;top:0;color:${T.mutedFg};white-space:nowrap">${meta}</span><span class="vf {{c.spS${k}}}" style="position:absolute;left:0;top:0;display:flex;align-items:center;gap:5px;color:${T.amber700};white-space:nowrap">${ico('CircleNotch', 12, 'bold', '', 'spin')}sincronizando…</span><span class="vf {{c.spD${k}}}" style="position:absolute;left:0;top:0;display:flex;align-items:center;gap:5px;color:${T.green700};white-space:nowrap">${ico('Check', 12, 'bold')}sincronizado · agora</span></span>`
+		: `<span style="font-size:11.1px;color:${T.mutedFg}">${meta}</span>`
 const spPanelRow = (nome, meta, k) =>
-	`<div class="sprow {{c.sp${k}}}" style="display:flex;align-items:center;gap:12px;height:44px;margin:4px 0;padding:0 10px;border-radius:${R.md};font-size:13.33px;letter-spacing:.025em">${ico('FilePdf', 22, 'fill', 'color:#d93025')}<span style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${nome}</span><span style="font-size:11.1px;color:${T.mutedFg}">${meta}</span></span></div>`
+	`<div class="sprow {{c.sp${k}}}" style="display:flex;align-items:center;gap:12px;height:44px;margin:4px 0;padding:0 10px;border-radius:${R.md};font-size:13.33px;letter-spacing:.025em">${ico('FilePdf', 22, 'fill', 'color:#d93025')}<span style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${nome}</span>${spMeta(meta, k)}</span></div>`
 const SP_FILES = [
 	['GMP SUCRALOSE — ANHUI JINHE.pdf', 'PDF · 1,2 MB · hoje'],
 	['HALAL ÁLCOOL CETOESTEARÍLICO 30-70.pdf', 'PDF · 640 KB · hoje'],
@@ -389,10 +397,10 @@ const SP_FILES = [
 	['MSDS INOSITOL — TJCY.pdf', 'PDF · 452 KB · há 2 sem']
 ]
 const spPanel = `<div class="sl {{c.sp}}" style="position:absolute;left:80px;top:200px;width:440px;height:600px;border:1px solid ${T.border};border-radius:${R.xl};background:${T.card};box-shadow:0 25px 50px -12px rgba(0,0,0,.25);display:flex;flex-direction:column;overflow:hidden">
-	<div style="height:64px;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:1px solid ${T.border60}">${sharepointSvg(28)}<div style="display:flex;flex-direction:column"><span style="font-size:13.33px;font-weight:500;letter-spacing:.025em">SharePoint</span><span style="font-family:${MONO};font-size:11.1px;color:${T.mutedFg}">Faradays Qualidade · Documentos</span></div><span style="margin-left:auto">${badge('success', `${ico('ArrowsClockwise', 12)} sincronizado`)}</span></div>
+	<div style="height:64px;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:1px solid ${T.border60}">${sharepointSvg(28)}<div style="display:flex;flex-direction:column"><span style="font-size:13.33px;font-weight:500;letter-spacing:.025em">SharePoint</span><span style="font-family:${MONO};font-size:11.1px;color:${T.mutedFg};white-space:nowrap">Qualidade · Documentos</span></div><span style="margin-left:auto;position:relative;width:150px;height:21px;flex-shrink:0"><span class="vf {{c.spHdrS}}" style="position:absolute;right:0;top:0">${badge('warning', `${ico('CircleNotch', 12, 'bold', '', 'spin')} sincronizando 3`)}</span><span class="vf {{c.spHdrOk}}" style="position:absolute;right:0;top:0">${badge('success', `${ico('ArrowsClockwise', 12)} sincronizado`)}</span></span></div>
 	<div style="height:40px;display:flex;align-items:center;gap:4px;padding:0 16px;font-size:13.33px;letter-spacing:.025em;color:${T.mutedFg};border-bottom:1px solid ${T.border60}"><span>Documentos</span>${ico('CaretRight', 14)}<span style="color:${T.fg};font-weight:500">Novos</span><span style="margin-left:auto;font-family:${MONO};font-size:11.1px">6 arquivos</span></div>
 	<div style="padding:4px 8px;display:flex;flex-direction:column">${SP_FILES.map(([n, m], k) => spPanelRow(n, m, k)).join('')}</div>
-	<div style="margin-top:auto;padding:12px 16px;border-top:1px solid ${T.border60};font-size:11.1px;color:${T.mutedFg};display:flex;align-items:center;gap:6px">${ico('CloudArrowUp', 14)}Selecione e arraste para o sistema — a IA lê tipo, produto e validade.</div>
+	<div style="margin-top:auto;padding:12px 16px;border-top:1px solid ${T.border60};font-size:11.1px;color:${T.mutedFg};display:flex;align-items:center;gap:6px">${ico('CloudArrowUp', 14)}Sincronização automática — a IA lê tipo, produto e validade de cada arquivo novo.</div>
 </div>`
 // Cartões que "voam" do painel para a tabela (3, em pilha).
 const dragCard = (nome, meta, k) =>
@@ -412,7 +420,7 @@ const echoCard = (cls, icon, title, meta, label) =>
 // icons: { palavra: svg } — a palavra ganha o ícone à esquerda (mesma linha, sobe junto).
 const titleCard = (cls, title, icons = {}) =>
 	`<div class="vf tc ${cls}" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 160px">
-	<h1 style="margin:0;font-family:${HEAD};font-size:104px;line-height:.95;letter-spacing:-.03em;font-weight:600;color:#f4f4f4;max-width:1400px">${title
+	<h1 style="margin:0;font-family:${HEAD};font-size:104px;line-height:.95;letter-spacing:-.03em;font-weight:600;color:${T.fg};max-width:1400px">${title
 		.split(' ')
 		.map((w) => (icons[w] ? `<span class="w" style="display:inline-flex;align-items:center;gap:22px;vertical-align:bottom"><span style="display:flex;transform:translateY(-4px)">${icons[w]}</span>${w}</span>` : `<span class="w">${w}</span>`))
 		.join(' ')}</h1>
@@ -439,10 +447,21 @@ const spiralSvg = (() => {
 })()
 const darkCard = (cls, inner) =>
 	`<div class="vf tc ${cls}" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:40px">${inner}</div>`
-const openCard = darkCard('{{c.open}}', `<div class="w" style="position:relative;display:flex">${wordmark(460, '#f4f4f4')}</div>`)
+// Dica de rotação na abertura (cartela própria, antes do logo): anel de setas finas
+// girando devagar e um celular que vai da vertical para a horizontal.
+const RING = (() => {
+	const arc = 'M 26 85.8 A 100 100 0 0 1 206.6 70 M 207.8 56.1 L 206.6 70 L 193.9 64.1'
+	return `<svg viewBox="0 0 240 240" width="240" height="240" fill="none" stroke="${T.fg}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${arc}"></path><path d="${arc}" transform="rotate(180 120 120)"></path></svg>`
+})()
+const rotateHint = `<div class="w" style="position:relative;width:240px;height:240px;display:grid;place-items:center">
+	<span class="rh-ring" style="position:absolute;inset:0;display:grid;place-items:center">${RING}</span>
+	<span class="rh-phone" style="position:relative;width:64px;height:112px;border:4px solid ${T.fg};border-radius:14px;background:${STAGE}"><span style="position:absolute;left:50%;bottom:7px;width:18px;height:3px;margin-left:-9px;border-radius:2px;background:${T.fg}"></span></span>
+</div>`
+const hintCard = darkCard('{{c.hint}}', rotateHint)
+const openCard = darkCard('{{c.open}}', `<div class="w" style="position:relative;display:flex">${wordmark(460, T.fg)}</div>`)
 const closeCard = darkCard(
 	'{{c.close}}',
-	`<div class="w" style="position:relative;display:flex">${wordmark(460, '#f4f4f4')}</div><span class="vf {{c.replay}}" onClick="{{ replay }}" style="position:relative;cursor:pointer">${btn('Reproduzir de novo', { variant: 'outline', icon: 'ArrowsClockwise', extra: 'background:transparent;border-color:rgba(255,255,255,.18);color:#f4f4f4;box-shadow:none' })}</span>`
+	`<div class="w" style="position:relative;display:flex">${wordmark(460, T.fg)}</div><div class="w" style="display:flex;align-items:center;gap:14px;width:560px;height:60px;padding:0 24px;border-radius:9999px;background:#ffffff;border:1px solid ${T.border};box-shadow:0 12px 32px -14px rgba(0,0,0,.2)">${ico('MagnifyingGlass', 22, 'bold', `color:${T.mutedFg}`)}<span class="url" style="font-family:${MONO};font-size:22px;color:${T.fg}">www.faradays.io</span><span class="caret" style="width:2px;height:28px;background:${T.fg}"></span></div>`
 )
 
 
@@ -454,8 +473,8 @@ const mailRow = (from, subj, prev, hora, opts = {}) =>
 	<span style="font-size:12px;font-weight:${opts.hot ? 600 : 400};color:${opts.hot ? OL : '#333333'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${subj}</span>
 	<span style="font-size:11px;color:#7a7a7a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${prev}</span>
 </div>`
-const outlook = `<div class="sr {{c.outlook}}" style="position:absolute;left:1076px;top:261px;width:780px;height:558px;border-radius:12px;overflow:hidden;background:#ffffff;color:#0a0a0a;box-shadow:0 50px 120px -30px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.08);display:flex;flex-direction:column;font-family:${BODY};letter-spacing:.01em">
-	<div style="height:44px;flex-shrink:0;background:${OL};color:#fff;display:flex;align-items:center;gap:10px;padding:0 16px;font-size:13.33px">${ico('Envelope', 18, 'fill')}<span style="font-weight:600">Outlook</span><span style="opacity:.85">· ANHUI JINHE FOOD</span><span style="margin-left:auto;font-family:${MONO};font-size:11px;opacity:.85">Inbox</span></div>
+const outlook = `<div class="sr {{c.outlook}}" style="position:absolute;left:1076px;top:261px;width:780px;height:558px;border-radius:12px;overflow:hidden;background:#ffffff;color:#0a0a0a;box-shadow:0 40px 100px -30px rgba(0,0,0,.35),0 0 0 1px rgba(0,0,0,.06);display:flex;flex-direction:column;font-family:${BODY};letter-spacing:.01em">
+	<div style="height:44px;flex-shrink:0;background:${OL};color:#fff;display:flex;align-items:center;gap:10px;padding:0 16px;font-size:13.33px">${ico('Envelope', 18, 'fill')}<span style="font-weight:600">Outlook</span><span style="opacity:.85">· ANHUI JINHE FOOD</span><span style="padding:2px 8px;border-radius:9999px;background:rgba(255,255,255,.2);font-family:${MONO};font-size:10px;letter-spacing:.08em;text-transform:uppercase">fornecedor</span><span style="margin-left:auto;font-family:${MONO};font-size:11px;opacity:.85">Inbox</span></div>
 	<div style="flex:1;min-height:0;display:flex">
 		<div style="width:250px;flex-shrink:0;border-right:1px solid #e5e5e5;display:flex;flex-direction:column;overflow:hidden">
 			<div style="padding:10px 12px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#7a7a7a;border-bottom:1px solid #eeeeee">Today</div>
@@ -498,7 +517,7 @@ const phTyping = (cls) =>
 	`<div class="typing ${cls}" style="display:flex;justify-content:flex-start"><div style="display:flex;gap:4px;align-items:center;height:34px;padding:0 12px;border-radius:10px;background:${PH_RECV};box-shadow:0 1px 1px rgba(0,0,0,.08)"><span class="dot dk"></span><span class="dot dk"></span><span class="dot dk"></span></div></div>`
 // Posição de repouso = a da vista dividida (1310,150); o transform st.phone
 // o centraliza ampliado no começo do capítulo e o leva para lá no fim.
-const phone = `<div class="ph {{c.phone}}" style="position:absolute;left:1310px;top:150px;width:390px;height:780px;transform:{{st.phone}};transform-origin:0 0;border-radius:44px;background:#0f0f0e;padding:12px;box-shadow:0 50px 120px -30px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.12)">
+const phone = `<div class="ph {{c.phone}}" style="position:absolute;left:1310px;top:150px;width:390px;height:780px;transform:{{st.phone}};transform-origin:0 0;border-radius:44px;background:#0f0f0e;padding:12px;box-shadow:0 40px 100px -30px rgba(0,0,0,.4),0 0 0 1px rgba(0,0,0,.08)">
 	<div style="width:100%;height:100%;border-radius:34px;overflow:hidden;background:#f0f2f5;display:flex;flex-direction:column;font-family:${BODY};color:#111111">
 		<div style="height:26px;flex-shrink:0;background:#ffffff"></div>
 		<div style="height:60px;flex-shrink:0;background:#ffffff;border-bottom:1px solid #e5e5e5;display:flex;align-items:center;gap:10px;padding:0 14px">
@@ -525,10 +544,10 @@ const phone = `<div class="ph {{c.phone}}" style="position:absolute;left:1310px;
 </div>`
 
 /* ---------------- legendas laterais do cap. 3 (fora da câmera) ---------- */
-const cap = (cls, over, text, place) =>
-	`<div class="cap ${cls}" style="position:absolute;${place};display:flex;flex-direction:column;gap:18px">
-	<span style="font-family:${MONO};font-size:15px;letter-spacing:.18em;text-transform:uppercase;color:#8ab4ff">${over}</span>
-	<p style="margin:0;font-family:${HEAD};font-size:46px;line-height:1.12;letter-spacing:-.02em;font-weight:600;color:#f4f4f4">${text}</p>
+const cap = (cls, over, text, place, size = 46) =>
+	`<div class="cap ${cls}" style="position:absolute;${place};display:flex;flex-direction:column;gap:${size > 40 ? 18 : 12}px">
+	<span style="font-family:${MONO};font-size:15px;letter-spacing:.18em;text-transform:uppercase;color:${T.brand}">${over}</span>
+	<p style="margin:0;font-family:${HEAD};font-size:${size}px;line-height:1.12;letter-spacing:-.02em;font-weight:600;color:${T.fg}">${text}</p>
 </div>`
 const CAP_SIDE = 'left:110px;top:0;bottom:0;width:540px;justify-content:center'
 const caps = [
@@ -536,7 +555,9 @@ const caps = [
 	cap('{{c.cap2}}', 'Agente IA · resposta automática', 'A IA responde na hora — ninguém do seu time precisou digitar.', CAP_SIDE),
 	cap('{{c.cap3}}', 'Agente IA · resposta automática', 'Tira a dúvida da marca…', CAP_SIDE),
 	cap('{{c.cap4}}', 'Agente IA · cotação emitida', '…e emite a cotação, com ICMS e câmbio do dia.', CAP_SIDE),
-	cap('{{c.cap5}}', 'Sistema Faradays', 'E toda a conversa fica registrada no sistema.', 'left:64px;top:862px;width:900px')
+	cap('{{c.cap5}}', 'Sistema Faradays', 'E toda a conversa fica registrada no sistema.', 'left:64px;top:862px;width:900px'),
+	// cap. 2, vista dividida: quem é quem
+	cap('{{c.cap7}}', 'Caixa de e-mail do fornecedor', 'O exportador recebe o BID na caixa dele e responde ali mesmo.', 'left:1076px;top:118px;width:780px', 34)
 ].join('')
 
 /* ---------------- CSS -------------------------------------------------- */
@@ -591,6 +612,17 @@ a{color:${T.brand}}a:hover{color:${T.blue700}}
 /* entrada dos textos das cartelas */
 @keyframes rise{0%{opacity:0;transform:translateY(40px)}100%{opacity:1;transform:translateY(0)}}
 .tc .w{display:inline-block;opacity:0}
+/* abertura: anel de setas gira devagar; celular vai para a horizontal e volta */
+.tc.show .rh-ring{animation:spinslow 9s linear infinite}
+@keyframes spinslow{to{transform:rotate(360deg)}}
+.tc.show .rh-phone{animation:rhRot 2.2s var(--ease) .5s forwards}
+@keyframes rhRot{0%,30%{transform:rotate(0)}100%{transform:rotate(-90deg)}}
+/* fechamento: a URL é digitada (mono → largura exata em ch) com cursor piscando */
+.url{display:inline-block;width:0;overflow:hidden;white-space:nowrap}
+.tc.show .url{animation:typeUrl 1.05s steps(15,end) 1s forwards}
+@keyframes typeUrl{to{width:calc(15ch + 4px)}}
+.caret{display:inline-block;animation:blink .8s step-end infinite}
+@keyframes blink{50%{opacity:0}}
 .tc.show .w{animation:rise .85s var(--ease) both}
 .tc.show .w:nth-child(2){animation-delay:.08s}.tc.show .w:nth-child(3){animation-delay:.16s}.tc.show .w:nth-child(4){animation-delay:.24s}.tc.show .w:nth-child(5){animation-delay:.32s}
 .zoomer{transform-origin:0 0;transition:transform 1.15s var(--ease)}
@@ -602,10 +634,15 @@ a{color:${T.brand}}a:hover{color:${T.blue700}}
 .row.show{animation:flash 1.8s var(--ease)}
 @keyframes flash{0%{background:rgba(0,101,224,.14)}100%{background:transparent}}
 .hl{transition:background .3s var(--ease)}.hl.hover{background:rgba(235,235,235,.4)}
-.crow{transition:background .6s var(--ease)}.crow.win{background:rgba(0,201,80,.15)}
+.crow{transition:background .6s var(--ease),box-shadow .6s var(--ease)}
+.crow.got{background:rgba(0,101,224,.09);box-shadow:inset 3px 0 0 ${T.brand};animation:gotRow 1.4s var(--ease)}
+@keyframes gotRow{0%{background:rgba(0,101,224,.3)}100%{background:rgba(0,101,224,.09)}}
+.crow.win{background:rgba(0,201,80,.15);box-shadow:inset 3px 0 0 ${T.green600}}
 .sprow{background:${T.card};transition:background .35s var(--ease),opacity .3s var(--ease)}
 .sprow.sel{background:#dbe7f9}
-.sprow.taken{opacity:.35}
+.sprow.ok{background:rgba(0,166,62,.08)}
+.spin{animation:spin 1s linear infinite;transform-origin:center}
+@keyframes spin{to{transform:rotate(360deg)}}
 .dcard{transform-origin:0 0;--d:0s;transition:transform .9s var(--ease) var(--d),opacity .3s var(--ease),box-shadow .3s var(--ease);opacity:0}
 .dcard.d1{--d:.06s}.dcard.d2{--d:.12s}
 .dcard.lift{opacity:1;box-shadow:0 25px 50px -12px rgba(0,0,0,.3);transition:opacity .25s var(--ease),box-shadow .3s var(--ease)}
@@ -621,9 +658,9 @@ a{color:${T.brand}}a:hover{color:${T.blue700}}
 @keyframes ringA{0%{opacity:.9;transform:scale(.4)}100%{opacity:0;transform:scale(1.4)}}
 @keyframes ringB{0%{opacity:.9;transform:scale(.4)}100%{opacity:0;transform:scale(1.4)}}
 .typing{overflow:hidden;transition:height .35s var(--ease),opacity .3s var(--ease),margin-top .35s var(--ease);height:36px}
-.typing.pre{height:0;opacity:0;margin-top:-12px}
+.typing.pre{height:0;opacity:0;margin-top:-8px}
 .typing.show{height:36px;opacity:1;margin-top:0}
-.typing.exit{height:0;opacity:0;margin-top:-12px}
+.typing.exit{height:0;opacity:0;margin-top:-8px}
 .dot{width:6px;height:6px;border-radius:9999px;background:rgba(255,255,255,.8);animation:bounce 1s infinite}
 .dot:nth-child(2){animation-delay:.15s}.dot:nth-child(3){animation-delay:.3s}
 .dot.dk{background:rgba(0,0,0,.35)}
@@ -642,7 +679,7 @@ const stage = `<div class="stage" style="position:relative;width:1920px;height:1
 
 	<div class="cam {{c.cam}}" style="position:absolute;inset:0;transform-origin:0 0;transform:{{st.cam}}">
 	<div class="vf {{c.win}}" style="position:absolute;left:160px;top:90px;width:1600px;height:900px">
-		<div class="zoomer {{c.zoomer}}" style="transform:{{st.zoom}};width:1600px;height:900px;border-radius:12px;overflow:hidden;background:${T.bg};box-shadow:0 50px 120px -30px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.08);display:flex">
+		<div class="zoomer {{c.zoomer}}" style="transform:{{st.zoom}};width:1600px;height:900px;border-radius:12px;overflow:hidden;background:${T.bg};box-shadow:0 40px 100px -30px rgba(0,0,0,.35),0 0 0 1px rgba(0,0,0,.06);display:flex">
 			${sidebar}
 			<main style="flex:1;min-width:0;display:flex;flex-direction:column">
 				${header}
@@ -667,31 +704,32 @@ const stage = `<div class="stage" style="position:relative;width:1920px;height:1
 	</div>
 
 	${caps}
+	${hintCard}
 	${openCard}
 	${closeCard}
 </div>`
 
 /* ---------------- lógica (timeline) ------------------------------------ */
 const CUES = [
-	['boot', 0], ['open', 350], ['openOut', 3300], ['ch1Out', 6400],
-	['spIn', 7300], ['zoomSp', 7550], ['c1', 8200], ['k1', 8600], ['c2', 8900], ['k2', 9300], ['c3', 9600], ['k3', 10000],
-	['grab', 10500], ['drop', 11300], ['cutSp', 11650], ['r1', 11750], ['r2', 11900], ['r3', 12050],
-	['spOut', 12500], ['zoomStatus', 12800], ['read', 13900], ['zoomOut1', 15600],
-	['cPastas', 16400], ['cutA1', 17000], ['cut1', 17200],
-	['docsOut', 19800], ['rst1', 20700], ['ch2Out', 22800],
-	['cRow', 24000], ['kRow', 24600], ['cDisp', 26000], ['kDisp', 26600], ['env', 27700],
-	['split', 28300], ['mailIn', 29500], ['replyOpen', 31200], ['t1', 31800], ['t2', 32500], ['t3', 33200], ['t4', 33900],
-	['cSend', 34700], ['kSend', 35300], ['flyGone', 36400], ['unsplit', 36600],
-	['cutA2', 37700], ['cut2', 37900], ['read2', 39200],
-	['sug', 40200], ['cVenc', 41500], ['kVenc', 42100], ['zoomOut2', 43500],
-	['cFechar', 44400], ['kFechar', 45000],
-	['bidOut', 47200], ['rst2', 48100], ['ch3Out', 50100],
-	['phoneIn', 50700], ['p1', 51900], ['cap1', 52000],
-	['ptyp1', 53000], ['p2', 54300], ['cap2', 54500],
-	['p3', 56600], ['ptyp2', 57500], ['p4', 58900], ['cap3', 59000],
-	['p5', 60300], ['ptyp3', 61100], ['p6', 62700], ['cap4', 62800],
-	['toSys', 65200], ['cap5', 65700],
-	['zoomConv', 67600], ['zoomOut3', 70300], ['waOut', 71800], ['rst3', 72700], ['end', 74400]
+	['boot', 0], ['hint', 350], ['hintOut', 3400], ['open', 3600], ['openOut', 5100], ['ch1Out', 8200],
+	['spIn', 9100], ['zoomSp', 9350], ['sync1', 10100], ['sync2', 10600], ['sync3', 11100], ['done1', 11700], ['done2', 12100], ['done3', 12500],
+	['lift', 12800], ['drop', 13100], ['cutSp', 13450], ['r1', 13550], ['r2', 13700], ['r3', 13850],
+	['spOut', 14300], ['zoomStatus', 14600], ['read', 15700], ['zoomOut1', 17400],
+	['cPastas', 18200], ['cutA1', 18800], ['cut1', 19000],
+	['docsOut', 21600], ['rst1', 22500], ['ch2Out', 24600],
+	['cRow', 25800], ['kRow', 26400], ['cDisp', 27800], ['kDisp', 28400], ['env', 29500],
+	['split', 30100], ['mailIn', 31300], ['mailOpen', 32000], ['replyOpen', 33700], ['t1', 34300], ['t2', 35000], ['t3', 35700], ['t4', 36400],
+	['cSend', 37200], ['kSend', 37800], ['flyGone', 38900], ['unsplit', 39100],
+	['cutA2', 40200], ['cut2', 40400], ['read2', 41700],
+	['sug', 42700], ['cVenc', 44000], ['kVenc', 44600], ['zoomOut2', 46000],
+	['cFechar', 46900], ['kFechar', 47500],
+	['bidOut', 49700], ['rst2', 50600], ['ch3Out', 52600],
+	['phoneIn', 53200], ['p1', 54300], ['cap1', 54400],
+	['ptyp1', 55100], ['p2', 56100], ['cap2', 56300],
+	['p3', 57200], ['ptyp2', 57800], ['p4', 58900], ['cap3', 59000],
+	['p5', 59800], ['ptyp3', 60300], ['p6', 61500], ['cap4', 61600],
+	['toSys', 63800], ['cap5', 64300],
+	['zoomConv', 66200], ['zoomOut3', 68900], ['waOut', 70400], ['rst3', 71300], ['end', 73000]
 ].sort((a, b) => a[1] - b[1])
 
 const logic = `
@@ -742,7 +780,7 @@ class Component extends DCLogic {
 			const el = performance.now() - this.t0;
 			const s = this.stepFor(el);
 			if (s !== this.state.step) this.setState({ step: s });
-			if (el > this.total + 2600 && (this.props.loop ?? false)) this.startAt('Abertura');
+			if (el > this.total + 2600 && (this.props.loop ?? true)) this.startAt('Abertura');
 		}, 40);
 	}
 	componentDidUpdate(prev) {
@@ -751,7 +789,7 @@ class Component extends DCLogic {
 			else { this.t0 = performance.now() - (this.frozen ?? 0); this.frozen = null; }
 		}
 		if (prev.inicio !== this.props.inicio) this.startAt(this.props.inicio);
-		if (prev.tempo !== this.props.tempo) this.seek(Math.max(0, Math.min(75, Number(this.props.tempo) || 0)) * 1000);
+		if (prev.tempo !== this.props.tempo) this.seek(Math.max(0, Math.min(80, Number(this.props.tempo) || 0)) * 1000);
 	}
 	componentWillUnmount() { clearInterval(this.timer); }
 	renderVals() {
@@ -760,12 +798,12 @@ class Component extends DCLogic {
 		const seq = (def, ...pairs) => { let v = def; for (const [n, s] of pairs) if (i >= I[n]) v = s; return v; };
 		const c = {}, st = {};
 		// Cartelas (fade) e janela do app (fade)
+		c.hint = seq('pre', ['hint', 'show'], ['hintOut', 'exit']);
 		c.open = seq('pre', ['open', 'show'], ['openOut', 'exit']);
 		c.ch1 = seq('pre', ['openOut', 'show'], ['ch1Out', 'exit']);
 		c.ch2 = seq('pre', ['docsOut', 'show'], ['ch2Out', 'exit']);
 		c.ch3 = seq('pre', ['bidOut', 'show'], ['ch3Out', 'exit']);
 		c.close = seq('pre', ['waOut', 'show']);
-		c.replay = (this.props.loop ?? false) ? 'pre' : seq('pre', ['end', 'show']);
 		c.win = seq('pre', ['ch1Out', 'show'], ['docsOut', 'exit'], ['rst1', 'pre'], ['ch2Out', 'show'], ['bidOut', 'exit'], ['rst2', 'pre'], ['toSys', 'show'], ['waOut', 'exit']);
 		// Páginas dentro da janela trocam enquanto ela está invisível.
 		c.pgDocs = seq('show', ['rst1', 'pre']);
@@ -773,15 +811,17 @@ class Component extends DCLogic {
 		c.pgWa = seq('pre', ['rst2', 'show']);
 		c.crDocs = seq('show', ['rst1', 'pre']); c.crBid = seq('pre', ['rst1', 'show'], ['rst2', 'pre']); c.crWa = seq('pre', ['rst2', 'show']);
 		c.navDocs = seq('on', ['rst1', '']); c.navBid = seq('', ['rst1', 'on'], ['rst2', '']); c.navWa = seq('', ['rst2', 'on']);
-		// Cap. 1 — SharePoint: a câmera fecha no painel enquanto ele entra, os três
-		// arquivos são selecionados em zoom e, com a pilha já voando, CORTA para a vista inteira.
+		// Cap. 1 — SharePoint: a câmera fecha no painel enquanto ele entra; os três arquivos
+		// novos sincronizam sozinhos (sem clique) e, com a pilha já voando, CORTA para a vista inteira.
 		st.cam = seq(CAM0, ['zoomSp', camFocus(470, 500, 1.7)], ['cutSp', CAM0]);
 		c.cam = seq('', ['cutSp', 'snap'], ['spOut', '']);
 		c.sp = seq('pre', ['spIn', 'show'], ['spOut', 'exit']);
+		c.spHdrS = seq('show', ['done3', 'exit']); c.spHdrOk = seq('pre', ['done3', 'show']);
 		for (let k = 0; k < 3; k++) {
-			const kk = 'k' + (k + 1), r = 'r' + (k + 1);
-			c['sp' + k] = seq('', [kk, 'sel'], ['drop', 'sel taken']);
-			c['card' + k] = seq('', ['grab', 'lift'], ['drop', 'fly'], [r, 'gone']);
+			const sy = 'sync' + (k + 1), dn = 'done' + (k + 1), r = 'r' + (k + 1);
+			c['sp' + k] = seq('', [sy, 'sel'], [dn, 'ok']);
+			c['spM' + k] = seq('show', [sy, 'exit']); c['spS' + k] = seq('pre', [sy, 'show'], [dn, 'exit']); c['spD' + k] = seq('pre', [dn, 'show']);
+			c['card' + k] = seq('', ['lift', 'lift'], ['drop', 'fly'], [r, 'gone']);
 			st['card' + k] = seq(tr(...spRow(k)), ['drop', tr(...tblRow(k))]);
 			c[r] = seq('pre', [r, 'show']);
 		}
@@ -798,7 +838,7 @@ class Component extends DCLogic {
 		c.env = seq('', ['kDisp', 'fly'], ['env', 'gone']);
 		// e-mail do exportador: entra na vista dividida, recebe o BID, responde
 		c.outlook = seq('pre', ['split', 'show'], ['unsplit', 'exit']);
-		c.mailRow = seq('pre', ['mailIn', 'show']); c.mailPane = seq('pre', ['mailIn', 'show']);
+		c.mailRow = seq('pre', ['mailIn', 'show']); c.mailPane = seq('pre', ['mailOpen', 'show']);
 		c.reply = seq('pre', ['replyOpen', 'show']);
 		c.t1 = seq('pre', ['t1', 'show']); c.t2 = seq('pre', ['t2', 'show']); c.t3 = seq('pre', ['t3', 'show']); c.t4 = seq('pre', ['t4', 'show']);
 		c.mailFly = seq('', ['kSend', 'fly'], ['flyGone', 'gone']);
@@ -806,7 +846,7 @@ class Component extends DCLogic {
 		// comparativo: a linha da ANHUI chega lendo o e-mail e depois preenche
 		c.aLendo = seq('show', ['read2', 'exit']); c.aLido = seq('pre', ['read2', 'show']);
 		c.sug = seq('pre', ['sug', 'show']);
-		c.rowWin = seq('', ['kVenc', 'win']); c.cbOff = seq('show', ['kVenc', 'exit']); c.cbOn = seq('pre', ['kVenc', 'show']);
+		c.rowWin = seq('', ['read2', 'got'], ['kVenc', 'win']); c.cbOff = seq('show', ['kVenc', 'exit']); c.cbOn = seq('pre', ['kVenc', 'show']);
 		// Cap. 3 — só o celular do representante, centralizado: a IA responde sozinha
 		// (rótulo nos balões, "digitando…", legendas laterais); no fim o celular vai
 		// para a direita, o sistema entra ao lado e a câmera fecha na conversa.
@@ -820,6 +860,7 @@ class Component extends DCLogic {
 		c.cap1 = seq('', ['cap1', 'show'], ['cap2', 'exit']); c.cap2 = seq('', ['cap2', 'show'], ['cap3', 'exit']);
 		c.cap3 = seq('', ['cap3', 'show'], ['cap4', 'exit']); c.cap4 = seq('', ['cap4', 'show'], ['toSys', 'exit']);
 		c.cap5 = seq('', ['cap5', 'show'], ['zoomConv', 'exit']);
+		c.cap7 = seq('', ['split', 'show'], ['unsplit', 'exit']);
 		// No sistema a conversa já está inteira quando a janela aparece.
 		for (const m of ['m1', 'm2', 'm3', 'm4', 'm5', 'm6']) c[m] = 'show';
 		// Câmera: zoom, vista dividida (janela encostada à esquerda) e volta
@@ -835,7 +876,6 @@ class Component extends DCLogic {
 		// Cursor (coordenadas da prancha). Na vista dividida e no zoom, segue a câmera.
 		const CP = {
 			idle: [900, 620],
-			c1: [300, 334], c2: [300, 386], c3: [300, 438], drop: [700, 776],
 			cPastas: [892, 254],
 			cRow: [852, 346],
 			cDisp: [1422, 903],
@@ -843,14 +883,13 @@ class Component extends DCLogic {
 			sug: zpt(560, 480, ZP), cVenc: zpt(400, 240, ZP),
 			cFechar: [1432, 903]
 		};
-		const cx = seq(null, ['spIn', 'idle'], ['c1', 'c1'], ['c2', 'c2'], ['c3', 'c3'], ['grab', 'c3'], ['drop', 'drop'],
-			['cPastas', 'cPastas'], ['rst1', 'idle'], ['cRow', 'cRow'], ['cDisp', 'cDisp'], ['split', 'cSend'], ['sug', 'sug'], ['cVenc', 'cVenc'], ['zoomOut2', 'cFechar'],
+		const cx = seq(null, ['spIn', 'idle'], ['cPastas', 'cPastas'], ['rst1', 'idle'], ['cRow', 'cRow'], ['cDisp', 'cDisp'], ['split', 'cSend'], ['sug', 'sug'], ['cVenc', 'cVenc'], ['zoomOut2', 'cFechar'],
 			['rst2', 'idle']);
 		const p = cx ? CP[cx] : CP.idle;
 		st.cur = tr(p[0], p[1]);
-		const curOn = seq(false, ['spIn', true], ['spOut', false], ['zoomOut1', true], ['cut1', false],
+		const curOn = seq(false, ['zoomOut1', true], ['cut1', false],
 			['cRow', true], ['kDisp', false], ['cSend', true], ['kSend', false], ['sug', true], ['kVenc', false], ['zoomOut2', true], ['kFechar', false]);
-		const click = seq('', ['k1', 'kA'], ['k2', 'kB'], ['k3', 'kA'], ['grab', 'kB'], ['cut1', 'kA'], ['kRow', 'kB'], ['kDisp', 'kA'], ['kSend', 'kB'], ['kVenc', 'kA'], ['kFechar', 'kB']);
+		const click = seq('', ['cut1', 'kA'], ['kRow', 'kB'], ['kDisp', 'kA'], ['kSend', 'kB'], ['kVenc', 'kA'], ['kFechar', 'kB']);
 		c.cur = (curOn ? '' : 'hide') + ' ' + click;
 		// Envelopes: do botão "Disparar BID" às linhas dos exportadores (coordenadas do modal).
 		for (let k = 0; k < 4; k++) st['env' + k] = seq(tr(1040, 760), ['kDisp', tr(1090, 180 + 40 * k)]);
@@ -879,7 +918,7 @@ const doc = `<!doctype html>
 </helmet>
 ${html}
 </x-dc>
-<script data-dc-script data-props='{"inicio":{"editor":"enum","options":["Abertura","SharePoint","BID","Conversas"],"default":"Abertura","section":"Reprodução"},"tempo":{"editor":"range","min":0,"max":75,"step":0.5,"unit":"s","default":0,"section":"Reprodução"},"pausar":{"editor":"boolean","default":false,"section":"Reprodução"},"loop":{"editor":"boolean","default":false,"section":"Reprodução"},"$preview":{"width":1920,"height":1080}}'>${logic}</script>
+<script data-dc-script data-props='{"inicio":{"editor":"enum","options":["Abertura","SharePoint","BID","Conversas"],"default":"Abertura","section":"Reprodução"},"tempo":{"editor":"range","min":0,"max":80,"step":0.5,"unit":"s","default":0,"section":"Reprodução"},"pausar":{"editor":"boolean","default":false,"section":"Reprodução"},"loop":{"editor":"boolean","default":true,"section":"Reprodução"},"$preview":{"width":1920,"height":1080}}'>${logic}</script>
 </body>
 </html>
 `
@@ -899,7 +938,7 @@ fs.writeFileSync(
 					y: 0,
 					w: 380,
 					text:
-						'Roteiro (75s)\n\n0:00 Abertura — logo Faradays sobre fundo escuro\n0:06 Documentos direto do SharePoint — a câmera fecha no painel do drive enquanto ele entra; 3 arquivos selecionados em zoom; com a pilha já voando, corte seco para a vista inteira; IA lê validade (zoom nos status), corte seco para a aba Pastas\n0:23 BID em um disparo — lista → modal → Disparar BID (4) → envelopes → vista dividida: a caixa de e-mail do exportador recebe o BID e responde com preço → o e-mail voa de volta → corte seco para o Comparativo JÁ EM ZOOM, com a linha da ANHUI chegando “lendo e-mail…” → IA sugere (ponto piscante) → clique na linha → Fechar cotação\n0:50 Conversas com IA — só o celular do representante, centralizado: ele pede o COA → "digitando…" → a IA responde sozinha (rótulo Agente IA nos balões; legendas laterais) → pergunta a marca → emite a cotação; no fim o celular vai para a direita, o sistema entra ao lado com a conversa inteira e a câmera fecha nela\n1:12 Fechamento — logo\n\nTransições: cartela ↔ demo em fade; match cut seco (sem fade, corta no meio do movimento) só em tabela→Pastas e disparo→comparativo.\n\nChips: Início pula ao capítulo; Tempo vai a um instante; Pausar congela; Loop repete.'
+						'Roteiro (75s)\n\n0:00 Abertura — logo Faradays sobre fundo escuro\n0:06 Documentos direto do SharePoint — a câmera fecha no painel do drive enquanto ele entra; os 3 arquivos novos sincronizam sozinhos (sem clique); com a pilha já voando, corte seco para a vista inteira; IA lê validade (zoom nos status), corte seco para a aba Pastas\n0:23 BID em um disparo — lista → modal → Disparar BID (4) → envelopes → vista dividida: a caixa de e-mail do exportador recebe o BID e responde com preço → o e-mail voa de volta → corte seco para o Comparativo JÁ EM ZOOM, com a linha da ANHUI chegando “lendo e-mail…” → IA sugere (ponto piscante) → clique na linha → Fechar cotação\n0:50 Conversas com IA — só o celular do representante, centralizado: ele pede o COA → "digitando…" → a IA responde sozinha (rótulo Agente IA nos balões; legendas laterais) → pergunta a marca → emite a cotação; no fim o celular vai para a direita, o sistema entra ao lado com a conversa inteira e a câmera fecha nela\n1:12 Fechamento — logo\n\nTransições: cartela ↔ demo em fade; match cut seco (sem fade, corta no meio do movimento) só em tabela→Pastas e disparo→comparativo.\n\nChips: Início pula ao capítulo; Tempo vai a um instante; Pausar congela; Loop repete.'
 				}
 			],
 			launch: { view: 'focused', file: 'Main.dc.html' }
@@ -926,7 +965,6 @@ const toStandalone = (h) =>
 			if (!mm) return m
 			return `style="${sty.replace(mm[0], '')}" data-st="${mm[1]}"`
 		})
-		.replace(/onClick="\{\{ replay \}\}"/g, 'data-replay="1"')
 
 const standaloneHtml = toStandalone(html)
 if (/\{\{/.test(standaloneHtml)) throw new Error('hole sobrando no standalone: ' + standaloneHtml.match(/\{\{[^}]*\}\}/)[0])
@@ -935,7 +973,8 @@ const runtime = `
 class DCLogic { constructor(props) { this.props = props } }
 ${logic}
 const params = new URLSearchParams(location.search)
-const props = { inicio: params.get('inicio') || 'Abertura', loop: params.has('loop'), pausar: params.has('pause'), tempo: 0 }
+// Repete por padrão (vídeo demonstrativo); ?noloop para parar no fechamento.
+const props = { inicio: params.get('inicio') || 'Abertura', loop: !params.has('noloop'), pausar: params.has('pause'), tempo: 0 }
 const comp = new Component(props)
 const elsC = [...document.querySelectorAll('[data-c]')], elsS = [...document.querySelectorAll('[data-st]')]
 function paint() {
@@ -945,7 +984,6 @@ function paint() {
 }
 comp.setState = function (s) { Object.assign(this.state, s); paint() }
 document.querilySelectorAll = null
-for (const el of document.querySelectorAll('[data-replay]')) el.addEventListener('click', () => comp.startAt('Abertura'))
 comp.componentDidMount()
 if (params.has('t')) comp.seek(Math.max(0, Number(params.get('t')) || 0) * 1000)
 paint()
@@ -985,7 +1023,7 @@ addEventListener('keydown', (e) => {
 	else if (e.key === 'f' || e.key === 'F') toggleFS()
 })
 // Clique/toque na prancha pausa/retoma (fora do botão de replay e da timeline).
-fitEl.addEventListener('click', (e) => { if (!e.target.closest('[data-replay]') && !e.target.closest('.tl')) togglePause() })
+fitEl.addEventListener('click', (e) => { if (!e.target.closest('.tl')) togglePause() })
 // Controles: timeline por capítulo embaixo + play/pause no centro. Aparecem ao passar o mouse
 // (somem 2,2 s depois, se estiver rodando), ficam fixos enquanto pausado e por 1,4 s após um pulo.
 const tl = document.querySelector('.tl'), track = tl.querySelector('.tl-track'), clock = tl.querySelector('.tl-clock'), shade = document.querySelector('.tl-shade'), pp = document.querySelector('.pp')
@@ -1065,19 +1103,23 @@ const standalone = `<!doctype html>
 html,body{margin:0;height:100%;overflow:hidden;background:${STAGE};touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
 .fit{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;cursor:default}
 .fit.nocur{cursor:none}
+/* Film grain da LP: layer fixo 2× o viewport, saltando de posição (só transform → compositor). */
+.grain{position:fixed;top:-50%;left:-50%;width:200vw;height:200vh;z-index:5;pointer-events:none;opacity:.12;background-image:${NOISE_URI};animation:grain-jump .5s steps(6) infinite;will-change:transform}
+@keyframes grain-jump{0%,100%{transform:translate(0,0)}17%{transform:translate(-5%,-10%)}33%{transform:translate(3%,-15%)}50%{transform:translate(12%,9%)}67%{transform:translate(9%,4%)}83%{transform:translate(-1%,7%)}}
+@media (prefers-reduced-motion: reduce){.grain{animation:none}}
 .tl-shade{position:absolute;left:0;right:0;bottom:0;height:320px;background:linear-gradient(to top,${rgba(STAGE, 0.96)} 0%,${rgba(STAGE, 0.75)} 45%,${rgba(STAGE, 0)} 100%);opacity:0;transition:opacity .35s;pointer-events:none}
 .tl-shade.on{opacity:1}
 .tl{position:absolute;left:64px;right:64px;bottom:40px;display:flex;align-items:flex-start;gap:20px;opacity:0;transition:opacity .3s;pointer-events:none}
 .tl.on{opacity:1;pointer-events:auto}
 .tl-track{flex:1;display:flex;gap:6px;height:6px}
-.seg{position:relative;height:6px;border-radius:3px;background:rgba(255,255,255,.16);cursor:pointer}
-.seg.active{background:rgba(255,255,255,.34)}
+.seg{position:relative;height:6px;border-radius:3px;background:rgba(10,10,10,.12);cursor:pointer}
+.seg.active{background:rgba(10,10,10,.22)}
 .seg .fill{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:#0065e0;width:0}
-.seg .lb{position:absolute;top:14px;left:0;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.55);white-space:nowrap}
-.seg.active .lb{color:#f4f4f4}
-.tl-clock{flex-shrink:0;margin-top:-6px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;letter-spacing:.06em;color:rgba(255,255,255,.7);font-variant-numeric:tabular-nums}
-.tl-fs{flex-shrink:0;margin-top:-9px;display:flex;color:rgba(255,255,255,.7);cursor:pointer}
-.tl-fs:hover{color:#f4f4f4}
+.seg .lb{position:absolute;top:14px;left:0;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:rgba(10,10,10,.5);white-space:nowrap}
+.seg.active .lb{color:#0a0a0a}
+.tl-clock{flex-shrink:0;margin-top:-6px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;letter-spacing:.06em;color:rgba(10,10,10,.65);font-variant-numeric:tabular-nums}
+.tl-fs{flex-shrink:0;margin-top:-9px;display:flex;color:rgba(10,10,10,.65);cursor:pointer}
+.tl-fs:hover{color:#0a0a0a}
 .pp{position:absolute;left:50%;top:50%;width:112px;height:112px;margin:-56px 0 0 -56px;border-radius:9999px;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);color:#f4f4f4;display:grid;place-items:center;opacity:0;transform:scale(.9);transition:opacity .3s,transform .3s var(--ease);pointer-events:none;cursor:pointer}
 .pp.on{opacity:1;transform:none;pointer-events:auto}
 .pp svg{display:none;width:44px;height:44px}
@@ -1085,7 +1127,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:${STAGE};touch-action:
 .pp:not(.paused) .i-pause{display:block}
 .pp.pop{animation:pop .45s var(--ease)}
 @keyframes pop{0%{transform:scale(.85)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
-.hint{position:absolute;left:64px;bottom:96px;padding:8px 14px;border-radius:9999px;background:rgba(255,255,255,.08);color:#f4f4f4;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:14px;letter-spacing:.08em;text-transform:uppercase;opacity:0;transition:opacity .3s;pointer-events:none}
+.hint{position:absolute;left:64px;bottom:96px;padding:8px 14px;border-radius:9999px;background:rgba(10,10,10,.06);color:#0a0a0a;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:14px;letter-spacing:.08em;text-transform:uppercase;opacity:0;transition:opacity .3s;pointer-events:none}
 .hint.on{opacity:1}
 /* Celular: controles maiores (a prancha encolhe ~4×) */
 @media (pointer: coarse) and (max-width: 1024px){
@@ -1099,20 +1141,21 @@ html,body{margin:0;height:100%;overflow:hidden;background:${STAGE};touch-action:
 .tl-shade{height:420px}
 }
 /* Celular na vertical: instrução para girar (fora da prancha, em px da tela) */
-.rot{position:fixed;inset:0;z-index:10;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:32px;background:${rgba(STAGE, 0.96)};color:#f4f4f4;text-align:center;font-family:Geist,'Helvetica Neue',system-ui,sans-serif}
+.rot{position:fixed;inset:0;z-index:10;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:32px;background:${rgba(STAGE, 0.96)};color:#0a0a0a;text-align:center;font-family:Geist,'Helvetica Neue',system-ui,sans-serif}
 .rot.on{display:flex}
-.rot-phone{position:relative;width:46px;height:82px;margin-bottom:14px;border:3px solid #f4f4f4;border-radius:11px;animation:rot 2.6s var(--ease) infinite}
-.rot-phone::after{content:"";position:absolute;left:50%;bottom:5px;width:14px;height:3px;margin-left:-7px;border-radius:2px;background:#f4f4f4}
+.rot-phone{position:relative;width:46px;height:82px;margin-bottom:14px;border:3px solid #0a0a0a;border-radius:11px;animation:rot 2.6s var(--ease) infinite}
+.rot-phone::after{content:"";position:absolute;left:50%;bottom:5px;width:14px;height:3px;margin-left:-7px;border-radius:2px;background:#0a0a0a}
 @keyframes rot{0%,22%{transform:rotate(0)}50%,82%{transform:rotate(-90deg)}100%{transform:rotate(0)}}
 .rot-t{margin:0;font-size:22px;font-weight:600;letter-spacing:-.01em}
-.rot-s{margin:0;max-width:280px;font-size:14px;line-height:1.5;color:rgba(244,244,244,.7)}
-.rot-skip{margin-top:18px;padding:10px 16px;border-radius:9999px;border:1px solid rgba(255,255,255,.22);background:transparent;color:#f4f4f4;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.rot-s{margin:0;max-width:280px;font-size:14px;line-height:1.5;color:rgba(10,10,10,.65)}
+.rot-skip{margin-top:18px;padding:10px 16px;border-radius:9999px;border:1px solid rgba(10,10,10,.2);background:transparent;color:#0a0a0a;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
 ${css}
 html,body{background:${STAGE}}
 </style>
 </head>
 <body>
 <div class="fit">${standaloneHtml}<div class="tl-shade"></div><div class="tl"><div class="tl-track"></div><span class="tl-clock"></span><span class="tl-fs" title="Tela cheia (F)">${ico('CornersOut', 18, 'bold')}</span></div><div class="pp" title="Pausar / retomar">${ico('Play', 44, 'fill', '', 'i-play')}${ico('Pause', 44, 'fill', '', 'i-pause')}</div><div class="hint"></div></div>
+<div class="grain" aria-hidden="true"></div>
 <div class="rot"><div class="rot-phone"></div><p class="rot-t">Gire o celular</p><p class="rot-s">O vídeo é widescreen — na horizontal ele ocupa a tela toda.</p><button class="rot-skip" type="button">Assistir assim mesmo</button></div>
 <script>${runtime}</script>
 </body>

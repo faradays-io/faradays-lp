@@ -2,17 +2,17 @@
 
 ## Contexto
 
-**O que é.** Um showcase de ~75 segundos da plataforma Faradays, em HTML animado (roda sozinho, sem arquivo de vídeo). A versão que vale é o `index.html` desta branch (`showcase-video` da LP); existe também uma prancha editável em <https://claude.ai/code/artifact/635fdcc2-1102-4e7a-99a4-075da06f4758>. Estilo dos vídeos de apresentação do Claude: cartelas de título grandes, cortes casados, zoom em componentes. Fundo cinza `#333333` (pensado para celular na horizontal; na vertical aparece a instrução de girar), o app reproduzido pixel a pixel (tokens do `globals.css`, Geist/Aspekta/JetBrains Mono, ícones Phosphor).
+**O que é.** Um showcase de ~75 segundos da plataforma Faradays, em HTML animado (roda sozinho, sem arquivo de vídeo). A versão que vale é o `index.html` desta branch (`showcase-video` da LP); existe também uma prancha editável em <https://claude.ai/code/artifact/635fdcc2-1102-4e7a-99a4-075da06f4758>. Estilo dos vídeos de apresentação do Claude: cartelas de título grandes, cortes casados, zoom em componentes. Fundo igual ao da LP — `#f8f8f8` com o film grain dinâmico do `GrainOverlay` (feTurbulence 0.25, opacidade .12, `grain-jump`), títulos e legendas em tinta escura; pensado para celular na horizontal (na vertical aparece a instrução de girar). O app reproduzido pixel a pixel (tokens do `globals.css`, Geist/Aspekta/JetBrains Mono, ícones Phosphor).
 
 **Roteiro atual.**
 
 | Tempo | Capítulo | O que acontece |
 |---|---|---|
-| 0:00 | Abertura | logo Faradays |
-| 0:06 | 1 · Documentos | cartela com o ícone do SharePoint; a câmera fecha no painel do drive enquanto ele entra; três arquivos são selecionados em zoom (linha em destaque); com a pilha já voando para a tabela, **corte seco para a vista inteira**; a IA lê a validade (zoom nos status); corte seco para a aba Pastas |
-| 0:23 | 2 · BID | lista de BIDs → modal → Disparar BID (4) → envelopes → **vista dividida**: a caixa de e-mail do exportador (ANHUI JINHE) recebe o BID e responde com preço → o e-mail voa de volta → corte seco para o Comparativo já em zoom, com a linha da ANHUI chegando "lendo e-mail…" → a IA sugere (ponto piscante) → clique na linha → Fechar cotação |
+| 0:00 | Abertura | dica animada sozinha (3 s): anel de setas finas girando devagar e um celular que vai da vertical para a horizontal, sem texto; depois o logo Faradays (1,5 s) |
+| 0:06 | 1 · Documentos | cartela com o ícone do SharePoint; a câmera fecha no painel do drive enquanto ele entra; **sem clique**: os três arquivos novos passam de "sincronizando…" a "sincronizado · agora" (linha em destaque, badge do painel acompanha); com a pilha já voando para a tabela, **corte seco para a vista inteira**; a IA lê a validade (zoom nos status); corte seco para a aba Pastas |
+| 0:23 | 2 · BID | lista de BIDs → modal → Disparar BID (4) → envelopes → **vista dividida** com a legenda "Caixa de e-mail do fornecedor" em cima do Outlook (pill *fornecedor* na barra): o e-mail chega na lista, o painel de leitura abre um instante depois e a resposta é digitada com calma e responde com preço → o e-mail voa de volta → corte seco para o Comparativo já em zoom, com a linha da ANHUI chegando "lendo e-mail…" → ao preencher, a linha acende (azul, barra à esquerda) → a IA sugere (ponto piscante) → clique na linha → Fechar cotação |
 | 0:50 | 3 · Conversas | **só o celular do representante**, centralizado e ampliado: ele pede o COA → "digitando…" → a IA responde sozinha com o arquivo (rótulo *Agente IA · resposta automática* no balão) → ele pergunta o preço → a IA pergunta a marca → emite a cotação. Legendas grandes à esquerda marcam cada beat. No fim o celular vai para a direita, o sistema entra ao lado com a conversa inteira ("E toda a conversa fica registrada no sistema") e a câmera fecha na conversa |
-| 1:12 | Fechamento | logo + botão "Reproduzir de novo" |
+| 1:10 | Fechamento | logo + barra de busca onde `www.faradays.io` é digitado (sem botões — o vídeo recomeça sozinho) |
 
 **Decisões já tomadas** (não precisa repetir, só desfazer se quiser): sem espiral de Fibonacci; cartelas só com o título, palavras subindo; cartela ↔ demo em fade; match cut seco (sem fade, corta no meio do movimento) só em tabela → Pastas e disparo → comparativo; sem toasts e sem cards-eco; balões do sistema em azul `#0065e0` com texto branco; IA sugere o fornecedor por badge + ponto piscante, o usuário clica; nada de Monfiza — tudo Faradays. No cap. 3 ninguém do time digita: o COA também sai da IA (saiu o diálogo de anexo/arraste do SharePoint) e o sistema só aparece no fim, com a conversa já registrada. Dados são mock (preços, datas, nomes de representantes). Mascote pixelado numa prancha ao lado, fora do vídeo.
 
@@ -47,7 +47,7 @@ Uma linha curta na base da tela, aparecendo e sumindo com a cena. Marque as que 
 | [ ] | Linha de apoio sob o logo na abertura | ex.: "Documentos, BID e WhatsApp em um só lugar." (saiu numa rodada anterior — volta só se marcar) |
 | [ ] | Numeração nas cartelas | overline pequeno acima do título, ex.: "01 · Qualidade" (também saiu antes) |
 | [ ] | Mascote na abertura/fechamento | o pet pixelado ao lado do logo, em idle |
-| [ ] | Chamada final | uma linha no fechamento, ex.: "Fale com a Faradays" ou o site — me passe o texto/URL |
+| [x] | Chamada final | barra de busca digitando `www.faradays.io` (já no vídeo) |
 | [ ] | Contador de tempo/capítulo no canto | discreto, mono, para orientar quem assiste |
 
 ---
@@ -65,7 +65,7 @@ Uma linha curta na base da tela, aparecendo e sumindo com a cena. Marque as que 
 | id | Ação | Onde | Atual | Novo |
 |---|---|---|---|---|
 | geral.logo | manter | abertura e fechamento | logo Faradays (sem texto) | |
-| geral.replay | manter | botão no fechamento | Reproduzir de novo | |
+| geral.url | manter | barra de busca no fechamento | www.faradays.io | |
 
 ## Casca do app (aparece nos três capítulos)
 
@@ -116,16 +116,17 @@ Uma linha curta na base da tela, aparecendo e sumindo com a cena. Marque as que 
 | id | Ação | Onde | Atual | Novo | Alternativas |
 |---|---|---|---|---|---|
 | sp.titulo | manter | cabeçalho | SharePoint | | |
-| sp.subtitulo | manter | cabeçalho | Faradays Qualidade · Documentos | | Qualidade · Biblioteca de documentos |
-| sp.badge | manter | cabeçalho | sincronizado | | conectado |
+| sp.subtitulo | manter | cabeçalho | Qualidade · Documentos | | Faradays Qualidade |
+| sp.badge | manter | cabeçalho | sincronizando 3 → sincronizado | | conectado |
 | sp.caminho | manter | trilha | Documentos › Novos · 6 arquivos | | Certificados › Recebidos · 6 arquivos |
-| sp.a1 (arrastado) | manter | | GMP SUCRALOSE — ANHUI JINHE.pdf · PDF · 1,2 MB · hoje | | |
-| sp.a2 (arrastado) | manter | | HALAL ÁLCOOL CETOESTEARÍLICO 30-70.pdf · PDF · 640 KB · hoje | | |
-| sp.a3 (arrastado) | manter | | COA ACESSULFAME K — lote 2408.pdf · PDF · 198 KB · ontem | | |
+| sp.a1 (sincroniza) | manter | | GMP SUCRALOSE — ANHUI JINHE.pdf · PDF · 1,2 MB · hoje | | |
+| sp.a2 (sincroniza) | manter | | HALAL ÁLCOOL CETOESTEARÍLICO 30-70.pdf · PDF · 640 KB · hoje | | |
+| sp.a3 (sincroniza) | manter | | COA ACESSULFAME K — lote 2408.pdf · PDF · 198 KB · ontem | | |
+| sp.status | manter | linha de meta das três, durante a sincronização | sincronizando… → sincronizado · agora | | enviando ao sistema… → no sistema |
 | sp.a4 | manter | | ISO 9001 VITASWEET — 2026.pdf · PDF · 880 KB · há 3 dias | | |
 | sp.a5 | manter | | FDA REGISTRATION — ENSIGN.pdf · PDF · 310 KB · há 1 sem | | |
 | sp.a6 | manter | | MSDS INOSITOL — TJCY.pdf · PDF · 452 KB · há 2 sem | | |
-| sp.rodape | manter | rodapé | Selecione e arraste para o sistema — a IA lê tipo, produto e validade. | | Arraste para importar. A IA preenche tipo, produto e validade. · Solte no sistema: a IA cuida do resto. |
+| sp.rodape | manter | rodapé | Sincronização automática — a IA lê tipo, produto e validade de cada arquivo novo. | | Novos arquivos entram sozinhos no sistema. · Sem upload: o drive já é o sistema. |
 
 ### Aba Pastas (árvore)
 
@@ -184,7 +185,8 @@ Uma linha curta na base da tela, aparecendo e sumindo com a cena. Marque as que 
 
 | id | Ação | Onde | Atual | Novo | Alternativas |
 |---|---|---|---|---|---|
-| mail.header | manter | barra | Outlook · ANHUI JINHE FOOD · Inbox | | |
+| mail.header | manter | barra | Outlook · ANHUI JINHE FOOD · *fornecedor* · Inbox | | |
+| mail.leg.fornecedor | manter | legenda acima do e-mail (vista dividida) | Caixa de e-mail do fornecedor — O exportador recebe o BID na caixa dele e responde ali mesmo. | | O fornecedor responde no e-mail dele, sem portal. |
 | mail.lista | manter | rótulo da lista | Today | | |
 | mail.novo (chega) | manter | 1ª linha da lista | Faradays · BID CC-2026-012 — 3 items · 09:12 · Dear supplier, please find below our BID for FOB/CFR quotation… | | |
 | mail.l2 | manter | lista | COSCO Shipping · Booking confirmation — Qingdao/Santos · 08:40 | | |
@@ -209,7 +211,7 @@ Uma linha curta na base da tela, aparecendo e sumindo com a cena. Marque as que 
 | cmp.b1l1 (sugerida/vencedora) | manter | | ANHUI JINHE FOOD · 4,85/KG FOB · 4,85/KG · T/T 90 days · E-mail · IA (chega como "lendo e-mail…" · resposta recebida, depois preenche) | | |
 | cmp.b1l2 | manter | | VITASWEET CO. (marca cotada: HANSONG) · 5,02/KG CFR · 4,88/KG · T/T 30 days · Planilha · IA | | |
 | cmp.b1l3 | manter | | ENSIGN INDUSTRY · 5,11/KG FOB · 5,11/KG · L/C at sight · E-mail · IA | | |
-| cmp.b1l4 | manter | | CHENGXIN CHEMICAL (rascunho da IA) · 5,20/KG FOB · 5,20/KG · 30% adiantado · E-mail · IA · Confirmar | | |
+| cmp.b1l4 | manter | | CHENGXIN CHEMICAL · 5,20/KG FOB · 5,20/KG · 30% adiantado · E-mail · IA (sem rótulo de rascunho) | | |
 | cmp.sugerida | manter | rótulo da IA | sugerida pela IA | | melhor oferta · recomendada |
 | cmp.box2 | manter | título do bloco | SUCRALOSE - ANHUI JINHE · CAS 56038-13-2 · 5.000 KG | | |
 | cmp.b2l1 | manter | | ANHUI JINHE FOOD · 38,40/KG FOB · 38,40/KG · T/T 90 days · E-mail · IA | | |
