@@ -57,7 +57,7 @@ Uma linha curta na base da tela, aparecendo e sumindo com a cena. Marque as que 
 | id | Ação | Atual | Novo | Alternativas |
 |---|---|---|---|---|
 | cartela.1 | manter | Documentos direto do SharePoint | | Do SharePoint para o sistema, sem digitar · Seus documentos, lidos pela IA |
-| cartela.2 | manter | BID em um disparo | | Um BID, todos os exportadores · Cote com todos de uma vez |
+| cartela.2 | trocado | BID em um disparo | Cotação em um clique | Um BID, todos os exportadores · Cote com todos de uma vez |
 | cartela.3 | manter | Conversas com IA | | O representante pergunta, a IA cota · WhatsApp com um agente do seu lado |
 
 ## Abertura e fechamento

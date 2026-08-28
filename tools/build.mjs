@@ -675,7 +675,7 @@ a{color:${T.brand}}a:hover{color:${T.blue700}}
 /* ---------------- stage ---------------------------------------------- */
 const stage = `<div class="stage" style="position:relative;width:1920px;height:1080px;overflow:hidden;background:${STAGE};color:${T.fg};font-family:${BODY};font-size:16px;line-height:1.5;letter-spacing:.02em">
 	${titleCard('{{c.ch1}}', 'Documentos direto do SharePoint', { SharePoint: sharepointSvg(92) })}
-	${titleCard('{{c.ch2}}', 'BID em um disparo')}
+	${titleCard('{{c.ch2}}', 'Cotação em um clique')}
 	${titleCard('{{c.ch3}}', 'Conversas com IA')}
 
 	<div class="cam {{c.cam}}" style="position:absolute;inset:0;transform-origin:0 0;transform:{{st.cam}}">
@@ -940,7 +940,7 @@ fs.writeFileSync(
 					y: 0,
 					w: 380,
 					text:
-						'Roteiro (75s)\n\n0:00 Abertura — logo Faradays sobre fundo escuro\n0:06 Documentos direto do SharePoint — a câmera fecha no painel do drive enquanto ele entra; os 3 arquivos novos sincronizam sozinhos (sem clique); com a pilha já voando, corte seco para a vista inteira; IA lê validade (zoom nos status), corte seco para a aba Pastas\n0:23 BID em um disparo — lista → modal → Disparar BID (4) → envelopes → vista dividida: a caixa de e-mail do exportador recebe o BID e responde com preço → o e-mail voa de volta → corte seco para o Comparativo JÁ EM ZOOM, com a linha da ANHUI chegando “lendo e-mail…” → IA sugere (ponto piscante) → clique na linha → Fechar cotação\n0:50 Conversas com IA — só o celular do representante, centralizado: ele pede o COA → "digitando…" → a IA responde sozinha (rótulo Agente IA nos balões; legendas laterais) → pergunta a marca → emite a cotação; no fim o celular vai para a direita, o sistema entra ao lado com a conversa inteira e a câmera fecha nela\n1:12 Fechamento — logo\n\nTransições: cartela ↔ demo em fade; match cut seco (sem fade, corta no meio do movimento) só em tabela→Pastas e disparo→comparativo.\n\nChips: Início pula ao capítulo; Tempo vai a um instante; Pausar congela; Loop repete.'
+						'Roteiro (75s)\n\n0:00 Abertura — logo Faradays sobre fundo escuro\n0:06 Documentos direto do SharePoint — a câmera fecha no painel do drive enquanto ele entra; os 3 arquivos novos sincronizam sozinhos (sem clique); com a pilha já voando, corte seco para a vista inteira; IA lê validade (zoom nos status), corte seco para a aba Pastas\n0:23 Cotação em um clique — lista → modal → Disparar BID (4) → envelopes → vista dividida: a caixa de e-mail do exportador recebe o BID e responde com preço → o e-mail voa de volta → corte seco para o Comparativo JÁ EM ZOOM, com a linha da ANHUI chegando “lendo e-mail…” → IA sugere (ponto piscante) → clique na linha → Fechar cotação\n0:50 Conversas com IA — só o celular do representante, centralizado: ele pede o COA → "digitando…" → a IA responde sozinha (rótulo Agente IA nos balões; legendas laterais) → pergunta a marca → emite a cotação; no fim o celular vai para a direita, o sistema entra ao lado com a conversa inteira e a câmera fecha nela\n1:12 Fechamento — logo\n\nTransições: cartela ↔ demo em fade; match cut seco (sem fade, corta no meio do movimento) só em tabela→Pastas e disparo→comparativo.\n\nChips: Início pula ao capítulo; Tempo vai a um instante; Pausar congela; Loop repete.'
 				}
 			],
 			launch: { view: 'focused', file: 'Main.dc.html' }
