@@ -1,8 +1,8 @@
 # Showcase Faradays
 
-Vídeo de apresentação da plataforma em HTML animado (~75 s, 1920×1080), sem arquivo de vídeo — abre em qualquer navegador e roda sozinho.
+Vídeo de apresentação da plataforma em HTML animado (~75 s, 1920×1080, fundo cinza `#333`), sem arquivo de vídeo — abre em qualquer navegador e roda sozinho. Pensado também para celular: na horizontal ocupa a tela toda; na vertical mostra a instrução de girar (o vídeo espera e retoma ao girar; dá para pular com "Assistir assim mesmo").
 
-- `index.html` — o showcase. Capítulos: Documentos direto do SharePoint · BID em um disparo (com a caixa de e-mail do exportador) · Conversas com IA (com o celular do representante).
+- `index.html` — o showcase. Capítulos: Documentos direto do SharePoint (zoom no painel do drive na seleção, corte seco para a vista inteira) · BID em um disparo (com a caixa de e-mail do exportador) · Conversas com IA (só o celular do representante, a IA respondendo sozinha; no fim o sistema entra com a conversa inteira).
 - `mascote.html` — o mascote pixelado (estrela), com direções de cor, expressões e escala.
 - `legendas.md` — todo texto do vídeo, com colunas para manter/remover/trocar e sugestões de legendas narradas; edite e devolva para regenerar.
 
@@ -10,12 +10,13 @@ Vídeo de apresentação da plataforma em HTML animado (~75 s, 1920×1080), sem 
 
 | Tecla | Ação |
 |---|---|
-| Espaço · clique · `K` | pausa / retoma |
+| Espaço · clique/toque · `K` | pausa / retoma |
 | `→` · `←` | próximo / anterior capítulo |
 | `R` | reinicia |
 | `1` `2` `3` | pula para Documentos · BID · Conversas |
+| `F` | tela cheia (no celular tenta travar na horizontal) |
 
-Pausado, aparece a linha do tempo dividida por capítulo (clique num trecho para pular até ele) e o relógio.
+Ao passar o mouse (ou pausar) aparecem os controles: play/pause no centro, a linha do tempo dividida por capítulo embaixo (clique num trecho para pular até ele), o relógio e o botão de tela cheia. Somem 2 s depois enquanto o vídeo roda.
 
 Parâmetros de URL: `?t=30` começa no segundo 30 · `?pause` abre pausado · `?inicio=BID` começa num capítulo (`SharePoint`, `BID`, `Conversas`) · `?loop` repete.
 

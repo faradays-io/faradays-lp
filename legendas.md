@@ -2,19 +2,19 @@
 
 ## Contexto
 
-**O que é.** Um showcase de ~75 segundos da plataforma Faradays, em HTML animado (roda sozinho, sem arquivo de vídeo). A versão que vale é o `index.html` desta branch (`showcase-video` da LP); existe também uma prancha editável em <https://claude.ai/code/artifact/635fdcc2-1102-4e7a-99a4-075da06f4758>. Estilo dos vídeos de apresentação do Claude: cartelas de título grandes, cortes casados, zoom em componentes. Fundo escuro `#0f0f0e`, o app reproduzido pixel a pixel (tokens do `globals.css`, Geist/Aspekta/JetBrains Mono, ícones Phosphor).
+**O que é.** Um showcase de ~75 segundos da plataforma Faradays, em HTML animado (roda sozinho, sem arquivo de vídeo). A versão que vale é o `index.html` desta branch (`showcase-video` da LP); existe também uma prancha editável em <https://claude.ai/code/artifact/635fdcc2-1102-4e7a-99a4-075da06f4758>. Estilo dos vídeos de apresentação do Claude: cartelas de título grandes, cortes casados, zoom em componentes. Fundo cinza `#333333` (pensado para celular na horizontal; na vertical aparece a instrução de girar), o app reproduzido pixel a pixel (tokens do `globals.css`, Geist/Aspekta/JetBrains Mono, ícones Phosphor).
 
 **Roteiro atual.**
 
 | Tempo | Capítulo | O que acontece |
 |---|---|---|
 | 0:00 | Abertura | logo Faradays |
-| 0:06 | 1 · Documentos | painel do SharePoint entra; três arquivos são selecionados (linha em destaque) e arrastados em pilha para a tabela; a IA lê a validade (zoom nos status); corte seco para a aba Pastas |
+| 0:06 | 1 · Documentos | cartela com o ícone do SharePoint; a câmera fecha no painel do drive enquanto ele entra; três arquivos são selecionados em zoom (linha em destaque); com a pilha já voando para a tabela, **corte seco para a vista inteira**; a IA lê a validade (zoom nos status); corte seco para a aba Pastas |
 | 0:23 | 2 · BID | lista de BIDs → modal → Disparar BID (4) → envelopes → **vista dividida**: a caixa de e-mail do exportador (ANHUI JINHE) recebe o BID e responde com preço → o e-mail voa de volta → corte seco para o Comparativo já em zoom, com a linha da ANHUI chegando "lendo e-mail…" → a IA sugere (ponto piscante) → clique na linha → Fechar cotação |
-| 0:50 | 3 · Conversas | **vista dividida** com o celular do representante: cada mensagem aparece no celular e no sistema; ele pede o COA → clipe → arquivo do SharePoint arrastado para a conversa (chega no celular) → a IA pergunta a marca e emite a cotação (zoom) |
+| 0:50 | 3 · Conversas | **só o celular do representante**, centralizado e ampliado: ele pede o COA → "digitando…" → a IA responde sozinha com o arquivo (rótulo *Agente IA · resposta automática* no balão) → ele pergunta o preço → a IA pergunta a marca → emite a cotação. Legendas grandes à esquerda marcam cada beat. No fim o celular vai para a direita, o sistema entra ao lado com a conversa inteira ("E toda a conversa fica registrada no sistema") e a câmera fecha na conversa |
 | 1:12 | Fechamento | logo + botão "Reproduzir de novo" |
 
-**Decisões já tomadas** (não precisa repetir, só desfazer se quiser): sem espiral de Fibonacci; cartelas só com o título, palavras subindo; cartela ↔ demo em fade; match cut seco (sem fade, corta no meio do movimento) só em tabela → Pastas e disparo → comparativo; sem toasts e sem cards-eco; balões do sistema em azul `#0065e0` com texto branco; IA sugere o fornecedor por badge + ponto piscante, o usuário clica; nada de Monfiza — tudo Faradays. Dados são mock (preços, datas, nomes de representantes). Mascote pixelado numa prancha ao lado, fora do vídeo.
+**Decisões já tomadas** (não precisa repetir, só desfazer se quiser): sem espiral de Fibonacci; cartelas só com o título, palavras subindo; cartela ↔ demo em fade; match cut seco (sem fade, corta no meio do movimento) só em tabela → Pastas e disparo → comparativo; sem toasts e sem cards-eco; balões do sistema em azul `#0065e0` com texto branco; IA sugere o fornecedor por badge + ponto piscante, o usuário clica; nada de Monfiza — tudo Faradays. No cap. 3 ninguém do time digita: o COA também sai da IA (saiu o diálogo de anexo/arraste do SharePoint) e o sistema só aparece no fim, com a conversa já registrada. Dados são mock (preços, datas, nomes de representantes). Mascote pixelado numa prancha ao lado, fora do vídeo.
 
 **Como usar este arquivo.** Cada linha tem **Ação** (`manter` · `remover` · `trocar`), **Novo** (o texto que entra quando a ação for `trocar`) e, onde faz sentido, **Alternativas** que já deixei prontas — pode copiar uma para Novo ou escrever a sua. As seções "Adicionar" listam coisas que hoje **não existem** no vídeo: marque `[x]` no que quiser que eu inclua. Devolva o arquivo (commit nesta branch ou cole no chat) e eu aplico e regenero o `index.html`.
 
@@ -224,7 +224,7 @@ Uma linha curta na base da tela, aparecendo e sumindo com a cena. Marque as que 
 | id | Ação | Atual | Novo |
 |---|---|---|---|
 | wa.busca | manter | Buscar por nome ou número... · Novo | |
-| wa.r1 (aberta) | manter | Carlos Mendes · Bom dia! Nestlé pediu o COA da creatina 200 mesh… · agora · 1 não lida | |
+| wa.r1 (aberta) | manter | Carlos Mendes · Agente IA: Cotação COT-V-0188 emitida — PDF anexo · 09:45 | |
 | wa.r2 | manter | Ana Souza · Você: Tabela de setembro sai dia 01 · há 2 h | |
 | wa.r3 | manter | João Pereira (Gestor) · Pedido PD-0453 faturado, obrigado! · há 5 h | |
 | wa.r4 | manter | Marcos Lima · Você: Cotação COT-V-0186 emitida — PDF anexo · ontem | |
@@ -237,7 +237,7 @@ Uma linha curta na base da tela, aparecendo e sumindo com a cena. Marque as que 
 | wa.header | manter | cabeçalho | Carlos Mendes · +5511987654321 · Rep. Sudeste · botão Cotações | | |
 | wa.dia | manter | separador | Hoje | | |
 | wa.m1 | manter | representante · 09:41 | Bom dia! A Nestlé pediu o COA da creatina 200 mesh, lote 2408. Consegue me mandar? | | Bom dia! Me manda o COA da creatina 200 mesh, lote 2408? A Nestlé pediu. |
-| wa.m2 | manter | sistema · 09:42 | (arquivo) COA CREATINA 200 MESH — lote 2408.pdf · PDF · 212 KB · SharePoint | | |
+| wa.m2 | manter | IA · 09:42 | Segue o COA da creatina 200 mesh, lote 2408: + (arquivo) COA CREATINA 200 MESH — lote 2408.pdf · PDF · 212 KB · SharePoint | | |
 | wa.m3 | manter | representante · 09:44 | Valeu! E quanto tá a creatina hoje pra 2 ton, entrega SP? | | Obrigado! Quanto fica 2 ton de creatina, entrega em SP? |
 | wa.ia | manter | rótulo nos balões da IA | Agente IA | | Faradays · IA |
 | wa.m4 | manter | IA · 09:44 | Encontrei **2 marcas** de creatina na tabela vigente: Creapure® e Hansong. Qual delas? | | Tenho creatina de 2 marcas na tabela vigente — Creapure® e Hansong. Qual você quer? |
@@ -245,28 +245,31 @@ Uma linha curta na base da tela, aparecendo e sumindo com a cena. Marque as que 
 | wa.m6 | manter | IA · 09:45 | Cotação COT-V-0188 emitida — ICMS SP e câmbio do dia já calculados. + (arquivo) COT-V-0188 · Nestlé SP.pdf · 2.000 kg · Creapure® · 1 pág. | | Pronto: cotação COT-V-0188 emitida, com ICMS SP e câmbio do dia. |
 | wa.compositor | manter | placeholder | Mensagem para o representante... | | |
 
-### Celular do representante (vista dividida, à direita do sistema)
+### Celular do representante (sozinho em cena; no fim, à direita do sistema)
 
 As mensagens são as mesmas da conversa (wa.m1 … wa.m6) — mudar lá muda aqui. Só estes textos são próprios do celular:
 
-| id | Ação | Onde | Atual | Novo |
-|---|---|---|---|---|
-| cel.contato | manter | cabeçalho | Faradays · online | |
-| cel.dia | manter | separador | Hoje | |
-| cel.arquivo1 | manter | balão recebido | COA CREATINA 200 MESH — lote 2408.pdf · PDF · 212 KB | |
-| cel.arquivo2 | manter | balão recebido | COT-V-0188 · Nestlé SP.pdf · 2.000 kg · Creapure® · 1 pág. | |
-| cel.compositor | manter | placeholder | Mensagem | |
+| id | Ação | Onde | Atual | Novo | Alternativas |
+|---|---|---|---|---|---|
+| cel.contato | manter | cabeçalho | Faradays | | |
+| cel.status | manter | cabeçalho, sob o nome | ✦ Agente IA · responde na hora | | Agente IA · online · Faradays IA · sempre disponível |
+| cel.digitando | manter | cabeçalho, enquanto a IA "pensa" | digitando… | | |
+| cel.rotulo | manter | topo dos balões recebidos | ✦ Agente IA · resposta automática | | Agente IA · automático · Respondido pela IA |
+| cel.dia | manter | separador | Hoje | | |
+| cel.m2 | manter | balão recebido · 09:42 | Segue o COA do lote 2408: + (arquivo) COA CREATINA 200 MESH — lote 2408.pdf · PDF · 212 KB | | |
+| cel.arquivo2 | manter | balão recebido | COT-V-0188 · Nestlé SP.pdf · 2.000 kg · Creapure® · 1 pág. | | |
+| cel.compositor | manter | placeholder | Mensagem | | |
+
+### Legendas laterais (texto grande à esquerda do celular)
+
+| id | Ação | Tempo | Overline | Atual | Novo | Alternativas |
+|---|---|---|---|---|---|---|
+| leg.1 | manter | 0:52 (1ª mensagem) | WhatsApp do representante | O representante pergunta pelo WhatsApp, como sempre. | | Ele pergunta onde já pergunta: no WhatsApp. |
+| leg.2 | manter | 0:54 (COA chega) | Agente IA · resposta automática | A IA responde na hora — ninguém do seu time precisou digitar. | | Resposta em segundos, sem ninguém do seu lado. |
+| leg.3 | manter | 0:59 (pergunta da marca) | Agente IA · resposta automática | Tira a dúvida da marca… | | Confirma a marca… |
+| leg.4 | manter | 1:03 (cotação) | Agente IA · cotação emitida | …e emite a cotação, com ICMS e câmbio do dia. | | …e cota na hora, com ICMS e câmbio do dia. |
+| leg.5 | manter | 1:05 (sistema entra) | Sistema Faradays | E toda a conversa fica registrada no sistema. | | Tudo registrado no sistema, para a equipe acompanhar. |
 
 ### Diálogo de anexo
 
-| id | Ação | Onde | Atual | Novo | Alternativas |
-|---|---|---|---|---|---|
-| anexo.titulo | manter | título | Enviar arquivo para Carlos Mendes | | |
-| anexo.subtitulo | manter | linha abaixo | Escolha a fonte e o arquivo. O envio vai como documento na conversa. | | Escolha o arquivo — ele vai como documento na conversa. |
-| anexo.fontes | manter | pills | Documentos · Laudos · SharePoint | | |
-| anexo.caminho | manter | trilha | Faradays Qualidade › Certificados › COA | | |
-| anexo.a1 (arrastado) | manter | | COA CREATINA 200 MESH — lote 2408.pdf · PDF · 212 KB · há 2 h | | |
-| anexo.a2 | manter | | COA ACESSULFAME K — lote 2407.pdf · PDF · 198 KB · há 3 dias | | |
-| anexo.a3 | manter | | COA SUCRALOSE — lote 2406.pdf · PDF · 240 KB · há 1 sem | | |
-| anexo.a4 | manter | | COA ÁCIDO ASCÓRBICO — lote 2405.pdf · PDF · 187 KB · há 2 sem | | |
-| anexo.rodape | manter | rodapé | Arraste o arquivo para a conversa ou use Enviar · Enviar | | Arraste para a conversa ou clique em Enviar |
+Saiu do roteiro (o COA agora é enviado pela IA). Os textos ficam aqui só como referência, caso queira voltar: título "Enviar arquivo para Carlos Mendes" · fontes Documentos · Laudos · SharePoint · trilha Faradays Qualidade › Certificados › COA · rodapé "Arraste o arquivo para a conversa ou use Enviar".
