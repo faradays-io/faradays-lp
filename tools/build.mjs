@@ -449,13 +449,14 @@ const darkCard = (cls, inner) =>
 	`<div class="vf tc ${cls}" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:40px">${inner}</div>`
 // Dica de rotação na abertura (cartela própria, antes do logo): anel de setas finas
 // girando devagar e um celular que vai da vertical para a horizontal.
+const HINT_INK = '#7a7a7a' // cinza da dica de rotação (setas e celular)
 const RING = (() => {
 	const arc = 'M 26 85.8 A 100 100 0 0 1 206.6 70 M 207.8 56.1 L 206.6 70 L 193.9 64.1'
-	return `<svg viewBox="0 0 240 240" width="240" height="240" fill="none" stroke="${T.fg}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${arc}"></path><path d="${arc}" transform="rotate(180 120 120)"></path></svg>`
+	return `<svg viewBox="0 0 240 240" width="240" height="240" fill="none" stroke="${HINT_INK}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${arc}"></path><path d="${arc}" transform="rotate(180 120 120)"></path></svg>`
 })()
 const rotateHint = `<div class="w" style="position:relative;width:240px;height:240px;display:grid;place-items:center">
 	<span class="rh-ring" style="position:absolute;inset:0;display:grid;place-items:center">${RING}</span>
-	<span class="rh-phone" style="position:relative;width:64px;height:112px;border:4px solid ${T.fg};border-radius:14px;background:${STAGE}"><span style="position:absolute;left:50%;bottom:7px;width:18px;height:3px;margin-left:-9px;border-radius:2px;background:${T.fg}"></span></span>
+	<span class="rh-phone" style="position:relative;width:64px;height:112px;border:4px solid ${HINT_INK};border-radius:14px;background:${STAGE}"><span style="position:absolute;left:50%;bottom:7px;width:18px;height:3px;margin-left:-9px;border-radius:2px;background:${HINT_INK}"></span></span>
 </div>`
 const hintCard = darkCard('{{c.hint}}', rotateHint)
 const openCard = darkCard('{{c.open}}', `<div class="w" style="position:relative;display:flex">${wordmark(460, T.fg)}</div>`)
@@ -616,7 +617,7 @@ a{color:${T.brand}}a:hover{color:${T.blue700}}
 .tc.show .rh-ring{animation:spinslow 9s linear infinite}
 @keyframes spinslow{to{transform:rotate(360deg)}}
 .tc.show .rh-phone{animation:rhRot 2.2s var(--ease) .5s forwards}
-@keyframes rhRot{0%,30%{transform:rotate(0)}100%{transform:rotate(-90deg)}}
+@keyframes rhRot{0%,30%{transform:rotate(0)}100%{transform:rotate(90deg)}}
 /* fechamento: a URL é digitada (mono → largura exata em ch) com cursor piscando */
 .url{display:inline-block;width:0;overflow:hidden;white-space:nowrap}
 .tc.show .url{animation:typeUrl 1.05s steps(15,end) 1s forwards}
