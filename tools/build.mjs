@@ -904,7 +904,7 @@ const runtime = `
 class DCLogic { constructor(props) { this.props = props } }
 ${logic}
 const params = new URLSearchParams(location.search)
-const props = { inicio: params.get('inicio') || 'Abertura', loop: params.has('loop'), pausar: false, tempo: 0 }
+const props = { inicio: params.get('inicio') || 'Abertura', loop: params.has('loop'), pausar: params.has('pause'), tempo: 0 }
 const comp = new Component(props)
 const elsC = [...document.querySelectorAll('[data-c]')], elsS = [...document.querySelectorAll('[data-st]')]
 function paint() {
@@ -930,7 +930,7 @@ const CH = [['Abertura', 0], ['Documentos', CUES[I.openOut][1]], ['BID', CUES[I.
 function elapsed() { return comp.frozen != null ? comp.frozen : performance.now() - comp.t0 }
 const hint = document.querySelector('.hint'); let hintTimer = null
 function say(txt) { hint.textContent = txt; hint.classList.add('on'); clearTimeout(hintTimer); hintTimer = setTimeout(() => hint.classList.remove('on'), 1400) }
-function togglePause() {
+let togglePause = function () {
 	if (comp.frozen != null) { comp.t0 = performance.now() - comp.frozen; comp.frozen = null; say('Reproduzindo') }
 	else { comp.frozen = performance.now() - comp.t0; say('Pausado') }
 }
@@ -949,8 +949,36 @@ addEventListener('keydown', (e) => {
 	else if (e.key === '2') { comp.startAt('BID'); say('BID') }
 	else if (e.key === '3') { comp.startAt('Conversas'); say('Conversas') }
 })
-// Clique na prancha também pausa/retoma (fora do botão de replay).
-document.querySelector('.fit').addEventListener('click', (e) => { if (!e.target.closest('[data-replay]')) togglePause() })
+// Clique na prancha também pausa/retoma (fora do botão de replay e da timeline).
+document.querySelector('.fit').addEventListener('click', (e) => { if (!e.target.closest('[data-replay]') && !e.target.closest('.tl')) togglePause() })
+// Timeline por capítulo: aparece pausado (e por 1,4 s depois de um pulo); clicar num trecho pula para lá.
+const tl = document.querySelector('.tl'), track = tl.querySelector('.tl-track'), clock = tl.querySelector('.tl-clock')
+const segs = CH.map((c, k) => {
+	const start = c[1], end = k + 1 < CH.length ? CH[k + 1][1] : comp.total
+	const el = document.createElement('div'); el.className = 'seg'; el.style.flex = String(end - start)
+	el.innerHTML = '<div class="fill"></div><span class="lb">' + c[0] + '</span>'
+	el.addEventListener('click', (e) => { const r = el.getBoundingClientRect(); comp.seek(start + (end - start) * ((e.clientX - r.left) / r.width)); say(c[0]) })
+	track.appendChild(el)
+	return { el, start, end }
+})
+const fmt = (ms) => { const t = Math.max(0, Math.round(ms / 1000)); return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0') }
+let tlTimer = null
+function showTL(temp) { tl.classList.add('on'); clearTimeout(tlTimer); if (temp) tlTimer = setTimeout(() => { if (comp.frozen == null) tl.classList.remove('on') }, 1400) }
+function updateTL() {
+	const el = Math.min(elapsed(), comp.total)
+	for (const sg of segs) {
+		const f = el <= sg.start ? 0 : el >= sg.end ? 1 : (el - sg.start) / (sg.end - sg.start)
+		sg.el.querySelector('.fill').style.width = (f * 100) + '%'
+		sg.el.classList.toggle('active', el >= sg.start && el < sg.end)
+	}
+	clock.textContent = fmt(el) + ' / ' + fmt(comp.total)
+	if (comp.frozen != null) tl.classList.add('on')
+}
+setInterval(updateTL, 100); updateTL()
+const _seek = comp.seek.bind(comp); comp.seek = (ms) => { _seek(ms); updateTL(); showTL(true) }
+const _toggle = togglePause
+togglePause = function () { _toggle(); if (comp.frozen != null) showTL(false); else showTL(true) }
+if (props.pausar) tl.classList.add('on')
 `.replace("document.querilySelectorAll = null\n", '')
 
 const standalone = `<!doctype html>
@@ -963,14 +991,23 @@ const standalone = `<!doctype html>
 <style>
 html,body{margin:0;height:100%;overflow:hidden;background:#0f0f0e}
 .fit{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;cursor:default}
-.hint{position:absolute;left:40px;bottom:32px;padding:8px 14px;border-radius:9999px;background:rgba(255,255,255,.08);color:#f4f4f4;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:14px;letter-spacing:.08em;text-transform:uppercase;opacity:0;transition:opacity .3s;pointer-events:none}
+.tl{position:absolute;left:64px;right:64px;bottom:40px;display:flex;align-items:flex-start;gap:20px;opacity:0;transition:opacity .3s;pointer-events:none}
+.tl.on{opacity:1;pointer-events:auto}
+.tl-track{flex:1;display:flex;gap:6px;height:6px}
+.seg{position:relative;height:6px;border-radius:3px;background:rgba(255,255,255,.16);cursor:pointer}
+.seg.active{background:rgba(255,255,255,.34)}
+.seg .fill{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:#0065e0;width:0}
+.seg .lb{position:absolute;top:14px;left:0;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.55);white-space:nowrap}
+.seg.active .lb{color:#f4f4f4}
+.tl-clock{flex-shrink:0;margin-top:-6px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;letter-spacing:.06em;color:rgba(255,255,255,.7);font-variant-numeric:tabular-nums}
+.hint{position:absolute;left:64px;bottom:96px;padding:8px 14px;border-radius:9999px;background:rgba(255,255,255,.08);color:#f4f4f4;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:14px;letter-spacing:.08em;text-transform:uppercase;opacity:0;transition:opacity .3s;pointer-events:none}
 .hint.on{opacity:1}
 ${css}
 html,body{background:#0f0f0e}
 </style>
 </head>
 <body>
-<div class="fit">${standaloneHtml}<div class="hint"></div></div>
+<div class="fit">${standaloneHtml}<div class="hint"></div><div class="tl"><div class="tl-track"></div><span class="tl-clock"></span></div></div>
 <script>${runtime}</script>
 </body>
 </html>

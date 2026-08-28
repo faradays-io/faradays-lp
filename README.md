@@ -4,6 +4,7 @@ Vídeo de apresentação da plataforma em HTML animado (~75 s, 1920×1080), sem 
 
 - `index.html` — o showcase. Capítulos: Documentos direto do SharePoint · BID em um disparo (com a caixa de e-mail do exportador) · Conversas com IA (com o celular do representante).
 - `mascote.html` — o mascote pixelado (estrela), com direções de cor, expressões e escala.
+- `legendas.md` — todo texto do vídeo, com colunas para manter/remover/trocar e sugestões de legendas narradas; edite e devolva para regenerar.
 
 ## Controles (index.html)
 
@@ -14,7 +15,9 @@ Vídeo de apresentação da plataforma em HTML animado (~75 s, 1920×1080), sem 
 | `R` | reinicia |
 | `1` `2` `3` | pula para Documentos · BID · Conversas |
 
-Parâmetros de URL: `?t=30` começa no segundo 30 · `?inicio=BID` começa num capítulo (`SharePoint`, `BID`, `Conversas`) · `?loop` repete.
+Pausado, aparece a linha do tempo dividida por capítulo (clique num trecho para pular até ele) e o relógio.
+
+Parâmetros de URL: `?t=30` começa no segundo 30 · `?pause` abre pausado · `?inicio=BID` começa num capítulo (`SharePoint`, `BID`, `Conversas`) · `?loop` repete.
 
 ## Regenerar
 
