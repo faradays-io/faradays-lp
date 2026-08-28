@@ -952,7 +952,8 @@ addEventListener('keydown', (e) => {
 // Clique na prancha também pausa/retoma (fora do botão de replay e da timeline).
 document.querySelector('.fit').addEventListener('click', (e) => { if (!e.target.closest('[data-replay]') && !e.target.closest('.tl')) togglePause() })
 // Timeline por capítulo: aparece pausado (e por 1,4 s depois de um pulo); clicar num trecho pula para lá.
-const tl = document.querySelector('.tl'), track = tl.querySelector('.tl-track'), clock = tl.querySelector('.tl-clock')
+const tl = document.querySelector('.tl'), track = tl.querySelector('.tl-track'), clock = tl.querySelector('.tl-clock'), shade = document.querySelector('.tl-shade')
+function setTL(on) { tl.classList.toggle('on', on); shade.classList.toggle('on', on) }
 const segs = CH.map((c, k) => {
 	const start = c[1], end = k + 1 < CH.length ? CH[k + 1][1] : comp.total
 	const el = document.createElement('div'); el.className = 'seg'; el.style.flex = String(end - start)
@@ -963,7 +964,7 @@ const segs = CH.map((c, k) => {
 })
 const fmt = (ms) => { const t = Math.max(0, Math.round(ms / 1000)); return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0') }
 let tlTimer = null
-function showTL(temp) { tl.classList.add('on'); clearTimeout(tlTimer); if (temp) tlTimer = setTimeout(() => { if (comp.frozen == null) tl.classList.remove('on') }, 1400) }
+function showTL(temp) { setTL(true); clearTimeout(tlTimer); if (temp) tlTimer = setTimeout(() => { if (comp.frozen == null) setTL(false) }, 1400) }
 function updateTL() {
 	const el = Math.min(elapsed(), comp.total)
 	for (const sg of segs) {
@@ -972,13 +973,13 @@ function updateTL() {
 		sg.el.classList.toggle('active', el >= sg.start && el < sg.end)
 	}
 	clock.textContent = fmt(el) + ' / ' + fmt(comp.total)
-	if (comp.frozen != null) tl.classList.add('on')
+	if (comp.frozen != null) setTL(true)
 }
 setInterval(updateTL, 100); updateTL()
 const _seek = comp.seek.bind(comp); comp.seek = (ms) => { _seek(ms); updateTL(); showTL(true) }
 const _toggle = togglePause
 togglePause = function () { _toggle(); if (comp.frozen != null) showTL(false); else showTL(true) }
-if (props.pausar) tl.classList.add('on')
+if (props.pausar) setTL(true)
 `.replace("document.querilySelectorAll = null\n", '')
 
 const standalone = `<!doctype html>
@@ -991,6 +992,8 @@ const standalone = `<!doctype html>
 <style>
 html,body{margin:0;height:100%;overflow:hidden;background:#0f0f0e}
 .fit{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;cursor:default}
+.tl-shade{position:absolute;left:0;right:0;bottom:0;height:320px;background:linear-gradient(to top,rgba(15,15,14,.96) 0%,rgba(15,15,14,.75) 45%,rgba(15,15,14,0) 100%);opacity:0;transition:opacity .35s;pointer-events:none}
+.tl-shade.on{opacity:1}
 .tl{position:absolute;left:64px;right:64px;bottom:40px;display:flex;align-items:flex-start;gap:20px;opacity:0;transition:opacity .3s;pointer-events:none}
 .tl.on{opacity:1;pointer-events:auto}
 .tl-track{flex:1;display:flex;gap:6px;height:6px}
@@ -1007,7 +1010,7 @@ html,body{background:#0f0f0e}
 </style>
 </head>
 <body>
-<div class="fit">${standaloneHtml}<div class="hint"></div><div class="tl"><div class="tl-track"></div><span class="tl-clock"></span></div></div>
+<div class="fit">${standaloneHtml}<div class="hint"></div><div class="tl-shade"></div><div class="tl"><div class="tl-track"></div><span class="tl-clock"></span></div></div>
 <script>${runtime}</script>
 </body>
 </html>
