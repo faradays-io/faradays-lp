@@ -30,10 +30,6 @@ export function generateStaticParams() {
    raiz (que faria o notFound() chegar depois do status 200). */
 export const dynamicParams = false
 
-/* A capa é o gatilho de entrada do título, que fica na coluna estreita logo
-   abaixo — os dois revelam juntos. */
-const HEADER_ID = 'post-header'
-
 /* Grade de leitura: índice na coluna da borda, texto no meio e a coluna
    espelhada à direita mantendo tudo opticamente centralizado.
 
@@ -78,49 +74,40 @@ export default async function BlogPostPage(props: PageProps<'/blog/[slug]'>) {
 			<ViewCounter slug={post.slug} />
 			<main className="pt-23">
 				<article className="max-w-section mx-auto w-full px-10 py-16 md:px-14 md:py-24">
-					{/* Abertura em largura cheia: volta e capa ocupam o artigo
-					   inteiro. */}
-					<div id={HEADER_ID}>
-						<Reveal>
-							<Link
-								href="/blog"
-								className="link-underline text-foreground/50 hover:text-foreground font-mono text-xs tracking-widest uppercase transition-colors"
-							>
-								← Blog
-							</Link>
-							<MockImage
-								label={post.title}
-								tone={post.thumbTone}
-								className="mt-8 aspect-[21/9] w-full"
-							/>
-						</Reveal>
-					</div>
+					{/* Cabeçalho inteiro em largura cheia — volta, título e tags
+					   — e a capa fechando o bloco; tudo revela junto. Nada de
+					   medida curta aqui: a manchete corre a largura do artigo, e
+					   a régua do `PostMeta` atravessa o mesmo vão, separando o
+					   cabeçalho da capa. */}
+					<Reveal>
+						<Link
+							href="/blog"
+							className="link-underline text-foreground/50 hover:text-foreground font-mono text-xs tracking-widest uppercase transition-colors"
+						>
+							← Blog
+						</Link>
+						<h1 className="font-heading text-display mt-8 text-balance">
+							{post.title}
+						</h1>
+						<div className="mt-10">
+							<PostMeta post={post} views={views} />
+						</div>
+						<MockImage
+							label={post.category}
+							tone={post.thumbTone}
+							className="mt-10 aspect-[21/9] w-full"
+						/>
+					</Reveal>
 
-					{/* Do título em diante tudo divide a mesma coluna de leitura —
-					   título e tags nascem no mesmo eixo do texto, alinhados à
-					   esquerda. O índice mora na coluna da borda e a coluna
-					   espelhada à direita mantém a leitura opticamente
-					   centralizada na tela. */}
-					<div className={cn(READING_GRID, 'mt-10')}>
+					{/* Abaixo da capa fica só o texto: o índice na coluna da
+					   borda, o corpo no meio e a coluna espelhada à direita
+					   mantendo a leitura opticamente centralizada na tela. */}
+					<div className={cn(READING_GRID, 'mt-16')}>
 						<div className="hidden xl:block">
 							<PostTocRail headings={headings} />
 						</div>
 						<div className="mx-auto w-full max-w-[70ch]">
-							{/* Mesmo gatilho da capa: o título entra junto com ela,
-							   como um bloco só, ainda que fique abaixo da dobra. */}
-							<Reveal trigger={`#${HEADER_ID}`}>
-								<h1 className="font-heading text-h1 text-balance">
-									{post.title}
-								</h1>
-								<p className="text-body-lg text-foreground/60 mt-5">
-									{post.excerpt}
-								</p>
-								<div className="mt-10">
-									<PostMeta post={post} views={views} />
-								</div>
-							</Reveal>
-
-							<div id={POST_BODY_ID} className="mt-12">
+							<div id={POST_BODY_ID}>
 								<PostBody blocks={post.blocks} />
 							</div>
 						</div>
