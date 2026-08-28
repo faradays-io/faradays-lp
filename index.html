@@ -566,7 +566,7 @@ html,body{background:#f8f8f8}
 <script>
 class DCLogic { constructor(props) { this.props = props } }
 
-const CUES = [["boot",0],["hint",350],["hintOut",3400],["open",3600],["openOut",5100],["ch1Out",8200],["spIn",9100],["zoomSp",9350],["sync1",10100],["sync2",10600],["sync3",11100],["done1",11700],["done2",12100],["done3",12500],["lift",12800],["drop",13100],["cutSp",13450],["r1",13550],["r2",13700],["r3",13850],["spOut",14300],["zoomStatus",14600],["read",15700],["zoomOut1",17400],["cPastas",18200],["cutA1",18800],["cut1",19000],["docsOut",21600],["rst1",22500],["ch2Out",24600],["cRow",25800],["kRow",26400],["cDisp",27800],["kDisp",28400],["env",29500],["split",30100],["mailIn",31300],["mailOpen",32000],["replyOpen",33700],["t1",34300],["t2",35000],["t3",35700],["t4",36400],["cSend",37200],["kSend",37800],["flyGone",38900],["unsplit",39100],["cutA2",40200],["cut2",40400],["read2",41700],["sug",42700],["cVenc",44000],["kVenc",44600],["zoomOut2",46000],["cFechar",46900],["kFechar",47500],["bidOut",49700],["rst2",50600],["ch3Out",52600],["phoneIn",53200],["p1",54300],["cap1",54400],["ptyp1",55100],["p2",56100],["cap2",56300],["p3",57200],["ptyp2",57800],["p4",58900],["cap3",59000],["p5",59800],["ptyp3",60300],["p6",61500],["cap4",61600],["toSys",63800],["cap5",64300],["zoomConv",66200],["zoomOut3",68900],["waOut",70400],["rst3",71300],["end",73000]];
+const CUES = [["boot",0],["hint",350],["hintOut",3400],["open",3600],["openOut",5100],["ch1Out",8200],["spIn",9100],["zoomSp",9350],["sync1",10100],["sync2",10600],["sync3",11100],["done1",11700],["done2",12100],["done3",12500],["lift",12800],["drop",13100],["cutSp",13450],["r1",13550],["r2",13700],["r3",13850],["spOut",14300],["zoomStatus",14600],["read",15700],["zoomOut1",17400],["cPastas",18200],["cutA1",18800],["cut1",19000],["docsOut",21600],["rst1",22500],["ch2Out",24600],["cRow",25800],["kRow",26400],["cDisp",27800],["kDisp",28400],["env",29500],["split",30100],["capMail",31100],["mailIn",31300],["mailOpen",32000],["replyOpen",33700],["t1",34300],["t2",35000],["t3",35700],["t4",36400],["cSend",37200],["kSend",37800],["flyGone",38900],["unsplit",39100],["cutA2",40200],["cut2",40400],["read2",41700],["sug",42700],["cVenc",44000],["kVenc",44600],["zoomOut2",46000],["cFechar",46900],["kFechar",47500],["bidOut",49700],["rst2",50600],["ch3Out",52600],["phoneIn",53200],["p1",54300],["cap1",54400],["ptyp1",55100],["p2",56100],["cap2",56300],["p3",57200],["ptyp2",57800],["p4",58900],["cap3",59000],["p5",59800],["ptyp3",60300],["p6",61500],["cap4",61600],["toSys",63800],["cap5",64300],["zoomConv",66200],["zoomOut3",68900],["waOut",70400],["rst3",71300],["end",73000]];
 const I = {}; CUES.forEach((c, k) => { I[c[0]] = k; });
 const START = { Abertura: 0, SharePoint: I.openOut, BID: I.docsOut, Conversas: I.bidOut };
 // Janela do app na prancha (px) — a câmera é um transform na janela.
@@ -693,7 +693,8 @@ class Component extends DCLogic {
 		c.cap1 = seq('', ['cap1', 'show'], ['cap2', 'exit']); c.cap2 = seq('', ['cap2', 'show'], ['cap3', 'exit']);
 		c.cap3 = seq('', ['cap3', 'show'], ['cap4', 'exit']); c.cap4 = seq('', ['cap4', 'show'], ['toSys', 'exit']);
 		c.cap5 = seq('', ['cap5', 'show'], ['zoomConv', 'exit']);
-		c.cap7 = seq('', ['split', 'show'], ['unsplit', 'exit']);
+		// a legenda espera a câmera encostar a janela à esquerda (senão aparece por cima da demo)
+		c.cap7 = seq('', ['capMail', 'show'], ['unsplit', 'exit']);
 		// No sistema a conversa já está inteira quando a janela aparece.
 		for (const m of ['m1', 'm2', 'm3', 'm4', 'm5', 'm6']) c[m] = 'show';
 		// Câmera: zoom, vista dividida (janela encostada à esquerda) e volta

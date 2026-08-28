@@ -719,7 +719,7 @@ const CUES = [
 	['cPastas', 18200], ['cutA1', 18800], ['cut1', 19000],
 	['docsOut', 21600], ['rst1', 22500], ['ch2Out', 24600],
 	['cRow', 25800], ['kRow', 26400], ['cDisp', 27800], ['kDisp', 28400], ['env', 29500],
-	['split', 30100], ['mailIn', 31300], ['mailOpen', 32000], ['replyOpen', 33700], ['t1', 34300], ['t2', 35000], ['t3', 35700], ['t4', 36400],
+	['split', 30100], ['capMail', 31100], ['mailIn', 31300], ['mailOpen', 32000], ['replyOpen', 33700], ['t1', 34300], ['t2', 35000], ['t3', 35700], ['t4', 36400],
 	['cSend', 37200], ['kSend', 37800], ['flyGone', 38900], ['unsplit', 39100],
 	['cutA2', 40200], ['cut2', 40400], ['read2', 41700],
 	['sug', 42700], ['cVenc', 44000], ['kVenc', 44600], ['zoomOut2', 46000],
@@ -861,7 +861,8 @@ class Component extends DCLogic {
 		c.cap1 = seq('', ['cap1', 'show'], ['cap2', 'exit']); c.cap2 = seq('', ['cap2', 'show'], ['cap3', 'exit']);
 		c.cap3 = seq('', ['cap3', 'show'], ['cap4', 'exit']); c.cap4 = seq('', ['cap4', 'show'], ['toSys', 'exit']);
 		c.cap5 = seq('', ['cap5', 'show'], ['zoomConv', 'exit']);
-		c.cap7 = seq('', ['split', 'show'], ['unsplit', 'exit']);
+		// a legenda espera a câmera encostar a janela à esquerda (senão aparece por cima da demo)
+		c.cap7 = seq('', ['capMail', 'show'], ['unsplit', 'exit']);
 		// No sistema a conversa já está inteira quando a janela aparece.
 		for (const m of ['m1', 'm2', 'm3', 'm4', 'm5', 'm6']) c[m] = 'show';
 		// Câmera: zoom, vista dividida (janela encostada à esquerda) e volta
