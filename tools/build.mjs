@@ -1010,7 +1010,7 @@ html,body{background:#0f0f0e}
 </style>
 </head>
 <body>
-<div class="fit">${standaloneHtml}<div class="hint"></div><div class="tl-shade"></div><div class="tl"><div class="tl-track"></div><span class="tl-clock"></span></div></div>
+<div class="fit">${standaloneHtml}<div class="tl-shade"></div><div class="tl"><div class="tl-track"></div><span class="tl-clock"></span></div><div class="hint"></div></div>
 <script>${runtime}</script>
 </body>
 </html>
