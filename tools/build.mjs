@@ -459,6 +459,84 @@ const rotateHint = `<div class="w" style="position:relative;width:240px;height:2
 	<span class="rh-phone" style="position:relative;width:64px;height:112px;border:4px solid ${HINT_INK};border-radius:14px;background:${STAGE}"><span style="position:absolute;left:50%;bottom:7px;width:18px;height:3px;margin-left:-9px;border-radius:2px;background:${HINT_INK}"></span></span>
 </div>`
 const hintCard = darkCard('{{c.hint}}', rotateHint)
+// Cartela-pergunta: "Ainda gerenciando manualmente / documentos, cotações e conversas?"
+// A câmera abre em "Ainda" bem grande, "gerenciando" é digitada e estoura a borda da
+// tela, o zoom out revela o resto da linha com mocks (mensagens, e-mail, documentos)
+// animados ao fundo, e a linha 2 sobe. Na saída, dolly 3D para dentro do texto: o
+// layer dos mocks escala mais que o do texto, jogando os elementos para os cantos.
+const qEl = (x, y, rot, inner, w, cls = '') =>
+	`<div class="qel${cls ? ' ' + cls : ''}" style="position:absolute;left:${x}px;top:${y}px;${w ? `width:${w}px;` : ''}"><div style="transform:rotate(${rot}deg)">${inner}</div></div>`
+const QSHADOW = 'box-shadow:0 16px 40px -18px rgba(0,0,0,.35)'
+const qBubbleSent = `<div style="border-radius:12px;padding:10px 14px;background:#d1f4d0;color:#111111;font-size:15px;line-height:1.45;${QSHADOW}">Consegue me mandar o COA do lote 2408?<span style="display:flex;justify-content:flex-end;align-items:center;gap:4px;margin-top:2px;font-size:10.5px;color:#6b6b6b">09:41 ${ico('Checks', 12, 'regular', 'color:#3b8eff')}</span></div>`
+const qBubbleIA = `<div style="border-radius:12px;padding:10px 14px;background:#ffffff;color:#111111;font-size:15px;line-height:1.45;${QSHADOW}"><span style="display:flex;align-items:center;gap:4px;font-family:${MONO};font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:${T.brand};margin-bottom:3px">${ico('Sparkle', 10, 'fill')}Agente IA · resposta automática</span>Segue o COA do lote 2408:</div>`
+const qMail = `<div style="display:inline-flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;background:#ffffff;font-size:14px;${QSHADOW}"><span style="display:grid;place-items:center;width:34px;height:34px;border-radius:9999px;background:${T.brand};color:#ffffff;font-size:13px;font-weight:600">F</span><span style="display:flex;flex-direction:column"><span style="font-weight:600">Faradays</span><span style="color:#555555;white-space:nowrap">BID CC-2026-012 — 3 items</span></span><span style="margin-left:10px;font-family:${MONO};font-size:11px;color:#7a7a7a">09:12</span></div>`
+const qDoc = (nome, bdg) =>
+	`<div style="display:inline-flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;background:#ffffff;${QSHADOW}">${ico('FilePdf', 26, 'fill', 'color:#d93025')}<span style="display:flex;flex-direction:column;font-size:13.5px"><span style="font-weight:500;white-space:nowrap">${nome}</span><span style="font-family:${MONO};font-size:10.5px;color:${T.mutedFg}">PDF · SharePoint</span></span><span style="margin-left:8px">${bdg}</span></div>`
+const qTyping = `<div style="display:inline-flex;gap:5px;align-items:center;height:38px;padding:0 16px;border-radius:12px;background:#ffffff;${QSHADOW}"><span class="dot dk"></span><span class="dot dk"></span><span class="dot dk"></span></div>`
+// Documento A4 mockado (COA em miniatura, com tabela e carimbo).
+const qLine = (w, o = 0.18) => `<span style="display:block;height:6px;border-radius:3px;background:${T.fg};opacity:${o};width:${w}"></span>`
+const qPage = `<div style="width:252px;background:#ffffff;border-radius:6px;padding:18px 18px 16px;display:flex;flex-direction:column;gap:8px;${QSHADOW}">
+	<div style="display:flex;align-items:center;justify-content:space-between">${wordmark(64, T.fg)}<span style="font-family:${MONO};font-size:8.5px;color:${T.mutedFg}">lote 2408</span></div>
+	<span style="font-size:12.5px;font-weight:600;letter-spacing:.01em">Certificate of Analysis</span>
+	<span style="font-family:${MONO};font-size:9px;color:${T.mutedFg}">CREATINA 200 MESH · Creapure®</span>
+	${qLine('100%')}${qLine('92%')}${qLine('96%')}${qLine('64%')}
+	<table style="width:100%;border-collapse:collapse;font-size:8.5px;letter-spacing:.02em;margin-top:2px">
+		${[['Aparência', 'Pó branco', 'Conforme'], ['Pureza (HPLC)', '≥ 99,5%', '99,8%'], ['Umidade', '≤ 0,12%', '0,09%']]
+			.map((r) => `<tr>${r.map((c, i) => `<td style="border:1px solid ${T.border};padding:3px 6px;${i === 2 ? `color:${T.green700};font-weight:600` : ''}">${c}</td>`).join('')}</tr>`)
+			.join('')}
+	</table>
+	<div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px">
+		${qLine('44%', 0.28)}
+		<span style="display:grid;place-items:center;width:54px;height:54px;border-radius:9999px;border:2.5px solid ${T.green600};color:${T.green700};font-family:${MONO};font-size:7px;font-weight:700;letter-spacing:.1em;transform:rotate(-14deg);text-align:center">QC<br>APROVADO</span>
+	</div>
+</div>`
+// Planilha de cotações em miniatura.
+const qSheet = `<div style="width:250px;background:#ffffff;border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;${QSHADOW}">
+	<span style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500">${ico('FileXls', 20, 'fill', 'color:#1d6f42')}Cotações — setembro.xlsx</span>
+	<table style="width:100%;border-collapse:collapse;font-family:${MONO};font-size:9px">
+		${[['CREATINA', '4,85', 'FOB'], ['SUCRALOSE', '38,40', 'FOB'], ['ACESSULFAME', '5,90', 'CFR']]
+			.map((r) => `<tr>${r.map((c) => `<td style="border:1px solid ${T.border};padding:3px 6px;white-space:nowrap">${c}</td>`).join('')}</tr>`)
+			.join('')}
+	</table>
+</div>`
+const qEnvelope = `<div style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:9999px;background:#ffffff;font-size:13.5px;${QSHADOW}">${ico('PaperPlaneRight', 16, 'fill', `color:${T.brand}`)}BID enviado a 4 exportadores</div>`
+// Certificado menor (meio para fora da borda esquerda) e pasta de certificados.
+const qPageMini = `<div style="width:200px;background:#ffffff;border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:7px;${QSHADOW}">
+	<div style="display:flex;align-items:center;justify-content:space-between">${wordmark(52, T.fg)}<span style="font-family:${MONO};font-size:7.5px;color:${T.mutedFg}">VAL 30/09/2027</span></div>
+	<span style="font-size:11px;font-weight:600">Halal Certificate</span>
+	${qLine('100%')}${qLine('88%')}${qLine('94%')}${qLine('72%')}${qLine('90%')}${qLine('55%')}
+	<div style="display:flex;justify-content:flex-end;margin-top:2px"><span style="display:grid;place-items:center;width:44px;height:44px;border-radius:9999px;border:2px solid ${T.brand};color:${T.brand};font-family:${MONO};font-size:6.5px;font-weight:700;letter-spacing:.08em;transform:rotate(10deg)">HALAL</span></div>
+</div>`
+const qFolder = `<div style="display:inline-flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;background:#ffffff;${QSHADOW}">${ico('FolderOpen', 22, 'fill', `color:${T.primary}`)}<span style="display:flex;flex-direction:column;font-size:13.5px"><span style="font-weight:500">Certificados</span><span style="font-family:${MONO};font-size:10.5px;color:${T.mutedFg}">46 arquivos</span></span></div>`
+// Mão perdida: vagueia entre pontos, com pausas, sem achar onde clicar.
+const qHand = `<span class="qhand" style="display:flex;color:${T.fg};filter:drop-shadow(0 0 1.5px rgba(255,255,255,.95)) drop-shadow(0 3px 5px rgba(0,0,0,.35))">${ico('HandPointing', 46, 'fill')}</span>`
+const qCard = `<div class="vf q {{c.q}}" style="position:absolute;inset:0;overflow:hidden">
+	<div class="qbg" style="position:absolute;inset:0;transform:{{st.qbg}}">
+		${qEl(90, 85, -5, qBubbleSent, 330)}
+		${qEl(1520, 70, 4, qBubbleIA, 360)}
+		${qEl(330, 800, 3, qMail)}
+		${qEl(1650, 700, 3, qPage)}
+		${qEl(1230, 885, -4, qDoc('COA CREATINA 200 MESH.pdf', badge('success', 'Vigente')))}
+		${qEl(930, 55, 2, qDoc('HALAL ÁCIDO ASCÓRBICO.pdf', badge('warning', 'A vencer')))}
+		${qEl(110, 255, -3, qSheet)}
+		${qEl(1050, 990, -2, qEnvelope)}
+		${qEl(950, 835, -3, qTyping)}
+		${qEl(500, 70, 3, qDoc('KOSHER CREATINA 200 MESH.pdf', badge('error', 'Vencido')))}
+		${qEl(1345, 200, -2, qFolder)}
+		${qEl(1560, 285, 4, qDoc('FDA REGISTRATION — ENSIGN.pdf', badge('success', 'Vigente')))}
+		${qEl(700, 950, 2, qDoc('MSDS INOSITOL — TJCY.pdf', badge('warning', 'SEM DATA')))}
+		${qEl(60, 730, -6, qPageMini)}
+		${qEl(1555, 205, 2, qDoc('CERT. ORIGEM — INOSITOL.pdf', badge('success', 'Vigente')))}
+		${qEl(1100, 700, 0, qHand, null, 'nofloat')}
+	</div>
+	<div class="qtx" style="position:absolute;inset:0;transform:{{st.qtx}}">
+		<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:36px;text-align:center;color:${T.fg}">
+			<h1 style="margin:0;font-family:${HEAD};font-size:94px;line-height:1.05;letter-spacing:-.025em;font-weight:600;white-space:nowrap"><span class="w qw1">Ainda</span> <span>${'gerenciando'.split('').map((ch, k) => `<span class="ql" style="animation-delay:${(k * 0.06).toFixed(2)}s">${ch}</span>`).join('')}</span> <span>manualmente</span></h1>
+			<h1 style="margin:0;font-family:${HEAD};font-size:94px;line-height:1.05;letter-spacing:-.025em;font-weight:600;white-space:nowrap">${'documentos, cotações e conversas?'.split(' ').map((w, k) => `<span class="l2w" style="animation-delay:${(k * 0.07).toFixed(2)}s">${w}</span>`).join(' ')}</h1>
+		</div>
+	</div>
+</div>`
+const meetCard = titleCard('{{c.meet}}', 'Conheça')
 const openCard = darkCard('{{c.open}}', `<div class="w" style="position:relative;display:flex">${wordmark(460, T.fg)}</div>`)
 const closeCard = darkCard(
 	'{{c.close}}',
@@ -617,6 +695,24 @@ a{color:${T.brand}}a:hover{color:${T.blue700}}
 .tc.show .rh-ring{animation:spinslow 9s linear infinite}
 @keyframes spinslow{to{transform:rotate(360deg)}}
 .tc.show .rh-phone{animation:rhRot 2.2s var(--ease) .5s forwards}
+/* cartela-pergunta: câmera própria (texto e fundo em layers separados p/ o dolly 3D) */
+.qtx,.qbg{transform-origin:0 0;transition:transform 1.6s var(--ease);will-change:transform}
+.q.ex3 .qtx,.q.ex3 .qbg{transition:transform .65s cubic-bezier(.6,0,.85,.45),opacity .16s linear .49s;opacity:0}
+.q.ex3 .qel,.q.ex3 .qel *{animation-play-state:paused}
+.q .w{display:inline-block;opacity:0}
+.q.show .w{animation:rise .85s var(--ease) both}
+.ql{display:inline-block;opacity:0}
+.q.type .ql{animation:qOn .01s linear both}
+@keyframes qOn{to{opacity:1}}
+.l2w{display:inline-block;opacity:0}
+.q.l2 .l2w{animation:rise .85s var(--ease) both}
+.qel{opacity:0}
+${Array.from({ length: 16 }, (_, i) => `.q.bgin .qel:nth-child(${i + 1}){animation:qelIn .7s var(--ease) ${(0.15 + i * 0.06).toFixed(2)}s both,qFloat ${(3.2 + ((i * 7) % 14) / 10).toFixed(1)}s ease-in-out ${(0.9 + i * 0.06).toFixed(2)}s infinite alternate}`).join('\n')}
+.q.bgin .qel.nofloat{animation:qelIn .7s var(--ease) 1.1s both}
+.qhand{animation:qWander 5.5s ease-in-out infinite}
+@keyframes qWander{0%{transform:translate(0,0) rotate(0)}13%{transform:translate(-90px,50px) rotate(-10deg)}24%{transform:translate(-90px,50px) rotate(-10deg)}40%{transform:translate(50px,130px) rotate(7deg)}52%{transform:translate(50px,130px) rotate(7deg)}68%{transform:translate(170px,-40px) rotate(12deg)}78%{transform:translate(170px,-40px) rotate(12deg)}100%{transform:translate(0,0) rotate(0)}}
+@keyframes qelIn{from{opacity:0;transform:translateY(26px) scale(.92)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes qFloat{from{transform:translateY(0)}to{transform:translateY(-9px)}}
 @keyframes rhRot{0%,30%{transform:rotate(0)}100%{transform:rotate(90deg)}}
 /* fechamento: a URL é digitada (mono → largura exata em ch) com cursor piscando */
 .url{display:inline-block;width:0;overflow:hidden;white-space:nowrap}
@@ -706,31 +802,29 @@ const stage = `<div class="stage" style="position:relative;width:1920px;height:1
 
 	${caps}
 	${hintCard}
+	${qCard}
+	${meetCard}
 	${openCard}
 	${closeCard}
 </div>`
 
 /* ---------------- lógica (timeline) ------------------------------------ */
 const CUES = [
-	['boot', 0], ['hint', 350], ['hintOut', 3400], ['open', 3600], ['openOut', 5100], ['ch1Out', 8200],
-	['spIn', 9100], ['zoomSp', 9350], ['sync1', 10100], ['sync2', 10600], ['sync3', 11100], ['done1', 11700], ['done2', 12100], ['done3', 12500],
-	['lift', 12800], ['drop', 13100], ['cutSp', 13450], ['r1', 13550], ['r2', 13700], ['r3', 13850],
-	['spOut', 14300], ['zoomStatus', 14600], ['read', 15700], ['zoomOut1', 17400],
-	['cPastas', 18200], ['cutA1', 18800], ['cut1', 19000],
-	['docsOut', 21600], ['rst1', 22500], ['ch2Out', 24600],
-	['cRow', 25800], ['kRow', 26400], ['cDisp', 27800], ['kDisp', 28400], ['env', 29500],
-	['split', 30100], ['capMail', 31100], ['mailIn', 31300], ['mailOpen', 32000], ['replyOpen', 33700], ['t1', 34300], ['t2', 35000], ['t3', 35700], ['t4', 36400],
-	['cSend', 37200], ['kSend', 37800], ['flyGone', 38900], ['unsplit', 39100],
-	['cutA2', 40200], ['cut2', 40400], ['read2', 41700],
-	['sug', 42700], ['cVenc', 44000], ['kVenc', 44600], ['zoomOut2', 46000],
-	['cFechar', 46900], ['kFechar', 47500],
-	['bidOut', 49700], ['rst2', 50600], ['ch3Out', 52600],
-	['phoneIn', 53200], ['p1', 54300], ['cap1', 54400],
-	['ptyp1', 55100], ['p2', 56100], ['cap2', 56300],
-	['p3', 57200], ['ptyp2', 57800], ['p4', 58900], ['cap3', 59000],
-	['p5', 59800], ['ptyp3', 60300], ['p6', 61500], ['cap4', 61600],
-	['toSys', 63800], ['cap5', 64300],
-	['zoomConv', 66200], ['zoomOut3', 68900], ['waOut', 70400], ['rst3', 71300], ['end', 73000]
+	['boot', 0], ['hint', 350], ['hintOut', 3400], ['q1', 3600], ['qType', 4400], ['qZoom', 4450],
+	['qLine2', 6200], ['qExit', 8200], ['meet', 8600], ['meetOut', 9700], ['open', 9900], ['openOut', 11400],
+	['ch1Out', 14500], ['spIn', 15400], ['zoomSp', 15650], ['sync1', 16400], ['sync2', 16900], ['sync3', 17400],
+	['done1', 18000], ['done2', 18400], ['done3', 18800], ['lift', 19100], ['drop', 19400], ['cutSp', 19750],
+	['r1', 19850], ['r2', 20000], ['r3', 20150], ['spOut', 20600], ['zoomStatus', 20900], ['read', 22000],
+	['zoomOut1', 23700], ['cPastas', 24500], ['cutA1', 25100], ['cut1', 25300], ['docsOut', 27900], ['rst1', 28800],
+	['ch2Out', 30900], ['cRow', 32100], ['kRow', 32700], ['cDisp', 34100], ['kDisp', 34700], ['env', 35800],
+	['split', 36400], ['capMail', 37400], ['mailIn', 37600], ['mailOpen', 38300], ['replyOpen', 40000], ['t1', 40600],
+	['t2', 41300], ['t3', 42000], ['t4', 42700], ['cSend', 43500], ['kSend', 44100], ['flyGone', 45200],
+	['unsplit', 45400], ['cutA2', 46500], ['cut2', 46700], ['read2', 48000], ['sug', 49000], ['cVenc', 50300],
+	['kVenc', 50900], ['zoomOut2', 52300], ['cFechar', 53200], ['kFechar', 53800], ['bidOut', 56000], ['rst2', 56900],
+	['ch3Out', 58900], ['phoneIn', 59500], ['p1', 60600], ['cap1', 60700], ['ptyp1', 61400], ['p2', 62400],
+	['cap2', 62600], ['p3', 63500], ['ptyp2', 64100], ['p4', 65200], ['cap3', 65300], ['p5', 66100],
+	['ptyp3', 66600], ['p6', 67800], ['cap4', 67900], ['toSys', 70100], ['cap5', 70600], ['zoomConv', 72500],
+	['zoomOut3', 75200], ['waOut', 76700], ['rst3', 77600], ['end', 79300]
 ].sort((a, b) => a[1] - b[1])
 
 const logic = `
@@ -790,7 +884,7 @@ class Component extends DCLogic {
 			else { this.t0 = performance.now() - (this.frozen ?? 0); this.frozen = null; }
 		}
 		if (prev.inicio !== this.props.inicio) this.startAt(this.props.inicio);
-		if (prev.tempo !== this.props.tempo) this.seek(Math.max(0, Math.min(80, Number(this.props.tempo) || 0)) * 1000);
+		if (prev.tempo !== this.props.tempo) this.seek(Math.max(0, Math.min(85, Number(this.props.tempo) || 0)) * 1000);
 	}
 	componentWillUnmount() { clearInterval(this.timer); }
 	renderVals() {
@@ -801,6 +895,10 @@ class Component extends DCLogic {
 		// Cartelas (fade) e janela do app (fade)
 		c.hint = seq('pre', ['hint', 'show'], ['hintOut', 'exit']);
 		c.open = seq('pre', ['open', 'show'], ['openOut', 'exit']);
+		c.q = seq('pre', ['q1', 'show'], ['qType', 'show type'], ['qZoom', 'show type bgin'], ['qLine2', 'show type bgin l2'], ['qExit', 'show type bgin l2 ex3'], ['meet', 'exit ex3']);
+		st.qtx = seq(camFocus(390, 500, 3.1), ['qZoom', CAM0], ['qExit', camFocus(960, 540, 5)]);
+		st.qbg = seq(CAM0, ['qExit', camFocus(960, 540, 9)]);
+		c.meet = seq('pre', ['meet', 'show'], ['meetOut', 'exit']);
 		c.ch1 = seq('pre', ['openOut', 'show'], ['ch1Out', 'exit']);
 		c.ch2 = seq('pre', ['docsOut', 'show'], ['ch2Out', 'exit']);
 		c.ch3 = seq('pre', ['bidOut', 'show'], ['ch3Out', 'exit']);
@@ -920,7 +1018,7 @@ const doc = `<!doctype html>
 </helmet>
 ${html}
 </x-dc>
-<script data-dc-script data-props='{"inicio":{"editor":"enum","options":["Abertura","SharePoint","BID","Conversas"],"default":"Abertura","section":"Reprodução"},"tempo":{"editor":"range","min":0,"max":80,"step":0.5,"unit":"s","default":0,"section":"Reprodução"},"pausar":{"editor":"boolean","default":false,"section":"Reprodução"},"loop":{"editor":"boolean","default":true,"section":"Reprodução"},"$preview":{"width":1920,"height":1080}}'>${logic}</script>
+<script data-dc-script data-props='{"inicio":{"editor":"enum","options":["Abertura","SharePoint","BID","Conversas"],"default":"Abertura","section":"Reprodução"},"tempo":{"editor":"range","min":0,"max":85,"step":0.5,"unit":"s","default":0,"section":"Reprodução"},"pausar":{"editor":"boolean","default":false,"section":"Reprodução"},"loop":{"editor":"boolean","default":true,"section":"Reprodução"},"$preview":{"width":1920,"height":1080}}'>${logic}</script>
 </body>
 </html>
 `

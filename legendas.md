@@ -8,7 +8,7 @@
 
 | Tempo | Capítulo | O que acontece |
 |---|---|---|
-| 0:00 | Abertura | dica animada sozinha (3 s): anel de setas finas girando devagar e um celular que vai da vertical para a horizontal, sem texto; depois o logo Faradays (1,5 s) |
+| 0:00 | Abertura | dica animada sozinha (3 s): anel de setas finas e um celular indo para a horizontal; depois a cartela-pergunta: "Ainda" grande e centralizado → "gerenciando" digitada estourando a tela → zoom out revela "Ainda gerenciando manualmente" com mocks animados ao fundo (balões de WhatsApp, e-mail, documentos) → sobe "documentos, cotações e conversas?" → saída em dolly 3D para dentro do texto (mocks fogem para os cantos mais rápido) → "Conheça" → logo Faradays |
 | 0:06 | 1 · Documentos | cartela com o ícone do SharePoint; a câmera fecha no painel do drive enquanto ele entra; **sem clique**: os três arquivos novos passam de "sincronizando…" a "sincronizado · agora" (linha em destaque, badge do painel acompanha); com a pilha já voando para a tabela, **corte seco para a vista inteira**; a IA lê a validade (zoom nos status); corte seco para a aba Pastas |
 | 0:23 | 2 · BID | lista de BIDs → modal → Disparar BID (4) → envelopes → **vista dividida** com a legenda "Caixa de e-mail do fornecedor" em cima do Outlook (pill *fornecedor* na barra): o e-mail chega na lista, o painel de leitura abre um instante depois e a resposta é digitada com calma e responde com preço → o e-mail voa de volta → corte seco para o Comparativo já em zoom, com a linha da ANHUI chegando "lendo e-mail…" → ao preencher, a linha acende (azul, barra à esquerda) → a IA sugere (ponto piscante) → clique na linha → Fechar cotação |
 | 0:50 | 3 · Conversas | **só o celular do representante**, centralizado e ampliado: ele pede o COA → "digitando…" → a IA responde sozinha com o arquivo (rótulo *Agente IA · resposta automática* no balão) → ele pergunta o preço → a IA pergunta a marca → emite a cotação. Legendas grandes à esquerda marcam cada beat. No fim o celular vai para a direita, o sistema entra ao lado com a conversa inteira ("E toda a conversa fica registrada no sistema") e a câmera fecha na conversa |
@@ -65,6 +65,10 @@ Uma linha curta na base da tela, aparecendo e sumindo com a cena. Marque as que 
 | id | Ação | Onde | Atual | Novo |
 |---|---|---|---|---|
 | geral.logo | manter | abertura e fechamento | logo Faradays (sem texto) | |
+| geral.pergunta.l1 | manter | cartela-pergunta, linha 1 | Ainda gerenciando manualmente | |
+| geral.pergunta.l2 | manter | cartela-pergunta, linha 2 | documentos, cotações e conversas? | |
+| geral.conheca | manter | cartela após a pergunta | Conheça | |
+| geral.mocks | manter | fundo da cartela-pergunta | balão "Consegue me mandar o COA do lote 2408?" · balão IA "Segue o COA do lote 2408:" · e-mail Faradays BID CC-2026-012 · página A4 do COA (Certificate of Analysis, tabela e carimbo QC APROVADO) · COA CREATINA 200 MESH.pdf (Vigente) · HALAL ÁCIDO ASCÓRBICO.pdf (A vencer) · KOSHER (Vencido) · FDA (Vigente) · MSDS (SEM DATA) · Cert. Origem (Vigente) · certificado Halal menor na borda esquerda · pasta Certificados · 46 arquivos · planilha Cotações — setembro.xlsx · pill "BID enviado a 4 exportadores" · balão digitando · mãozinha perdida vagando |
 | geral.url | manter | barra de busca no fechamento | www.faradays.io | |
 
 ## Casca do app (aparece nos três capítulos)
