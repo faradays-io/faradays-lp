@@ -536,7 +536,7 @@ const qCard = `<div class="vf q {{c.q}}" style="position:absolute;inset:0;overfl
 		</div>
 	</div>
 </div>`
-const meetCard = titleCard('{{c.meet}}', 'Conheça')
+const meetCard = titleCard('pull {{c.meet}}', 'Conheça')
 const openCard = darkCard('{{c.open}}', `<div class="w" style="position:relative;display:flex">${wordmark(460, T.fg)}</div>`)
 const closeCard = darkCard(
 	'{{c.close}}',
@@ -691,13 +691,19 @@ a{color:${T.brand}}a:hover{color:${T.blue700}}
 /* entrada dos textos das cartelas */
 @keyframes rise{0%{opacity:0;transform:translateY(40px)}100%{opacity:1;transform:translateY(0)}}
 .tc .w{display:inline-block;opacity:0}
+/* camera pull-back: a cartela chega grande (câmera colada) e recua até o lugar */
+.tc.pull.show{transition:none;animation:pullback .7s cubic-bezier(.16,.84,.44,1) both}
+@keyframes pullback{from{transform:scale(2.1)}to{transform:scale(1)}}
+.tc.pull.show .w{animation:fadeOnly .45s var(--ease) both}
+@keyframes fadeOnly{from{opacity:0}to{opacity:1}}
 /* abertura: anel de setas gira devagar; celular vai para a horizontal e volta */
 .tc.show .rh-ring{animation:spinslow 9s linear infinite}
 @keyframes spinslow{to{transform:rotate(360deg)}}
 .tc.show .rh-phone{animation:rhRot 2.2s var(--ease) .5s forwards}
 /* cartela-pergunta: câmera própria (texto e fundo em layers separados p/ o dolly 3D) */
 .qtx,.qbg{transform-origin:0 0;transition:transform 1.6s var(--ease);will-change:transform}
-.q.ex3 .qtx,.q.ex3 .qbg{transition:transform .65s cubic-bezier(.6,0,.85,.45),opacity .16s linear .49s;opacity:0}
+.q.ex3 .qtx,.q.ex3 .qbg{transition:transform .85s var(--ease)}
+.q.cut{opacity:0;transition:none}
 .q.ex3 .qel,.q.ex3 .qel *{animation-play-state:paused}
 .q .w{display:inline-block;opacity:0}
 .q.show .w{animation:rise .85s var(--ease) both}
@@ -811,20 +817,20 @@ const stage = `<div class="stage" style="position:relative;width:1920px;height:1
 /* ---------------- lógica (timeline) ------------------------------------ */
 const CUES = [
 	['boot', 0], ['hint', 350], ['hintOut', 3400], ['q1', 3600], ['qType', 4400], ['qZoom', 4450],
-	['qLine2', 6200], ['qExit', 8200], ['meet', 8600], ['meetOut', 9700], ['open', 9900], ['openOut', 11400],
-	['ch1Out', 14500], ['spIn', 15400], ['zoomSp', 15650], ['sync1', 16400], ['sync2', 16900], ['sync3', 17400],
-	['done1', 18000], ['done2', 18400], ['done3', 18800], ['lift', 19100], ['drop', 19400], ['cutSp', 19750],
-	['r1', 19850], ['r2', 20000], ['r3', 20150], ['spOut', 20600], ['zoomStatus', 20900], ['read', 22000],
-	['zoomOut1', 23700], ['cPastas', 24500], ['cutA1', 25100], ['cut1', 25300], ['docsOut', 27900], ['rst1', 28800],
-	['ch2Out', 30900], ['cRow', 32100], ['kRow', 32700], ['cDisp', 34100], ['kDisp', 34700], ['env', 35800],
-	['split', 36400], ['capMail', 37400], ['mailIn', 37600], ['mailOpen', 38300], ['replyOpen', 40000], ['t1', 40600],
-	['t2', 41300], ['t3', 42000], ['t4', 42700], ['cSend', 43500], ['kSend', 44100], ['flyGone', 45200],
-	['unsplit', 45400], ['cutA2', 46500], ['cut2', 46700], ['read2', 48000], ['sug', 49000], ['cVenc', 50300],
-	['kVenc', 50900], ['zoomOut2', 52300], ['cFechar', 53200], ['kFechar', 53800], ['bidOut', 56000], ['rst2', 56900],
-	['ch3Out', 58900], ['phoneIn', 59500], ['p1', 60600], ['cap1', 60700], ['ptyp1', 61400], ['p2', 62400],
-	['cap2', 62600], ['p3', 63500], ['ptyp2', 64100], ['p4', 65200], ['cap3', 65300], ['p5', 66100],
-	['ptyp3', 66600], ['p6', 67800], ['cap4', 67900], ['toSys', 70100], ['cap5', 70600], ['zoomConv', 72500],
-	['zoomOut3', 75200], ['waOut', 76700], ['rst3', 77600], ['end', 79300]
+	['qLine2', 6200], ['qExit', 8200], ['meet', 8500], ['meetOut', 9900], ['open', 10100], ['openOut', 11600],
+	['ch1Out', 14700], ['spIn', 15600], ['zoomSp', 15850], ['sync1', 16600], ['sync2', 17100], ['sync3', 17600],
+	['done1', 18200], ['done2', 18600], ['done3', 19000], ['lift', 19300], ['drop', 19600], ['cutSp', 19950],
+	['r1', 20050], ['r2', 20200], ['r3', 20350], ['spOut', 20800], ['zoomStatus', 21100], ['read', 22200],
+	['zoomOut1', 23900], ['cPastas', 24700], ['cutA1', 25300], ['cut1', 25500], ['docsOut', 28100], ['rst1', 29000],
+	['ch2Out', 31100], ['cRow', 32300], ['kRow', 32900], ['cDisp', 34300], ['kDisp', 34900], ['env', 36000],
+	['split', 36600], ['capMail', 37600], ['mailIn', 37800], ['mailOpen', 38500], ['replyOpen', 40200], ['t1', 40800],
+	['t2', 41500], ['t3', 42200], ['t4', 42900], ['cSend', 43700], ['kSend', 44300], ['flyGone', 45400],
+	['unsplit', 45600], ['cutA2', 46700], ['cut2', 46900], ['read2', 48200], ['sug', 49200], ['cVenc', 50500],
+	['kVenc', 51100], ['zoomOut2', 52500], ['cFechar', 53400], ['kFechar', 54000], ['bidOut', 56200], ['rst2', 57100],
+	['ch3Out', 59100], ['phoneIn', 59700], ['p1', 60800], ['cap1', 60900], ['ptyp1', 61600], ['p2', 62600],
+	['cap2', 62800], ['p3', 63700], ['ptyp2', 64300], ['p4', 65400], ['cap3', 65500], ['p5', 66300],
+	['ptyp3', 66800], ['p6', 68000], ['cap4', 68100], ['toSys', 70300], ['cap5', 70800], ['zoomConv', 72700],
+	['zoomOut3', 75400], ['waOut', 76900], ['rst3', 77800], ['end', 79500]
 ].sort((a, b) => a[1] - b[1])
 
 const logic = `
@@ -895,9 +901,9 @@ class Component extends DCLogic {
 		// Cartelas (fade) e janela do app (fade)
 		c.hint = seq('pre', ['hint', 'show'], ['hintOut', 'exit']);
 		c.open = seq('pre', ['open', 'show'], ['openOut', 'exit']);
-		c.q = seq('pre', ['q1', 'show'], ['qType', 'show type'], ['qZoom', 'show type bgin'], ['qLine2', 'show type bgin l2'], ['qExit', 'show type bgin l2 ex3'], ['meet', 'exit ex3']);
-		st.qtx = seq(camFocus(390, 500, 3.1), ['qZoom', CAM0], ['qExit', camFocus(960, 540, 5)]);
-		st.qbg = seq(CAM0, ['qExit', camFocus(960, 540, 9)]);
+		c.q = seq('pre', ['q1', 'show'], ['qType', 'show type'], ['qZoom', 'show type bgin'], ['qLine2', 'show type bgin l2'], ['qExit', 'show type bgin l2 ex3'], ['meet', 'cut ex3']);
+		st.qtx = seq(camFocus(390, 500, 3.1), ['qZoom', CAM0], ['qExit', camFocus(960, 540, 0.45)]);
+		st.qbg = seq(CAM0, ['qExit', camFocus(960, 540, 0.26)]);
 		c.meet = seq('pre', ['meet', 'show'], ['meetOut', 'exit']);
 		c.ch1 = seq('pre', ['openOut', 'show'], ['ch1Out', 'exit']);
 		c.ch2 = seq('pre', ['docsOut', 'show'], ['ch2Out', 'exit']);
@@ -1131,7 +1137,7 @@ let ctlTimer = null
 function setControls(on) { tl.classList.toggle('on', on); shade.classList.toggle('on', on); pp.classList.toggle('on', on); fitEl.classList.toggle('nocur', !on) }
 function showControls(temp) {
 	setControls(true); clearTimeout(ctlTimer)
-	if (temp) ctlTimer = setTimeout(() => { if (comp.frozen == null) setControls(false) }, 2200)
+	if (temp) ctlTimer = setTimeout(() => { if (comp.frozen == null) setControls(false) }, 1100)
 }
 fitEl.addEventListener('mousemove', () => showControls(true))
 fitEl.addEventListener('mouseleave', () => { if (comp.frozen == null) { clearTimeout(ctlTimer); setControls(false) } })
@@ -1220,7 +1226,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:${STAGE};touch-action:
 .tl-clock{flex-shrink:0;margin-top:-6px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;letter-spacing:.06em;color:rgba(10,10,10,.65);font-variant-numeric:tabular-nums}
 .tl-fs{flex-shrink:0;margin-top:-9px;display:flex;color:rgba(10,10,10,.65);cursor:pointer}
 .tl-fs:hover{color:#0a0a0a}
-.pp{position:absolute;left:50%;top:50%;width:112px;height:112px;margin:-56px 0 0 -56px;border-radius:9999px;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);color:#f4f4f4;display:grid;place-items:center;opacity:0;transform:scale(.9);transition:opacity .3s,transform .3s var(--ease);pointer-events:none;cursor:pointer}
+.pp{position:absolute;left:50%;top:50%;width:112px;height:112px;margin:-56px 0 0 -56px;border-radius:9999px;background:rgba(0,0,0,.22);backdrop-filter:blur(5px);color:#f4f4f4;display:grid;place-items:center;opacity:0;transform:scale(.9);transition:opacity .3s,transform .3s var(--ease);pointer-events:none;cursor:pointer}
 .pp.on{opacity:1;transform:none;pointer-events:auto}
 .pp svg{display:none;width:44px;height:44px}
 .pp.paused .i-play{display:block;margin-left:6px}
