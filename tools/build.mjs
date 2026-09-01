@@ -604,11 +604,11 @@ const bidQCard = `<div class="vf q qb {{c.ch2}}" style="position:absolute;inset:
 const meetCard = titleCard('pull {{c.meet}}', 'Conheça')
 const openCard = darkCard(
 	'{{c.open}}',
-	`<div style="display:flex;flex-direction:column;align-items:center;gap:28px">
-		<div class="w" style="position:relative;display:flex">${wordmark(560, T.fg)}</div>
-		<div class="w" style="font-family:${MONO};font-size:24px;font-weight:500;letter-spacing:.26em;padding-left:.26em;text-transform:uppercase;color:${T.mutedFg}">para compradores de alto volume</div>
-		<div style="display:flex;gap:16px;margin-top:10px">
-			${['Gerenciamento de documentos com IA', 'Cotação de venda automática', 'Cotação de compra em um clique'].map((t, k) => `<div class="qfb" style="transition-delay:${(0.85 + k * 0.15).toFixed(2)}s;animation-delay:${(0.35 + k * 0.15).toFixed(2)}s">${ico('Sparkle', 15, 'fill', 'position:relative;color:#ffffff', 'ai-spark')}<span style="position:relative">${t}</span></div>`).join('')}
+	`<div style="display:flex;flex-direction:column;align-items:center;gap:34px">
+		<div class="w" style="position:relative;display:flex">${wordmark(680, T.fg)}</div>
+		<div class="w" style="font-family:${MONO};font-size:29px;font-weight:500;letter-spacing:.26em;padding-left:.26em;text-transform:uppercase;color:${T.mutedFg}">para compradores de alto volume</div>
+		<div style="display:flex;gap:20px;margin-top:14px">
+			${['Gerenciamento de documentos com IA', 'Cotação de venda automática', 'Cotação de compra em um clique'].map((t, k) => `<div class="qfb" style="transition-delay:${(0.85 + k * 0.15).toFixed(2)}s;animation-delay:${(0.35 + k * 0.15).toFixed(2)}s">${ico('Sparkle', 18, 'fill', 'position:relative;color:#ffffff', 'ai-spark')}<span style="position:relative">${t}</span></div>`).join('')}
 		</div>
 	</div>`
 )
@@ -804,7 +804,7 @@ ${Array.from({ length: 16 }, (_, i) => `.q.bgin .qel:nth-child(${i + 1}){animati
 .q .qw2{display:inline-block;opacity:0}
 .q.bgin .qw2{animation:rise .45s var(--ease) .05s both}
 /* badges de features (cena do logo): entram apagados e acendem para o gradiente de IA */
-.qfb{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:9999px;font-size:15px;font-weight:500;color:#ffffff;background:linear-gradient(100deg,#1d6ae5,#38bdf8,#7c8cf8,#38bdf8,#1d6ae5);background-size:220% 100%;box-shadow:0 12px 30px -12px rgba(0,0,0,.4);opacity:0}
+.qfb{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:10px;padding:13px 22px;border-radius:9999px;font-size:18px;font-weight:500;color:#ffffff;background:linear-gradient(100deg,#1d6ae5,#38bdf8,#7c8cf8,#38bdf8,#1d6ae5);background-size:220% 100%;box-shadow:0 12px 30px -12px rgba(0,0,0,.4);opacity:0}
 .qfb::before{content:"";position:absolute;inset:0;background:#262626;transition:opacity .5s var(--ease);transition-delay:inherit}
 .tc.show .qfb{animation:rise .4s var(--ease) both,aiSweep 3.5s linear infinite}
 .tc.show .qfb::before{opacity:0}
