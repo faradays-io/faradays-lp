@@ -607,6 +607,9 @@ const openCard = darkCard(
 	`<div style="display:flex;flex-direction:column;align-items:center;gap:28px">
 		<div class="w" style="position:relative;display:flex">${wordmark(560, T.fg)}</div>
 		<div class="w" style="font-family:${MONO};font-size:24px;font-weight:500;letter-spacing:.26em;padding-left:.26em;text-transform:uppercase;color:${T.mutedFg}">para compradores de alto volume</div>
+		<div style="display:flex;gap:16px;margin-top:10px">
+			${['Gerenciamento de documentos com IA', 'Cotação de venda automática', 'Cotação de compra em um clique'].map((t, k) => `<div class="qfb" style="transition-delay:${(0.85 + k * 0.15).toFixed(2)}s;animation-delay:${(0.35 + k * 0.15).toFixed(2)}s">${ico('Sparkle', 15, 'fill', 'position:relative;color:#ffffff', 'ai-spark')}<span style="position:relative">${t}</span></div>`).join('')}
+		</div>
 	</div>`
 )
 const closeCard = darkCard(
@@ -800,6 +803,11 @@ ${Array.from({ length: 16 }, (_, i) => `.q.bgin .qel:nth-child(${i + 1}){animati
 .q.qb.l2 .l2w{animation-duration:.45s}
 .q .qw2{display:inline-block;opacity:0}
 .q.bgin .qw2{animation:rise .45s var(--ease) .05s both}
+/* badges de features (cena do logo): entram apagados e acendem para o gradiente de IA */
+.qfb{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:9999px;font-size:15px;font-weight:500;color:#ffffff;background:linear-gradient(100deg,#1d6ae5,#38bdf8,#7c8cf8,#38bdf8,#1d6ae5);background-size:220% 100%;box-shadow:0 12px 30px -12px rgba(0,0,0,.4);opacity:0}
+.qfb::before{content:"";position:absolute;inset:0;background:#262626;transition:opacity .5s var(--ease);transition-delay:inherit}
+.tc.show .qfb{animation:rise .4s var(--ease) both,aiSweep 3.5s linear infinite}
+.tc.show .qfb::before{opacity:0}
 ${Array.from({ length: 10 }, (_, i) => `.q.qb.bgin .qel:nth-child(${i + 1}){animation:qelIn .4s var(--ease) ${(0.05 + i * 0.035).toFixed(2)}s both,qFloat ${(3 + ((i * 7) % 12) / 10).toFixed(1)}s ease-in-out ${(0.45 + i * 0.035).toFixed(2)}s infinite alternate}`).join('\n')}
 .qhand{animation:qWander 5.5s ease-in-out infinite}
 @keyframes qWander{0%{transform:translate(0,0) rotate(0)}13%{transform:translate(-90px,50px) rotate(-10deg)}24%{transform:translate(-90px,50px) rotate(-10deg)}40%{transform:translate(50px,130px) rotate(7deg)}52%{transform:translate(50px,130px) rotate(7deg)}68%{transform:translate(170px,-40px) rotate(12deg)}78%{transform:translate(170px,-40px) rotate(12deg)}100%{transform:translate(0,0) rotate(0)}}
@@ -920,25 +928,25 @@ const stage = `<div class="stage" style="position:relative;width:1920px;height:1
 /* ---------------- lógica (timeline) ------------------------------------ */
 const CUES = [
 	// dica de girar o celular — desligada para caber em ~1min (descomente para voltar):
-	// ['hint', 350], ['hintOut', 3400],
+	// ['hint', 350], ['hintOut', 4900],
 	['boot', 0], ['q1', 500], ['qType', 1100], ['qZoom', 1150], ['qLine2', 2000], ['qExit', 2900],
-	['meet', 3200], ['meetOut', 4000], ['open', 4200], ['openOut', 5300], ['bZoom', 5700], ['bLine2', 6400],
+	['meet', 3200], ['meetOut', 4000], ['open', 4200], ['openOut', 7200], ['bZoom', 7600], ['bLine2', 8300],
 	// cap. 1 — Cotação de compra (BID)
-	['ch2Out', 7200], ['cRow', 8400], ['kRow', 9000], ['cDisp', 9500], ['kDisp', 10100], ['env', 11200],
-	['split', 11800], ['capMail', 12800], ['mailIn', 12500], ['mailOpen', 12900], ['replyOpen', 13300], ['t1', 13600],
-	['t2', 13800], ['t3', 14000], ['t4', 14200], ['cSend', 14600], ['kSend', 15200], ['flyGone', 16300],
-	['unsplit', 16500], ['cutA2', 17600], ['cut2', 17800], ['read2', 19100], ['sug', 20100], ['cVenc', 20200],
-	['kVenc', 21000], ['zoomOut2', 22000], ['cFechar', 22900], ['kFechar', 23500], ['bidOut', 24400], ['rst1', 25300],
+	['ch2Out', 9100], ['cRow', 10300], ['kRow', 10900], ['cDisp', 11400], ['kDisp', 12000], ['env', 13100],
+	['split', 13700], ['capMail', 14700], ['mailIn', 14400], ['mailOpen', 14800], ['replyOpen', 15200], ['t1', 15500],
+	['t2', 15700], ['t3', 15900], ['t4', 16100], ['cSend', 16500], ['kSend', 17100], ['flyGone', 18200],
+	['unsplit', 18400], ['cutA2', 19500], ['cut2', 19700], ['read2', 21000], ['sug', 22000], ['cVenc', 22100],
+	['kVenc', 22900], ['zoomOut2', 23900], ['cFechar', 24800], ['kFechar', 25400], ['bidOut', 26300], ['rst1', 27200],
 	// cap. 2 — Documentos (SharePoint)
-	['ch1Out', 27500], ['spIn', 28400], ['zoomSp', 28650], ['sync1', 29200], ['sync2', 29500], ['sync3', 29800],
-	['done1', 30300], ['done2', 30600], ['done3', 30900], ['lift', 31100], ['drop', 31400], ['cutSp', 31750],
-	['r1', 31850], ['r2', 32000], ['r3', 32150], ['spOut', 32600], ['zoomStatus', 32900], ['read', 34000],
-	['zoomOut1', 35700], ['cPastas', 36500], ['cutA1', 37100], ['cut1', 37300], ['docsOut', 38600], ['rst2', 39500],
+	['ch1Out', 29400], ['spIn', 30300], ['zoomSp', 30550], ['sync1', 31100], ['sync2', 31400], ['sync3', 31700],
+	['done1', 32200], ['done2', 32500], ['done3', 32800], ['lift', 33000], ['drop', 33300], ['cutSp', 33650],
+	['r1', 33750], ['r2', 33900], ['r3', 34050], ['spOut', 34500], ['zoomStatus', 34800], ['read', 35900],
+	['zoomOut1', 37600], ['cPastas', 38400], ['cutA1', 39000], ['cut1', 39200], ['docsOut', 40500], ['rst2', 41400],
 	// cap. 3 — Conversas com IA (WhatsApp)
-	['ch3Out', 40100], ['phoneIn', 40200], ['p1', 40700], ['cap1', 40800], ['ptyp1', 41500], ['p2', 42500],
-	['cap2', 42700], ['p3', 43600], ['ptyp2', 44200], ['p4', 45300], ['cap3', 45400], ['p5', 46200],
-	['ptyp3', 46700], ['p6', 47900], ['cap4', 48000], ['toSys', 50200], ['cap5', 50700], ['zoomConv', 52600],
-	['zoomOut3', 55300], ['waOut', 56800], ['rst3', 57700], ['end', 59400]
+	['ch3Out', 42000], ['phoneIn', 42100], ['p1', 42600], ['cap1', 42700], ['ptyp1', 43400], ['p2', 44400],
+	['cap2', 44600], ['p3', 45500], ['ptyp2', 46100], ['p4', 47200], ['cap3', 47300], ['p5', 48100],
+	['ptyp3', 48600], ['p6', 49800], ['cap4', 49900], ['toSys', 52100], ['cap5', 52600], ['zoomConv', 54500],
+	['zoomOut3', 57200], ['waOut', 58700], ['rst3', 59600], ['end', 61300]
 ].sort((a, b) => a[1] - b[1])
 
 const logic = `
@@ -1154,7 +1162,7 @@ fs.writeFileSync(
 					y: 0,
 					w: 380,
 					text:
-						'Roteiro (59s)\n\n0:00 Abertura — cartela-pergunta ("Ainda gerenciando manualmente / documentos, cotações e conversas?") com mocks animados, digitação e zoom out acelerados; MATCH CUT para o Conheça já em zoom out; logo Faradays + "para compradores de alto volume". Dica de girar o celular desligada (cues comentados)\n0:05 Cotação por e-mail, comparação na planilha? — cartela com a coreografia da abertura ("Cotação" grande → zoom out sobre corpo de e-mail, planilhas grandes e notificações; a cartela sai recuando em zoom out) → lista → modal → Disparar BID (4) → envelopes → vista dividida: a caixa de e-mail do exportador recebe o BID e responde com preço → o e-mail voa de volta → corte seco para o Comparativo JÁ EM ZOOM, com a linha da ANHUI chegando "lendo e-mail…" → IA sugere (ponto piscante) → clique na linha → Fechar cotação\n0:24 E os documentos dos seus fornecedores, em dia? — a câmera fecha no painel do drive enquanto ele entra; os 3 arquivos novos sincronizam sozinhos (sem clique); com a pilha já voando, corte seco para a vista inteira; IA lê validade (zoom nos status), corte seco para a aba Pastas\n0:39 Seu representante ainda depende do administrativo? — só o celular do representante, centralizado: ele pede o COA → "digitando…" (glow colorido estilo Siri) → a IA responde sozinha (rótulo Agente IA nos balões) → pergunta a marca → emite a cotação; no fim o celular vai para a direita, o sistema entra ao lado com a conversa inteira e a câmera fecha nela\n0:57 Fechamento — logo + barra de busca digitando www.faradays.io (loop)\n\nTransições: cartela ↔ demo em fade; match cut seco (sem fade, corta no meio do movimento) na pergunta→Conheça, no disparo→comparativo e em tabela→Pastas.\n\nChips: Início pula ao capítulo; Tempo vai a um instante; Pausar congela; Loop repete.'
+						'Roteiro (61s)\n\n0:00 Abertura — cartela-pergunta ("Ainda gerenciando manualmente / documentos, cotações e conversas?") com mocks animados, digitação e zoom out acelerados; MATCH CUT para o Conheça já em zoom out; logo Faradays + "para compradores de alto volume" e três badges de features (documentos com IA · venda automática · compra em um clique) acendendo do cinza para o gradiente de IA. Dica de girar o celular desligada (cues comentados)\n0:07 Cotação por e-mail, comparação na planilha? — cartela com a coreografia da abertura ("Cotação" grande → zoom out sobre corpo de e-mail, planilhas grandes e notificações; a cartela sai recuando em zoom out) → lista → modal → Disparar BID (4) → envelopes → vista dividida: a caixa de e-mail do exportador recebe o BID e responde com preço → o e-mail voa de volta → corte seco para o Comparativo JÁ EM ZOOM, com a linha da ANHUI chegando "lendo e-mail…" → IA sugere (ponto piscante) → clique na linha → Fechar cotação\n0:26 E os documentos dos seus fornecedores, em dia? — a câmera fecha no painel do drive enquanto ele entra; os 3 arquivos novos sincronizam sozinhos (sem clique); com a pilha já voando, corte seco para a vista inteira; IA lê validade (zoom nos status), corte seco para a aba Pastas\n0:40 Seu representante ainda depende do administrativo? — só o celular do representante, centralizado: ele pede o COA → "digitando…" (glow colorido estilo Siri) → a IA responde sozinha (rótulo Agente IA nos balões) → pergunta a marca → emite a cotação; no fim o celular vai para a direita, o sistema entra ao lado com a conversa inteira e a câmera fecha nela\n0:58 Fechamento — logo + barra de busca digitando www.faradays.io (loop)\n\nTransições: cartela ↔ demo em fade; match cut seco (sem fade, corta no meio do movimento) na pergunta→Conheça, no disparo→comparativo e em tabela→Pastas.\n\nChips: Início pula ao capítulo; Tempo vai a um instante; Pausar congela; Loop repete.'
 				}
 			],
 			launch: { view: 'focused', file: 'Main.dc.html' }
