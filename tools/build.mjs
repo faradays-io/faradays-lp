@@ -146,7 +146,7 @@ const docRow = (tipo, produto, marca, mand, validade, status, opts = {}) => {
 	const st = { vigente: ['success', 'Vigente'], a_vencer: ['warning', 'A vencer'], vencido: ['error', 'Vencido'], na: ['neutral', 'N/A'] }[status]
 	const cls = opts.cls ? `class="row vf ${opts.cls}"` : ''
 	const val = opts.lendo
-		? `<span style="position:relative;display:inline-block;min-width:96px;height:20px"><span class="vf {{c.lendo}}" style="position:absolute;left:0;top:0;display:inline-flex;align-items:center;gap:6px;color:${T.amber700}">${ico('Sparkle', 14, 'fill')}${mono('lendo…')}</span><span class="vf {{c.lido}}" style="position:absolute;left:0;top:0">${mono(validade)}</span></span>`
+		? `<span style="position:relative;display:inline-block;min-width:96px;height:20px"><span class="vf {{c.lendo}}" style="position:absolute;left:0;top:0;display:inline-flex;align-items:center;gap:6px">${ico('Sparkle', 14, 'fill', 'color:#4aa8ff', 'ai-spark')}<span class="ai-shimmer" style="font-family:${MONO};font-variant-numeric:tabular-nums">lendo…</span></span><span class="vf {{c.lido}}" style="position:absolute;left:0;top:0">${mono(validade)}<span class="aiburst"></span></span></span>`
 		: mono(validade)
 	const badgeHtml = opts.lendo
 		? `<span style="position:relative;display:inline-block;min-width:80px;height:21px"><span class="vf {{c.lendo}}" style="position:absolute;left:0;top:0">${badge('warning', 'SEM DATA')}</span><span class="vf {{c.lido}}" style="position:absolute;left:0;top:0">${badge(st[0], st[1])}</span></span>`
@@ -277,7 +277,7 @@ const cmpRow = (nome, extra, cotado, base, prazo, origem, opts = {}) => {
 	const bg = opts.draft ? 'background:rgba(254,154,0,.05);' : ''
 	return `<tr ${rowCls} style="border-bottom:1px solid ${T.border60};border-left:2px solid transparent;${bg}">
 		${ctd(`<span style="display:inline-flex;flex-direction:column;align-items:flex-start;gap:4px"><span style="font-weight:500">${nome}</span>${extra || ''}</span>`, 'left')}
-		${ctd(cotado)}${ctd(mono(`${base}<span style="color:${T.mutedFg}">/KG</span>`, 'font-weight:500'))}${ctd(mono(prazo))}${ctd(badge(origem[0], origem[1]))}
+		${ctd(cotado)}${ctd(mono(`${base}<span style="color:${T.mutedFg}">/KG</span>`, 'font-weight:500'))}${ctd(mono(prazo))}${ctd(origem[1].includes('IA') ? aiBadge(origem[1]) : badge(origem[0], origem[1]))}
 		${ctd(opts.cls ? `<span style="position:relative;display:inline-block;width:16px;height:16px"><span class="vf {{c.cbOff}}" style="position:absolute;inset:0">${checkbox(false)}</span><span class="vf {{c.cbOn}}" style="position:absolute;inset:0">${checkbox(true)}</span></span>` : checkbox(false))}
 		${ctd(opts.draft ? btn('Confirmar', { variant: 'outline', size: 'xs' }) : `<span style="display:inline-flex;color:${T.mutedFg}">${ico('DotsThreeVertical', 16, 'bold')}</span>`)}
 	</tr>`
@@ -289,15 +289,18 @@ const cmpBox = (titulo, marca, cas, qtd, rows) =>
 	<thead><tr style="border-bottom:1px solid ${T.border}">${cth('Exportador', 'left')}${cth('Preço cotado')}${cth('Base FOB')}${cth('Prazo pagto')}${cth('Origem')}${cth('Vencedora')}<th></th></tr></thead>
 	<tbody>${rows.join('')}</tbody></table></div>`
 // Célula com dois estados empilhados (grid-area 1/1): "lendo" → "lido".
-const stack = (a, b) => `<span style="display:inline-grid;justify-items:center;align-items:center"><span class="vf {{c.aLendo}}" style="grid-area:1/1">${a}</span><span class="vf {{c.aLido}}" style="grid-area:1/1">${b}</span></span>`
-const lendoTag = `<span style="display:inline-flex;align-items:center;gap:6px;color:${T.amber700}">${ico('Sparkle', 14, 'fill')}${mono('lendo e-mail…')}</span>`
+// Assinatura visual da IA: pill com borda e texto no gradiente (mesma família do shimmer).
+const aiBadge = (text) =>
+	`<span class="ai-badge" style="display:inline-flex;align-items:center;gap:4px;border-radius:${R.md};padding:2px 8px;font-size:11.1px;line-height:1.5;letter-spacing:.03em;font-weight:500;white-space:nowrap">${ico('Sparkle', 11, 'fill', 'color:#4aa8ff')}<span class="ai-shimmer">${text}</span></span>`
+const stack = (a, b, burst = false) => `<span style="display:inline-grid;justify-items:center;align-items:center"><span class="vf {{c.aLendo}}" style="grid-area:1/1">${a}</span><span class="vf {{c.aLido}}" style="grid-area:1/1;position:relative">${b}${burst ? '<span class="aiburst"></span>' : ''}</span></span>`
+const lendoTag = `<span style="display:inline-flex;align-items:center;gap:6px">${ico('Sparkle', 14, 'fill', 'color:#4aa8ff', 'ai-spark')}<span class="ai-shimmer" style="font-family:${MONO};font-variant-numeric:tabular-nums">lendo e-mail…</span></span>`
 const anhuiRow = () =>
 	`<tr class="crow {{c.rowWin}}" style="border-bottom:1px solid ${T.border60};border-left:2px solid transparent">
-		${ctd(`<span style="display:inline-flex;flex-direction:column;align-items:flex-start;gap:4px"><span style="font-weight:500">ANHUI JINHE FOOD</span><span class="vf {{c.sug}}" style="display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:${T.green700}"><span class="pulse"></span>sugerida pela IA</span></span>`, 'left')}
-		${ctd(stack(lendoTag, preco('4,85', 'KG', 'FOB')))}
+		${ctd(`<span style="display:inline-flex;flex-direction:column;align-items:flex-start;gap:4px"><span style="font-weight:500">ANHUI JINHE FOOD</span><span class="vf {{c.sug}}" style="display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase"><span class="pulse"></span><span class="ai-shimmer">sugerida pela IA</span></span></span>`, 'left')}
+		${ctd(stack(lendoTag, preco('4,85', 'KG', 'FOB'), true))}
 		${ctd(stack(muted('—'), mono(`4,85<span style="color:${T.mutedFg}">/KG</span>`, 'font-weight:500')))}
 		${ctd(stack(muted('—'), mono('T/T 90 days')))}
-		${ctd(stack(badge('neutral', 'resposta recebida'), badge('info', 'E-mail · IA')))}
+		${ctd(stack(badge('neutral', 'resposta recebida'), aiBadge('E-mail · IA')))}
 		${ctd(`<span style="position:relative;display:inline-block;width:16px;height:16px"><span class="vf {{c.cbOff}}" style="position:absolute;inset:0">${checkbox(false)}</span><span class="vf {{c.cbOn}}" style="position:absolute;inset:0">${checkbox(true)}</span></span>`)}
 		${ctd(`<span style="display:inline-flex;color:${T.mutedFg}">${ico('DotsThreeVertical', 16, 'bold')}</span>`)}
 	</tr>`
@@ -341,7 +344,7 @@ const bubble = (side, html, cls, opts = {}) => {
 	const out = side === 'out'
 	const base = `max-width:80%;border-radius:${R.lg};padding:8px 12px;font-size:13.33px;letter-spacing:.025em;line-height:1.5;box-shadow:0 1px 2px rgba(0,0,0,.05);background:${out ? T.brand : T.bg};color:${out ? '#ffffff' : T.fg}`
 	const sub = out ? 'rgba(255,255,255,.7)' : T.mutedFg
-	return `<div class="vp ${cls}" style="display:flex;justify-content:${out ? 'flex-end' : 'flex-start'}"><div style="${base}">${opts.ia ? `<span style="display:flex;align-items:center;gap:4px;font-family:${MONO};font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:${sub};margin-bottom:2px">${ico('Sparkle', 10, 'fill')}Agente IA</span>` : ''}${html}<span style="display:flex;justify-content:flex-end;align-items:center;gap:4px;margin-top:2px;font-family:${MONO};font-size:10px;color:${sub}">${opts.hora}${out ? ico('Checks', 12) : ''}</span></div></div>`
+	return `<div class="vp ${cls}" style="display:flex;justify-content:${out ? 'flex-end' : 'flex-start'}"><div style="${base}">${opts.ia ? `<span style="display:flex;align-items:center;gap:4px;font-family:${MONO};font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:${sub};margin-bottom:2px">${ico('Sparkle', 10, 'fill', '', 'ai-spark')}Agente IA</span>` : ''}${html}<span style="display:flex;justify-content:flex-end;align-items:center;gap:4px;margin-top:2px;font-family:${MONO};font-size:10px;color:${sub}">${opts.hora}${out ? ico('Checks', 12) : ''}</span></div></div>`
 }
 const fileCard = (nome, meta, extra = '', onBrand = false) =>
 	`<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:${R.lg};border:1px solid ${onBrand ? 'rgba(255,255,255,.22)' : T.border};background:${onBrand ? 'rgba(255,255,255,.14)' : 'rgba(235,235,235,.6)'};${extra}">${ico('FilePdf', 28, 'fill', onBrand ? 'color:#ffffff' : 'color:#d93025')}<div style="min-width:0;display:flex;flex-direction:column"><span style="font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:${onBrand ? '#ffffff' : T.fg}">${nome}</span><span style="font-family:${MONO};font-size:10px;color:${onBrand ? 'rgba(255,255,255,.7)' : T.mutedFg}">${meta}</span></div></div>`
@@ -447,7 +450,7 @@ const spiralSvg = (() => {
 })()
 const darkCard = (cls, inner) =>
 	`<div class="vf tc ${cls}" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:40px">${inner}</div>`
-// Dica de rotação na abertura (cartela própria, antes do logo): anel de setas finas
+// Dica de rotação na abertura (DESLIGADA nos CUES; descomente lá para voltar): anel de setas finas
 // girando devagar e um celular que vai da vertical para a horizontal.
 const HINT_INK = '#7a7a7a' // cinza da dica de rotação (setas e celular)
 const RING = (() => {
@@ -468,7 +471,7 @@ const qEl = (x, y, rot, inner, w, cls = '') =>
 	`<div class="qel${cls ? ' ' + cls : ''}" style="position:absolute;left:${x}px;top:${y}px;${w ? `width:${w}px;` : ''}"><div style="transform:rotate(${rot}deg)">${inner}</div></div>`
 const QSHADOW = 'box-shadow:0 16px 40px -18px rgba(0,0,0,.35)'
 const qBubbleSent = `<div style="border-radius:12px;padding:10px 14px;background:#d1f4d0;color:#111111;font-size:15px;line-height:1.45;${QSHADOW}">Consegue me mandar o COA do lote 2408?<span style="display:flex;justify-content:flex-end;align-items:center;gap:4px;margin-top:2px;font-size:10.5px;color:#6b6b6b">09:41 ${ico('Checks', 12, 'regular', 'color:#3b8eff')}</span></div>`
-const qBubbleIA = `<div style="border-radius:12px;padding:10px 14px;background:#ffffff;color:#111111;font-size:15px;line-height:1.45;${QSHADOW}"><span style="display:flex;align-items:center;gap:4px;font-family:${MONO};font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:${T.brand};margin-bottom:3px">${ico('Sparkle', 10, 'fill')}Agente IA · resposta automática</span>Segue o COA do lote 2408:</div>`
+const qBubbleIA = `<div style="border-radius:12px;padding:10px 14px;background:#ffffff;color:#111111;font-size:15px;line-height:1.45;${QSHADOW}"><span style="display:flex;align-items:center;gap:4px;font-family:${MONO};font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px">${ico('Sparkle', 10, 'fill', 'color:#4aa8ff', 'ai-spark')}<span class="ai-shimmer">Agente IA · resposta automática</span></span>Segue o COA do lote 2408:</div>`
 const qMail = `<div style="display:inline-flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;background:#ffffff;font-size:14px;${QSHADOW}"><span style="display:grid;place-items:center;width:34px;height:34px;border-radius:9999px;background:${T.brand};color:#ffffff;font-size:13px;font-weight:600">F</span><span style="display:flex;flex-direction:column"><span style="font-weight:600">Faradays</span><span style="color:#555555;white-space:nowrap">BID CC-2026-012 — 3 items</span></span><span style="margin-left:10px;font-family:${MONO};font-size:11px;color:#7a7a7a">09:12</span></div>`
 const qDoc = (nome, bdg) =>
 	`<div style="display:inline-flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;background:#ffffff;${QSHADOW}">${ico('FilePdf', 26, 'fill', 'color:#d93025')}<span style="display:flex;flex-direction:column;font-size:13.5px"><span style="font-weight:500;white-space:nowrap">${nome}</span><span style="font-family:${MONO};font-size:10.5px;color:${T.mutedFg}">PDF · SharePoint</span></span><span style="margin-left:8px">${bdg}</span></div>`
@@ -531,13 +534,81 @@ const qCard = `<div class="vf q {{c.q}}" style="position:absolute;inset:0;overfl
 	</div>
 	<div class="qtx" style="position:absolute;inset:0;transform:{{st.qtx}}">
 		<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:36px;text-align:center;color:${T.fg}">
-			<h1 style="margin:0;font-family:${HEAD};font-size:94px;line-height:1.05;letter-spacing:-.025em;font-weight:600;white-space:nowrap"><span class="w qw1">Ainda</span> <span>${'gerenciando'.split('').map((ch, k) => `<span class="ql" style="animation-delay:${(k * 0.06).toFixed(2)}s">${ch}</span>`).join('')}</span> <span>manualmente</span></h1>
-			<h1 style="margin:0;font-family:${HEAD};font-size:94px;line-height:1.05;letter-spacing:-.025em;font-weight:600;white-space:nowrap">${'documentos, cotações e conversas?'.split(' ').map((w, k) => `<span class="l2w" style="animation-delay:${(k * 0.07).toFixed(2)}s">${w}</span>`).join(' ')}</h1>
+			<h1 style="margin:0;font-family:${HEAD};font-size:94px;line-height:1.05;letter-spacing:-.025em;font-weight:600;white-space:nowrap"><span class="w qw1">Ainda</span> <span>${'gerenciando'.split('').map((ch, k) => `<span class="ql" style="animation-delay:${(k * 0.045).toFixed(3)}s">${ch}</span>`).join('')}</span> <span>manualmente</span></h1>
+			<h1 style="margin:0;font-family:${HEAD};font-size:94px;line-height:1.05;letter-spacing:-.025em;font-weight:600;white-space:nowrap">${'documentos, cotações e conversas?'.split(' ').map((w, k) => `<span class="l2w" style="animation-delay:${(k * 0.05).toFixed(2)}s">${w}</span>`).join(' ')}</h1>
+		</div>
+	</div>
+</div>`
+// Cartela-pergunta do cap. BID: mesma coreografia da abertura ("Cotação" grande,
+// zoom out revela o resto sobre e-mails de resposta e planilhas), mais rápida.
+const qMailRe = (nome, texto, hora) =>
+	`<div style="display:inline-flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;background:#ffffff;font-size:14px;${QSHADOW}"><span style="display:grid;place-items:center;width:34px;height:34px;border-radius:9999px;background:#0f6cbd;color:#ffffff;font-size:13px;font-weight:600">${nome[0]}</span><span style="display:flex;flex-direction:column"><span style="font-weight:600">${nome}</span><span style="color:#555555;white-space:nowrap">${texto}</span></span><span style="margin-left:10px;font-family:${MONO};font-size:11px;color:#7a7a7a">${hora}</span></div>`
+const qCell = (t, extra = '') => `<td style="border:1px solid ${T.border};padding:4px 8px;white-space:nowrap;${extra}">${t}</td>`
+const qNum = `text-align:center;background:rgba(235,235,235,.5);color:${T.mutedFg}`
+const qSheetBig = `<div style="width:480px;background:#ffffff;border-radius:10px;overflow:hidden;${QSHADOW}">
+	<div style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid ${T.border60};font-size:13px;font-weight:500">${ico('FileXls', 20, 'fill', 'color:#1d6f42')}comparativo_v3_FINAL.xlsx<span style="margin-left:auto;font-family:${MONO};font-size:10px;color:${T.mutedFg}">editada por 3 pessoas</span></div>
+	<table style="width:100%;border-collapse:collapse;font-family:${MONO};font-size:10px">
+		<tr>${['', 'A', 'B', 'C', 'D'].map((c) => qCell(c, qNum + ';font-weight:600')).join('')}</tr>
+		<tr>${qCell('1', qNum)}${qCell('EXPORTADOR', 'font-weight:600')}${qCell('USD/KG', 'font-weight:600')}${qCell('INCO', 'font-weight:600')}${qCell('PRAZO', 'font-weight:600')}</tr>
+		<tr>${qCell('2', qNum)}${qCell('ANHUI JINHE')}${qCell('4,85')}${qCell('FOB')}${qCell('T/T 90')}</tr>
+		<tr>${qCell('3', qNum)}${qCell('VITASWEET')}${qCell('5,02', 'background:#fff3bf')}${qCell('CFR')}${qCell('T/T 30')}</tr>
+		<tr>${qCell('4', qNum)}${qCell('CHENGXIN')}${qCell('??', `color:${T.destructive};font-weight:700`)}${qCell('FOB')}${qCell('30% adiant.')}</tr>
+	</table>
+</div>`
+const qSheetBig2 = `<div style="width:440px;background:#ffffff;border-radius:10px;overflow:hidden;${QSHADOW}">
+	<div style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid ${T.border60};font-size:13px;font-weight:500">${ico('FileXls', 20, 'fill', 'color:#1d6f42')}cotações_agosto_v7.xlsx<span style="margin-left:auto;font-family:${MONO};font-size:10px;color:${T.mutedFg}">v7 · ontem</span></div>
+	<table style="width:100%;border-collapse:collapse;font-family:${MONO};font-size:10px">
+		<tr>${qCell('PRODUTO', 'font-weight:600')}${qCell('MELHOR USD', 'font-weight:600')}${qCell('FONTE', 'font-weight:600')}</tr>
+		<tr>${qCell('CREATINA 200 MESH')}${qCell('4,85')}${qCell('e-mail 14:02')}</tr>
+		<tr>${qCell('SUCRALOSE')}${qCell('38,40', 'background:#fff3bf')}${qCell('planilha v3')}</tr>
+		<tr>${qCell('ACESSULFAME K')}${qCell('#REF!', `color:${T.destructive};font-weight:700`)}${qCell('—')}</tr>
+	</table>
+</div>`
+const qMailBody = `<div style="width:430px;background:#ffffff;border-radius:12px;overflow:hidden;${QSHADOW}">
+	<div style="padding:12px 16px;border-bottom:1px solid ${T.border60};display:flex;align-items:center;gap:10px"><span style="display:grid;place-items:center;width:32px;height:32px;border-radius:9999px;background:#0f6cbd;color:#ffffff;font-size:12px;font-weight:600">A</span><span style="display:flex;flex-direction:column;min-width:0"><span style="font-size:13px;font-weight:600;white-space:nowrap">ANHUI JINHE FOOD</span><span style="font-size:11px;color:#7a7a7a;white-space:nowrap">RE: BID CC-2026-012 · para: compras@… · 14:02</span></span></div>
+	<div style="padding:12px 16px;display:flex;flex-direction:column;gap:6px;font-size:12.5px;line-height:1.5;color:#222222">
+		<span>Dear team, please find our offer below:</span>
+		<span style="font-family:${MONO};font-size:11.5px;color:#555555">CREATINE 200 MESH — USD 4.85/KG FOB Qingdao<br>SUCRALOSE — USD 38.40/KG FOB Qingdao</span>
+		<span>Payment T/T 90 days · price validity 15 days.</span>
+	</div>
+</div>`
+const qNotif = (icon, titulo, meta) =>
+	`<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:#ffffff;${QSHADOW}"><span style="display:grid;place-items:center;width:30px;height:30px;border-radius:8px;background:rgba(15,108,189,.1);color:#0f6cbd">${ico(icon, 16, 'fill')}</span><span style="display:flex;flex-direction:column;min-width:0"><span style="font-size:12.5px;font-weight:600;white-space:nowrap">${titulo}</span><span style="font-size:11px;color:#7a7a7a;white-space:nowrap">${meta}</span></span><span style="margin-left:auto;width:8px;height:8px;border-radius:9999px;background:#0f6cbd"></span></div>`
+const qNotifs = `<div style="display:flex;flex-direction:column;gap:8px;width:310px">
+	${qNotif('Envelope', 'Nova resposta de BID', 'ANHUI JINHE FOOD · agora')}
+	${qNotif('Envelope', 'Nova resposta de BID', 'VITASWEET CO. · há 2 min')}
+	${qNotif('FileXls', 'Planilha atualizada', 'comparativo_v3_FINAL.xlsx · há 5 min')}
+</div>`
+const qUnread = `<div style="display:inline-flex;align-items:center;gap:14px;padding:12px 16px;border-radius:12px;background:#ffffff;font-size:13.5px;${QSHADOW}"><span style="position:relative;display:flex;color:#0f6cbd">${ico('Envelope', 24, 'fill')}<span style="position:absolute;right:-10px;top:-8px;display:grid;place-items:center;min-width:20px;height:20px;padding:0 5px;border-radius:9999px;background:${T.destructive};color:#ffffff;font-size:11px;font-weight:700">27</span></span>não lidas</div>`
+const qRe = `<div style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:9999px;background:#ffffff;font-size:13.5px;${QSHADOW}">${ico('Envelope', 16, 'fill', 'color:#0f6cbd')}RE: RE: RE: BID CC-2026-012 — 3 items</div>`
+const bidQCard = `<div class="vf q qb {{c.ch2}}" style="position:absolute;inset:0;overflow:hidden">
+	<div class="qbg" style="position:absolute;inset:0;transform:{{st.qbBg}}">
+		${qEl(70, 110, -4, qMailBody)}
+		${qEl(1390, 75, 3, qSheetBig)}
+		${qEl(620, 50, 2, qRe)}
+		${qEl(90, 430, -2, qNotifs)}
+		${qEl(100, 700, -3, qSheet)}
+		${qEl(1440, 700, -3, qSheetBig2)}
+		${qEl(430, 935, 2, qMailRe('VITASWEET CO.', 'RE: BID CC-2026-012 — quotation attached', '15:47'))}
+		${qEl(1120, 960, -2, qEnvelope)}
+		${qEl(1690, 465, 3, qUnread)}
+		${qEl(700, 90, -2, qMail)}
+	</div>
+	<div class="qtx" style="position:absolute;inset:0;transform:{{st.qbTx}}">
+		<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:36px;text-align:center;color:${T.fg}">
+			<h1 style="margin:0;font-family:${HEAD};font-size:94px;line-height:1.05;letter-spacing:-.025em;font-weight:600;white-space:nowrap"><span class="w">Cotação</span> <span class="qw2">por</span> <span class="qw2" style="animation-delay:.12s">e-mail,</span></h1>
+			<h1 style="margin:0;font-family:${HEAD};font-size:94px;line-height:1.05;letter-spacing:-.025em;font-weight:600;white-space:nowrap">${'comparação na planilha?'.split(' ').map((w, k) => `<span class="l2w" style="animation-delay:${(k * 0.04).toFixed(2)}s">${w}</span>`).join(' ')}</h1>
 		</div>
 	</div>
 </div>`
 const meetCard = titleCard('pull {{c.meet}}', 'Conheça')
-const openCard = darkCard('{{c.open}}', `<div class="w" style="position:relative;display:flex">${wordmark(460, T.fg)}</div>`)
+const openCard = darkCard(
+	'{{c.open}}',
+	`<div style="display:flex;flex-direction:column;align-items:center;gap:28px">
+		<div class="w" style="position:relative;display:flex">${wordmark(560, T.fg)}</div>
+		<div class="w" style="font-family:${MONO};font-size:24px;font-weight:500;letter-spacing:.26em;padding-left:.26em;text-transform:uppercase;color:${T.mutedFg}">para compradores de alto volume</div>
+	</div>`
+)
 const closeCard = darkCard(
 	'{{c.close}}',
 	`<div class="w" style="position:relative;display:flex">${wordmark(460, T.fg)}</div><div class="w" style="display:flex;align-items:center;gap:14px;width:560px;height:60px;padding:0 24px;border-radius:9999px;background:#ffffff;border:1px solid ${T.border};box-shadow:0 12px 32px -14px rgba(0,0,0,.2)">${ico('MagnifyingGlass', 22, 'bold', `color:${T.mutedFg}`)}<span class="url" style="font-family:${MONO};font-size:22px;color:${T.fg}">www.faradays.io</span><span class="caret" style="width:2px;height:28px;background:${T.fg}"></span></div>`
@@ -575,10 +646,10 @@ const outlook = `<div class="sr {{c.outlook}}" style="position:absolute;left:107
 			</div>
 			<div class="vp {{c.reply}}" style="margin:0 16px 16px;flex-shrink:0;border:1px solid #e5e5e5;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:5px;font-size:12.5px;line-height:1.5;color:#222222">
 				<span style="font-size:11px;color:#7a7a7a">Reply · Faradays</span>
-				<span class="vf {{c.t1}}">Dear Faradays team,</span>
-				<span class="vf {{c.t2}}">CREATINE 200 MESH — <b>USD 4.85/KG FOB</b> Qingdao</span>
-				<span class="vf {{c.t3}}">SUCRALOSE — <b>USD 38.40/KG FOB</b> Qingdao</span>
-				<span class="vf {{c.t4}}">Payment T/T 90 days · price validity 15 days</span>
+				<span class="vf tln {{c.t1}}">Dear Faradays team,</span>
+				<span class="vf tln {{c.t2}}">CREATINE 200 MESH — <b>USD 4.85/KG FOB</b> Qingdao</span>
+				<span class="vf tln {{c.t3}}">SUCRALOSE — <b>USD 38.40/KG FOB</b> Qingdao</span>
+				<span class="vf tln {{c.t4}}">Payment T/T 90 days · price validity 15 days</span>
 				<div style="display:flex;justify-content:flex-end;margin-top:6px"><span style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 14px;border-radius:6px;background:${OL};color:#fff;font-size:12.5px;font-weight:600">${ico('PaperPlaneRight', 14, 'fill')}Send</span></div>
 			</div>
 		</div>
@@ -589,7 +660,7 @@ const mailFly = `<span class="mfly {{c.mailFly}}" style="position:absolute;left:
 
 const PH_SENT = '#d1f4d0', PH_RECV = '#ffffff'
 const phBubble = (side, html, cls, hora, opts = {}) =>
-	`<div class="vp ${cls}" style="display:flex;justify-content:${side === 'sent' ? 'flex-end' : 'flex-start'}"><div style="max-width:84%;border-radius:10px;padding:7px 10px;font-size:13px;line-height:1.4;background:${side === 'sent' ? PH_SENT : PH_RECV};color:#111111;box-shadow:0 1px 1px rgba(0,0,0,.08)">${opts.ia ? `<span style="display:flex;align-items:center;gap:4px;margin-bottom:3px;font-family:${MONO};font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:${T.brand};white-space:nowrap">${ico('Sparkle', 10, 'fill')}Agente IA · resposta automática</span>` : ''}${html}<span style="display:flex;justify-content:flex-end;align-items:center;gap:3px;margin-top:2px;font-size:10px;color:#6b6b6b">${hora}${side === 'sent' ? ico('Checks', 12, 'regular', 'color:#3b8eff') : ''}</span></div></div>`
+	`<div class="vp ${cls}" style="display:flex;justify-content:${side === 'sent' ? 'flex-end' : 'flex-start'}"><div style="position:relative;max-width:84%;border-radius:10px;padding:7px 10px;font-size:13px;line-height:1.4;background:${side === 'sent' ? PH_SENT : PH_RECV};color:#111111;box-shadow:0 1px 1px rgba(0,0,0,.08)">${opts.ia ? `<span style="display:flex;align-items:center;gap:4px;margin-bottom:3px;font-family:${MONO};font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap">${ico('Sparkle', 10, 'fill', 'color:#4aa8ff', 'ai-spark')}<span class="ai-shimmer">Agente IA · resposta automática</span></span>` : ''}${html}<span style="display:flex;justify-content:flex-end;align-items:center;gap:3px;margin-top:2px;font-size:10px;color:#6b6b6b">${hora}${side === 'sent' ? ico('Checks', 12, 'regular', 'color:#3b8eff') : ''}</span></div></div>`
 const phFile = (nome, meta, extra = '') =>
 	`<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;background:rgba(0,0,0,.05);${extra}">${ico('FilePdf', 24, 'fill', 'color:#d93025')}<div style="min-width:0;display:flex;flex-direction:column"><span style="font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${nome}</span><span style="font-size:10px;color:#6b6b6b">${meta}</span></div></div>`
 const phTyping = (cls) =>
@@ -597,11 +668,11 @@ const phTyping = (cls) =>
 // Posição de repouso = a da vista dividida (1310,150); o transform st.phone
 // o centraliza ampliado no começo do capítulo e o leva para lá no fim.
 const phone = `<div class="ph {{c.phone}}" style="position:absolute;left:1310px;top:150px;width:390px;height:780px;transform:{{st.phone}};transform-origin:0 0;border-radius:44px;background:#0f0f0e;padding:12px;box-shadow:0 40px 100px -30px rgba(0,0,0,.4),0 0 0 1px rgba(0,0,0,.08)">
-	<div style="width:100%;height:100%;border-radius:34px;overflow:hidden;background:#f0f2f5;display:flex;flex-direction:column;font-family:${BODY};color:#111111">
+	<div style="position:relative;width:100%;height:100%;border-radius:34px;overflow:hidden;background:#f0f2f5;display:flex;flex-direction:column;font-family:${BODY};color:#111111">
 		<div style="height:26px;flex-shrink:0;background:#ffffff"></div>
 		<div style="height:60px;flex-shrink:0;background:#ffffff;border-bottom:1px solid #e5e5e5;display:flex;align-items:center;gap:10px;padding:0 14px">
 			<span style="display:grid;place-items:center;width:36px;height:36px;border-radius:9999px;background:rgba(37,211,102,.15)">${waGreenSvg(20)}</span>
-			<div style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:14px;font-weight:600">Faradays</span><span style="position:relative;height:15px;font-size:11px;line-height:15px"><span class="vf q {{c.phOn}}" style="position:absolute;left:0;top:0;display:flex;align-items:center;gap:4px;color:#6b6b6b;white-space:nowrap">${ico('Sparkle', 10, 'fill', `color:${T.brand}`)}Agente IA · responde na hora</span><span class="vf q {{c.phTyp}}" style="position:absolute;left:0;top:0;color:#128c7e;white-space:nowrap">digitando…</span></span></div>
+			<div style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:14px;font-weight:600">Faradays</span><span style="position:relative;height:15px;font-size:11px;line-height:15px"><span class="vf q {{c.phOn}}" style="position:absolute;left:0;top:0;display:flex;align-items:center;gap:4px;color:#6b6b6b;white-space:nowrap">${ico('Sparkle', 10, 'fill', 'color:#4aa8ff', 'ai-spark')}<span class="ai-shimmer">Agente IA · responde na hora</span></span><span class="vf q {{c.phTyp}}" style="position:absolute;left:0;top:0;white-space:nowrap"><span class="ai-shimmer">digitando…</span></span></span></div>
 		</div>
 		<div style="flex:1;min-height:0;padding:12px;display:flex;flex-direction:column;gap:8px;overflow:hidden">
 			<div style="align-self:center"><span style="display:inline-block;padding:3px 10px;border-radius:9999px;background:#ffffff;font-size:10.5px;color:#6b6b6b;box-shadow:0 1px 1px rgba(0,0,0,.06)">Hoje</span></div>
@@ -613,11 +684,15 @@ const phone = `<div class="ph {{c.phone}}" style="position:absolute;left:1310px;
 			${phBubble('recv', 'Encontrei <b>2 marcas</b> de creatina na tabela vigente: Creapure® e Hansong. Qual delas?', '{{c.p4}}', '09:44', { ia: true })}
 			${phBubble('sent', 'Creapure', '{{c.p5}}', '09:45')}
 			${phTyping('{{c.pt3}}')}
-			${phBubble('recv', `Cotação COT-V-0188 emitida — ICMS SP e câmbio do dia já calculados.${phFile('COT-V-0188 · Nestlé SP.pdf', '2.000 kg · Creapure® · 1 pág.', 'margin-top:6px')}`, '{{c.p6}}', '09:45', { ia: true })}
+			${phBubble('recv', `Cotação COT-V-0188 emitida — ICMS SP e câmbio do dia já calculados.${phFile('COT-V-0188 · Nestlé SP.pdf', '2.000 kg · Creapure® · 1 pág.', 'margin-top:6px')}<span class="aiburst" style="right:4px;top:4px"></span>`, '{{c.p6}}', '09:45', { ia: true })}
 		</div>
 		<div style="flex-shrink:0;padding:8px 10px 14px;display:flex;align-items:center;gap:8px">
 			<span style="flex:1;display:flex;align-items:center;height:40px;padding:0 14px;border-radius:9999px;background:#ffffff;font-size:13px;color:#8a8a8a">Mensagem</span>
 			<span style="display:grid;place-items:center;width:40px;height:40px;border-radius:9999px;background:#25d366;color:#fff">${ico('Microphone', 18, 'fill')}</span>
+		</div>
+		<div class="vf siri {{c.glow}}" style="position:absolute;inset:0;border-radius:34px;pointer-events:none;z-index:6">
+			<span class="siri-ring r1"><span class="siri-spin"></span></span>
+			<span class="siri-ring r2"><span class="siri-spin"></span></span>
 		</div>
 	</div>
 </div>`
@@ -652,6 +727,7 @@ a{color:${T.brand}}a:hover{color:${T.blue700}}
 .vf.show{opacity:1}
 .vf.exit{opacity:0;pointer-events:none}
 .vf.q{transition-duration:.25s}
+.vf.tln{transition-duration:.3s}
 /* pop — modais, cards-eco, balões */
 .vp{transition:transform .5s var(--ease),opacity .4s var(--ease)}
 .vp.pre{opacity:0;transform:scale(.96) translateY(8px);transition:none;pointer-events:none}
@@ -701,20 +777,30 @@ a{color:${T.brand}}a:hover{color:${T.blue700}}
 @keyframes spinslow{to{transform:rotate(360deg)}}
 .tc.show .rh-phone{animation:rhRot 2.2s var(--ease) .5s forwards}
 /* cartela-pergunta: câmera própria (texto e fundo em layers separados p/ o dolly 3D) */
-.qtx,.qbg{transform-origin:0 0;transition:transform 1.6s var(--ease);will-change:transform}
+.qtx,.qbg{transform-origin:0 0;transition:transform 1.15s var(--ease);will-change:transform}
 .q.ex3 .qtx,.q.ex3 .qbg{transition:transform .85s var(--ease)}
 .q.cut{opacity:0;transition:none}
 .q.ex3 .qel,.q.ex3 .qel *{animation-play-state:paused}
 .q .w{display:inline-block;opacity:0}
-.q.show .w{animation:rise .85s var(--ease) both}
+.q.show .w{animation:rise .55s var(--ease) both}
 .ql{display:inline-block;opacity:0}
 .q.type .ql{animation:qOn .01s linear both}
 @keyframes qOn{to{opacity:1}}
 .l2w{display:inline-block;opacity:0}
-.q.l2 .l2w{animation:rise .85s var(--ease) both}
+.q.l2 .l2w{animation:rise .55s var(--ease) both}
 .qel{opacity:0}
-${Array.from({ length: 16 }, (_, i) => `.q.bgin .qel:nth-child(${i + 1}){animation:qelIn .7s var(--ease) ${(0.15 + i * 0.06).toFixed(2)}s both,qFloat ${(3.2 + ((i * 7) % 14) / 10).toFixed(1)}s ease-in-out ${(0.9 + i * 0.06).toFixed(2)}s infinite alternate}`).join('\n')}
-.q.bgin .qel.nofloat{animation:qelIn .7s var(--ease) 1.1s both}
+${Array.from({ length: 16 }, (_, i) => `.q.bgin .qel:nth-child(${i + 1}){animation:qelIn .5s var(--ease) ${(0.08 + i * 0.04).toFixed(2)}s both,qFloat ${(3.2 + ((i * 7) % 14) / 10).toFixed(1)}s ease-in-out ${(0.6 + i * 0.04).toFixed(2)}s infinite alternate}`).join('\n')}
+.q.bgin .qel.nofloat{animation:qelIn .5s var(--ease) .7s both}
+/* cartela-pergunta do BID (.qb): mesma coreografia, tudo mais rápido */
+.q.qb .qtx,.q.qb .qbg{transition-duration:.9s}
+.q.qb.exit{transition-duration:.5s}
+.q.qb.exit .qtx,.q.qb.exit .qbg{transition-duration:.6s}
+.q.qb.exit .qel,.q.qb.exit .qel *{animation-play-state:paused}
+.q.qb.show .w{animation-duration:.45s}
+.q.qb.l2 .l2w{animation-duration:.45s}
+.q .qw2{display:inline-block;opacity:0}
+.q.bgin .qw2{animation:rise .45s var(--ease) .05s both}
+${Array.from({ length: 10 }, (_, i) => `.q.qb.bgin .qel:nth-child(${i + 1}){animation:qelIn .4s var(--ease) ${(0.05 + i * 0.035).toFixed(2)}s both,qFloat ${(3 + ((i * 7) % 12) / 10).toFixed(1)}s ease-in-out ${(0.45 + i * 0.035).toFixed(2)}s infinite alternate}`).join('\n')}
 .qhand{animation:qWander 5.5s ease-in-out infinite}
 @keyframes qWander{0%{transform:translate(0,0) rotate(0)}13%{transform:translate(-90px,50px) rotate(-10deg)}24%{transform:translate(-90px,50px) rotate(-10deg)}40%{transform:translate(50px,130px) rotate(7deg)}52%{transform:translate(50px,130px) rotate(7deg)}68%{transform:translate(170px,-40px) rotate(12deg)}78%{transform:translate(170px,-40px) rotate(12deg)}100%{transform:translate(0,0) rotate(0)}}
 @keyframes qelIn{from{opacity:0;transform:translateY(26px) scale(.92)}to{opacity:1;transform:translateY(0) scale(1)}}
@@ -735,6 +821,7 @@ ${Array.from({ length: 16 }, (_, i) => `.q.bgin .qel:nth-child(${i + 1}){animati
 .pl{transition:background .4s var(--ease),color .4s var(--ease)}
 .pl.on{background:${T.brand};color:#fff}.pl.off{background:${T.muted};color:${T.mutedFg}}
 .row.show{animation:flash 1.8s var(--ease)}
+.row.ai,.crow.ai{background:linear-gradient(100deg,rgba(29,106,229,.10),rgba(56,189,248,.13),rgba(124,140,248,.10),rgba(29,106,229,.10));background-size:280% 100%;animation:aiSweep 2.2s linear infinite}
 @keyframes flash{0%{background:rgba(0,101,224,.14)}100%{background:transparent}}
 .hl{transition:background .3s var(--ease)}.hl.hover{background:rgba(235,235,235,.4)}
 .crow{transition:background .6s var(--ease),box-shadow .6s var(--ease)}
@@ -768,17 +855,32 @@ ${Array.from({ length: 16 }, (_, i) => `.q.bgin .qel:nth-child(${i + 1}){animati
 .dot:nth-child(2){animation-delay:.15s}.dot:nth-child(3){animation-delay:.3s}
 .dot.dk{background:rgba(0,0,0,.35)}
 @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+/* IA em ação: shimmer de gradiente no texto (estilo Gemini) */
+.ai-shimmer{background:linear-gradient(90deg,#1d6ae5,#38bdf8,#7c8cf8,#38bdf8,#1d6ae5);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:aiSweep 1.8s linear infinite}
+@keyframes aiSweep{from{background-position:0% 0}to{background-position:200% 0}}
+.ai-spark{animation:aiPulse 1.5s ease-in-out infinite}
+.ai-badge{background:linear-gradient(#ffffff,#ffffff) padding-box,linear-gradient(90deg,#1d6ae5,#38bdf8,#7c8cf8) border-box;border:1px solid transparent}
+/* mini explosão de sparkles quando a IA conclui (valor preenchido, cotação emitida) */
+.aiburst{position:absolute;right:-6px;top:-2px;width:5px;height:5px;border-radius:9999px;opacity:0;pointer-events:none}
+.vf.show .aiburst,.vp.show .aiburst{animation:aiBurst .8s ease-out .1s both}
+@keyframes aiBurst{0%{opacity:1;box-shadow:0 0 0 0 #1d6ae5,0 0 0 0 #38bdf8,0 0 0 0 #7c8cf8,0 0 0 0 #22d3ee,0 0 0 0 #4aa8ff,0 0 0 0 #8d9fff}100%{opacity:0;box-shadow:-24px -16px 0 1px #1d6ae5,22px -20px 0 0 #38bdf8,28px 9px 0 1px #7c8cf8,-26px 11px 0 0 #22d3ee,7px -28px 0 1px #4aa8ff,-5px 24px 0 0 #8d9fff}}
+@keyframes aiPulse{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.22);opacity:1}}
+/* glow de borda estilo Siri/Apple Intelligence: anel cônico girando + halo desfocado */
+.vf.siri{transition-duration:.45s}
+.siri-ring{position:absolute;inset:0;border-radius:34px;overflow:hidden;display:block;padding:3px;-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude}
+.siri-ring.r2{padding:11px;filter:blur(12px);opacity:.32}
+.siri-spin{position:absolute;display:block;inset:-60%;background:conic-gradient(from 0deg,#8d9fff,#4aa8ff,#38bdf8,#22d3ee,#5b8cff,#7c8cf8,#2563eb,#8d9fff);animation:siriSpin 1.8s linear infinite}
+@keyframes siriSpin{to{transform:rotate(360deg)}}
 /* ponto piscante da sugestão da IA */
-.pulse{position:relative;display:inline-block;width:8px;height:8px;border-radius:9999px;background:${T.brand}}
-.pulse::after{content:"";position:absolute;inset:-4px;border-radius:9999px;border:2px solid ${T.brand};animation:pulse 1.4s ease-out infinite}
+.pulse{position:relative;display:inline-block;width:8px;height:8px;border-radius:9999px;background:linear-gradient(135deg,#1d6ae5,#38bdf8,#7c8cf8)}
+.pulse::after{content:"";position:absolute;inset:-4px;border-radius:9999px;border:2px solid #4aa8ff;animation:pulse 1.4s ease-out infinite}
 @keyframes pulse{0%{opacity:.9;transform:scale(.6)}100%{opacity:0;transform:scale(1.6)}}
 `
 
 /* ---------------- stage ---------------------------------------------- */
 const stage = `<div class="stage" style="position:relative;width:1920px;height:1080px;overflow:hidden;background:${STAGE};color:${T.fg};font-family:${BODY};font-size:16px;line-height:1.5;letter-spacing:.02em">
-	${titleCard('{{c.ch1}}', 'Documentos direto do SharePoint', { SharePoint: sharepointSvg(92) })}
-	${titleCard('{{c.ch2}}', 'Cotação em um clique')}
-	${titleCard('{{c.ch3}}', 'Conversas com IA')}
+	${titleCard('{{c.ch1}}', 'E os documentos dos seus fornecedores, em dia?')}
+	${titleCard('{{c.ch3}}', 'Seu representante ainda depende do administrativo?')}
 
 	<div class="cam {{c.cam}}" style="position:absolute;inset:0;transform-origin:0 0;transform:{{st.cam}}">
 	<div class="vf {{c.win}}" style="position:absolute;left:160px;top:90px;width:1600px;height:900px">
@@ -809,6 +911,7 @@ const stage = `<div class="stage" style="position:relative;width:1920px;height:1
 	${caps}
 	${hintCard}
 	${qCard}
+	${bidQCard}
 	${meetCard}
 	${openCard}
 	${closeCard}
@@ -816,27 +919,32 @@ const stage = `<div class="stage" style="position:relative;width:1920px;height:1
 
 /* ---------------- lógica (timeline) ------------------------------------ */
 const CUES = [
-	['boot', 0], ['hint', 350], ['hintOut', 3400], ['q1', 3600], ['qType', 4400], ['qZoom', 4450],
-	['qLine2', 6200], ['qExit', 8200], ['meet', 8500], ['meetOut', 9900], ['open', 10100], ['openOut', 11600],
-	['ch1Out', 14700], ['spIn', 15600], ['zoomSp', 15850], ['sync1', 16600], ['sync2', 17100], ['sync3', 17600],
-	['done1', 18200], ['done2', 18600], ['done3', 19000], ['lift', 19300], ['drop', 19600], ['cutSp', 19950],
-	['r1', 20050], ['r2', 20200], ['r3', 20350], ['spOut', 20800], ['zoomStatus', 21100], ['read', 22200],
-	['zoomOut1', 23900], ['cPastas', 24700], ['cutA1', 25300], ['cut1', 25500], ['docsOut', 28100], ['rst1', 29000],
-	['ch2Out', 31100], ['cRow', 32300], ['kRow', 32900], ['cDisp', 34300], ['kDisp', 34900], ['env', 36000],
-	['split', 36600], ['capMail', 37600], ['mailIn', 37800], ['mailOpen', 38500], ['replyOpen', 40200], ['t1', 40800],
-	['t2', 41500], ['t3', 42200], ['t4', 42900], ['cSend', 43700], ['kSend', 44300], ['flyGone', 45400],
-	['unsplit', 45600], ['cutA2', 46700], ['cut2', 46900], ['read2', 48200], ['sug', 49200], ['cVenc', 50500],
-	['kVenc', 51100], ['zoomOut2', 52500], ['cFechar', 53400], ['kFechar', 54000], ['bidOut', 56200], ['rst2', 57100],
-	['ch3Out', 59100], ['phoneIn', 59700], ['p1', 60800], ['cap1', 60900], ['ptyp1', 61600], ['p2', 62600],
-	['cap2', 62800], ['p3', 63700], ['ptyp2', 64300], ['p4', 65400], ['cap3', 65500], ['p5', 66300],
-	['ptyp3', 66800], ['p6', 68000], ['cap4', 68100], ['toSys', 70300], ['cap5', 70800], ['zoomConv', 72700],
-	['zoomOut3', 75400], ['waOut', 76900], ['rst3', 77800], ['end', 79500]
+	// dica de girar o celular — desligada para caber em ~1min (descomente para voltar):
+	// ['hint', 350], ['hintOut', 3400],
+	['boot', 0], ['q1', 500], ['qType', 1100], ['qZoom', 1150], ['qLine2', 2000], ['qExit', 2900],
+	['meet', 3200], ['meetOut', 4000], ['open', 4200], ['openOut', 5300], ['bZoom', 5700], ['bLine2', 6400],
+	// cap. 1 — Cotação de compra (BID)
+	['ch2Out', 7200], ['cRow', 8400], ['kRow', 9000], ['cDisp', 10400], ['kDisp', 11000], ['env', 12100],
+	['split', 12700], ['capMail', 13700], ['mailIn', 13400], ['mailOpen', 13800], ['replyOpen', 14200], ['t1', 14500],
+	['t2', 14700], ['t3', 14900], ['t4', 15100], ['cSend', 15500], ['kSend', 16100], ['flyGone', 17200],
+	['unsplit', 17400], ['cutA2', 18500], ['cut2', 18700], ['read2', 20000], ['sug', 21000], ['cVenc', 22300],
+	['kVenc', 22900], ['zoomOut2', 24300], ['cFechar', 25200], ['kFechar', 25800], ['bidOut', 28000], ['rst1', 28900],
+	// cap. 2 — Documentos (SharePoint)
+	['ch1Out', 31100], ['spIn', 32000], ['zoomSp', 32250], ['sync1', 33000], ['sync2', 33500], ['sync3', 34000],
+	['done1', 34600], ['done2', 35000], ['done3', 35400], ['lift', 35700], ['drop', 36000], ['cutSp', 36350],
+	['r1', 36450], ['r2', 36600], ['r3', 36750], ['spOut', 37200], ['zoomStatus', 37500], ['read', 38600],
+	['zoomOut1', 40300], ['cPastas', 41100], ['cutA1', 41700], ['cut1', 41900], ['docsOut', 44500], ['rst2', 45400],
+	// cap. 3 — Conversas com IA (WhatsApp)
+	['ch3Out', 47400], ['phoneIn', 48000], ['p1', 49100], ['cap1', 49200], ['ptyp1', 49900], ['p2', 50900],
+	['cap2', 51100], ['p3', 52000], ['ptyp2', 52600], ['p4', 53700], ['cap3', 53800], ['p5', 54600],
+	['ptyp3', 55100], ['p6', 56300], ['cap4', 56400], ['toSys', 58600], ['cap5', 59100], ['zoomConv', 61000],
+	['zoomOut3', 63700], ['waOut', 65200], ['rst3', 66100], ['end', 67800]
 ].sort((a, b) => a[1] - b[1])
 
 const logic = `
 const CUES = ${JSON.stringify(CUES)};
 const I = {}; CUES.forEach((c, k) => { I[c[0]] = k; });
-const START = { Abertura: 0, SharePoint: I.openOut, BID: I.docsOut, Conversas: I.bidOut };
+const START = { Abertura: 0, BID: I.openOut, SharePoint: I.bidOut, Conversas: I.docsOut };
 // Janela do app na prancha (px) — a câmera é um transform na janela.
 const WX = 160, WY = 90;
 const focus = (cx, cy, s) => 'translate(' + (960 - WX - s * cx) + 'px,' + (540 - WY - s * cy) + 'px) scale(' + s + ')';
@@ -905,18 +1013,20 @@ class Component extends DCLogic {
 		st.qtx = seq(camFocus(390, 500, 3.1), ['qZoom', CAM0], ['qExit', camFocus(960, 540, 0.45)]);
 		st.qbg = seq(CAM0, ['qExit', camFocus(960, 540, 0.26)]);
 		c.meet = seq('pre', ['meet', 'show'], ['meetOut', 'exit']);
-		c.ch1 = seq('pre', ['openOut', 'show'], ['ch1Out', 'exit']);
-		c.ch2 = seq('pre', ['docsOut', 'show'], ['ch2Out', 'exit']);
-		c.ch3 = seq('pre', ['bidOut', 'show'], ['ch3Out', 'exit']);
+		c.ch2 = seq('pre', ['openOut', 'show'], ['bZoom', 'show bgin'], ['bLine2', 'show bgin l2'], ['ch2Out', 'show bgin l2 exit']);
+		st.qbTx = seq(camFocus(760, 476, 2.6), ['bZoom', CAM0], ['ch2Out', camFocus(960, 540, 0.62)]);
+		st.qbBg = seq(CAM0, ['ch2Out', camFocus(960, 540, 0.45)]);
+		c.ch1 = seq('pre', ['bidOut', 'show'], ['ch1Out', 'exit']);
+		c.ch3 = seq('pre', ['docsOut', 'show'], ['ch3Out', 'exit']);
 		c.close = seq('pre', ['waOut', 'show']);
-		c.win = seq('pre', ['ch1Out', 'show'], ['docsOut', 'exit'], ['rst1', 'pre'], ['ch2Out', 'show'], ['bidOut', 'exit'], ['rst2', 'pre'], ['toSys', 'show'], ['waOut', 'exit']);
+		c.win = seq('pre', ['ch2Out', 'show'], ['bidOut', 'exit'], ['rst1', 'pre'], ['ch1Out', 'show'], ['docsOut', 'exit'], ['rst2', 'pre'], ['toSys', 'show'], ['waOut', 'exit']);
 		// Páginas dentro da janela trocam enquanto ela está invisível.
-		c.pgDocs = seq('show', ['rst1', 'pre']);
-		c.pgBid = seq('pre', ['rst1', 'show'], ['rst2', 'pre']);
+		c.pgBid = seq('show', ['rst1', 'pre']);
+		c.pgDocs = seq('pre', ['rst1', 'show'], ['rst2', 'pre']);
 		c.pgWa = seq('pre', ['rst2', 'show']);
-		c.crDocs = seq('show', ['rst1', 'pre']); c.crBid = seq('pre', ['rst1', 'show'], ['rst2', 'pre']); c.crWa = seq('pre', ['rst2', 'show']);
-		c.navDocs = seq('on', ['rst1', '']); c.navBid = seq('', ['rst1', 'on'], ['rst2', '']); c.navWa = seq('', ['rst2', 'on']);
-		// Cap. 1 — SharePoint: a câmera fecha no painel enquanto ele entra; os três arquivos
+		c.crBid = seq('show', ['rst1', 'pre']); c.crDocs = seq('pre', ['rst1', 'show'], ['rst2', 'pre']); c.crWa = seq('pre', ['rst2', 'show']);
+		c.navBid = seq('on', ['rst1', '']); c.navDocs = seq('', ['rst1', 'on'], ['rst2', '']); c.navWa = seq('', ['rst2', 'on']);
+		// Cap. 2 — SharePoint: a câmera fecha no painel enquanto ele entra; os três arquivos
 		// novos sincronizam sozinhos (sem clique) e, com a pilha já voando, CORTA para a vista inteira.
 		st.cam = seq(CAM0, ['zoomSp', camFocus(470, 500, 1.7)], ['cutSp', CAM0]);
 		c.cam = seq('', ['cutSp', 'snap'], ['spOut', '']);
@@ -928,13 +1038,13 @@ class Component extends DCLogic {
 			c['spM' + k] = seq('show', [sy, 'exit']); c['spS' + k] = seq('pre', [sy, 'show'], [dn, 'exit']); c['spD' + k] = seq('pre', [dn, 'show']);
 			c['card' + k] = seq('', ['lift', 'lift'], ['drop', 'fly'], [r, 'gone']);
 			st['card' + k] = seq(tr(...spRow(k)), ['drop', tr(...tblRow(k))]);
-			c[r] = seq('pre', [r, 'show']);
+			c[r] = seq('pre', [r, 'show ai'], ['read', 'show']);
 		}
 		c.sp3 = ''; c.sp4 = ''; c.sp5 = '';
 		c.lendo = seq('show', ['read', 'exit']); c.lido = seq('pre', ['read', 'show']);
 		c.pillDocs = seq('on', ['cut1', 'off']); c.pillPastas = seq('off', ['cut1', 'on']);
 		c.docsTable = seq('show', ['cutA1', 'out'], ['cut1', 'gone']); c.docsTree = seq('pre', ['cut1', 'show']);
-		// Cap. 2 — BID
+		// Cap. 1 — BID, o produto principal
 		c.rowBid = seq('', ['cRow', 'hover'], ['kRow', '']);
 		c.overlay = seq('pre', ['kRow', 'show'], ['bidOut', 'exit']); c.modal = seq('pre', ['kRow', 'show'], ['bidOut', 'exit']);
 		c.pillDisp = seq('on', ['cut2', 'off']); c.pillCmp = seq('off', ['cut2', 'on']);
@@ -951,7 +1061,7 @@ class Component extends DCLogic {
 		// comparativo: a linha da ANHUI chega lendo o e-mail e depois preenche
 		c.aLendo = seq('show', ['read2', 'exit']); c.aLido = seq('pre', ['read2', 'show']);
 		c.sug = seq('pre', ['sug', 'show']);
-		c.rowWin = seq('', ['read2', 'got'], ['kVenc', 'win']); c.cbOff = seq('show', ['kVenc', 'exit']); c.cbOn = seq('pre', ['kVenc', 'show']);
+		c.rowWin = seq('', ['cut2', 'ai'], ['read2', 'got'], ['kVenc', 'win']); c.cbOff = seq('show', ['kVenc', 'exit']); c.cbOn = seq('pre', ['kVenc', 'show']);
 		// Cap. 3 — só o celular do representante, centralizado: a IA responde sozinha
 		// (rótulo nos balões, "digitando…", legendas laterais); no fim o celular vai
 		// para a direita, o sistema entra ao lado e a câmera fecha na conversa.
@@ -961,6 +1071,7 @@ class Component extends DCLogic {
 		c.p4 = seq('pre', ['p4', 'show']); c.p5 = seq('pre', ['p5', 'show']); c.p6 = seq('pre', ['p6', 'show']);
 		c.pt1 = seq('pre', ['ptyp1', 'show'], ['p2', 'exit']); c.pt2 = seq('pre', ['ptyp2', 'show'], ['p4', 'exit']); c.pt3 = seq('pre', ['ptyp3', 'show'], ['p6', 'exit']);
 		c.phOn = seq('show', ['ptyp1', 'exit'], ['p2', 'show'], ['ptyp2', 'exit'], ['p4', 'show'], ['ptyp3', 'exit'], ['p6', 'show']);
+		c.glow = seq('pre', ['ptyp1', 'show'], ['p2', 'exit'], ['ptyp2', 'show'], ['p4', 'exit'], ['ptyp3', 'show'], ['p6', 'exit']);
 		c.phTyp = seq('pre', ['ptyp1', 'show'], ['p2', 'exit'], ['ptyp2', 'show'], ['p4', 'exit'], ['ptyp3', 'show'], ['p6', 'exit']);
 		c.cap1 = seq('', ['cap1', 'show'], ['cap2', 'exit']); c.cap2 = seq('', ['cap2', 'show'], ['cap3', 'exit']);
 		c.cap3 = seq('', ['cap3', 'show'], ['cap4', 'exit']); c.cap4 = seq('', ['cap4', 'show'], ['toSys', 'exit']);
@@ -971,10 +1082,9 @@ class Component extends DCLogic {
 		for (const m of ['m1', 'm2', 'm3', 'm4', 'm5', 'm6']) c[m] = 'show';
 		// Câmera: zoom, vista dividida (janela encostada à esquerda) e volta
 		st.zoom = seq(NOZOOM,
-			['zoomStatus', focus(1100, 620, 2.1)], ['zoomOut1', NOZOOM],
-			['rst1', NOZOOM],
 			['split', place(LEFT[0], LEFT[1], LEFT[2])], ['unsplit', NOZOOM],
 			['cut2', focus(ZP[0], ZP[1], ZP[2])], ['zoomOut2', NOZOOM],
+			['zoomStatus', focus(1100, 620, 2.1)], ['zoomOut1', NOZOOM],
 			['rst2', place(LEFT[0], LEFT[1], LEFT[2])],
 			['zoomConv', focus(944, 442, 1920 / 1312)], ['zoomOut3', NOZOOM]);
 		// O comparativo já entra em zoom: a câmera SALTA no instante do corte.
@@ -989,13 +1099,13 @@ class Component extends DCLogic {
 			sug: zpt(560, 480, ZP), cVenc: zpt(400, 240, ZP),
 			cFechar: [1432, 903]
 		};
-		const cx = seq(null, ['spIn', 'idle'], ['cPastas', 'cPastas'], ['rst1', 'idle'], ['cRow', 'cRow'], ['cDisp', 'cDisp'], ['split', 'cSend'], ['sug', 'sug'], ['cVenc', 'cVenc'], ['zoomOut2', 'cFechar'],
-			['rst2', 'idle']);
+		const cx = seq(null, ['cRow', 'cRow'], ['cDisp', 'cDisp'], ['split', 'cSend'], ['sug', 'sug'], ['cVenc', 'cVenc'], ['zoomOut2', 'cFechar'],
+			['rst1', 'idle'], ['cPastas', 'cPastas']);
 		const p = cx ? CP[cx] : CP.idle;
 		st.cur = tr(p[0], p[1]);
-		const curOn = seq(false, ['zoomOut1', true], ['cut1', false],
-			['cRow', true], ['kDisp', false], ['cSend', true], ['kSend', false], ['sug', true], ['kVenc', false], ['zoomOut2', true], ['kFechar', false]);
-		const click = seq('', ['cut1', 'kA'], ['kRow', 'kB'], ['kDisp', 'kA'], ['kSend', 'kB'], ['kVenc', 'kA'], ['kFechar', 'kB']);
+		const curOn = seq(false, ['cRow', true], ['kDisp', false], ['cSend', true], ['kSend', false], ['sug', true], ['kVenc', false], ['zoomOut2', true], ['kFechar', false],
+			['zoomOut1', true], ['cut1', false]);
+		const click = seq('', ['kRow', 'kA'], ['kDisp', 'kB'], ['kSend', 'kA'], ['kVenc', 'kB'], ['kFechar', 'kA'], ['cut1', 'kB']);
 		c.cur = (curOn ? '' : 'hide') + ' ' + click;
 		// Envelopes: do botão "Disparar BID" às linhas dos exportadores (coordenadas do modal).
 		for (let k = 0; k < 4; k++) st['env' + k] = seq(tr(1040, 760), ['kDisp', tr(1090, 180 + 40 * k)]);
@@ -1024,7 +1134,7 @@ const doc = `<!doctype html>
 </helmet>
 ${html}
 </x-dc>
-<script data-dc-script data-props='{"inicio":{"editor":"enum","options":["Abertura","SharePoint","BID","Conversas"],"default":"Abertura","section":"Reprodução"},"tempo":{"editor":"range","min":0,"max":85,"step":0.5,"unit":"s","default":0,"section":"Reprodução"},"pausar":{"editor":"boolean","default":false,"section":"Reprodução"},"loop":{"editor":"boolean","default":true,"section":"Reprodução"},"$preview":{"width":1920,"height":1080}}'>${logic}</script>
+<script data-dc-script data-props='{"inicio":{"editor":"enum","options":["Abertura","BID","SharePoint","Conversas"],"default":"Abertura","section":"Reprodução"},"tempo":{"editor":"range","min":0,"max":85,"step":0.5,"unit":"s","default":0,"section":"Reprodução"},"pausar":{"editor":"boolean","default":false,"section":"Reprodução"},"loop":{"editor":"boolean","default":true,"section":"Reprodução"},"$preview":{"width":1920,"height":1080}}'>${logic}</script>
 </body>
 </html>
 `
@@ -1034,7 +1144,7 @@ fs.writeFileSync(
 	JSON.stringify(
 		{
 			artboards: [
-				{ file: 'Main.dc.html', x: 0, y: 0, w: 1920, h: 1080, title: 'Showcase · 60s', is_interactive: true },
+				{ file: 'Main.dc.html', x: 0, y: 0, w: 1920, h: 1080, title: 'Showcase · 80s', is_interactive: true },
 				{ file: 'Mascote.dc.html', x: 0, y: 1240, w: 1920, h: 900, title: 'Mascote' }
 			],
 			annotations: [
@@ -1044,7 +1154,7 @@ fs.writeFileSync(
 					y: 0,
 					w: 380,
 					text:
-						'Roteiro (75s)\n\n0:00 Abertura — logo Faradays sobre fundo escuro\n0:06 Documentos direto do SharePoint — a câmera fecha no painel do drive enquanto ele entra; os 3 arquivos novos sincronizam sozinhos (sem clique); com a pilha já voando, corte seco para a vista inteira; IA lê validade (zoom nos status), corte seco para a aba Pastas\n0:23 Cotação em um clique — lista → modal → Disparar BID (4) → envelopes → vista dividida: a caixa de e-mail do exportador recebe o BID e responde com preço → o e-mail voa de volta → corte seco para o Comparativo JÁ EM ZOOM, com a linha da ANHUI chegando “lendo e-mail…” → IA sugere (ponto piscante) → clique na linha → Fechar cotação\n0:50 Conversas com IA — só o celular do representante, centralizado: ele pede o COA → "digitando…" → a IA responde sozinha (rótulo Agente IA nos balões; legendas laterais) → pergunta a marca → emite a cotação; no fim o celular vai para a direita, o sistema entra ao lado com a conversa inteira e a câmera fecha nela\n1:12 Fechamento — logo\n\nTransições: cartela ↔ demo em fade; match cut seco (sem fade, corta no meio do movimento) só em tabela→Pastas e disparo→comparativo.\n\nChips: Início pula ao capítulo; Tempo vai a um instante; Pausar congela; Loop repete.'
+						'Roteiro (68s)\n\n0:00 Abertura — cartela-pergunta ("Ainda gerenciando manualmente / documentos, cotações e conversas?") com mocks animados, digitação e zoom out acelerados; MATCH CUT para o Conheça já em zoom out; logo Faradays + "para compradores de alto volume". Dica de girar o celular desligada (cues comentados)\n0:05 Cotação por e-mail, comparação na planilha? — cartela com a coreografia da abertura ("Cotação" grande → zoom out sobre corpo de e-mail, planilhas grandes e notificações; a cartela sai recuando em zoom out) → lista → modal → Disparar BID (4) → envelopes → vista dividida: a caixa de e-mail do exportador recebe o BID e responde com preço → o e-mail voa de volta → corte seco para o Comparativo JÁ EM ZOOM, com a linha da ANHUI chegando "lendo e-mail…" → IA sugere (ponto piscante) → clique na linha → Fechar cotação\n0:28 E os documentos dos seus fornecedores, em dia? — a câmera fecha no painel do drive enquanto ele entra; os 3 arquivos novos sincronizam sozinhos (sem clique); com a pilha já voando, corte seco para a vista inteira; IA lê validade (zoom nos status), corte seco para a aba Pastas\n0:45 Seu representante ainda depende do administrativo? — só o celular do representante, centralizado: ele pede o COA → "digitando…" (glow colorido estilo Siri) → a IA responde sozinha (rótulo Agente IA nos balões) → pergunta a marca → emite a cotação; no fim o celular vai para a direita, o sistema entra ao lado com a conversa inteira e a câmera fecha nela\n1:05 Fechamento — logo + barra de busca digitando www.faradays.io (loop)\n\nTransições: cartela ↔ demo em fade; match cut seco (sem fade, corta no meio do movimento) na pergunta→Conheça, no disparo→comparativo e em tabela→Pastas.\n\nChips: Início pula ao capítulo; Tempo vai a um instante; Pausar congela; Loop repete.'
 				}
 			],
 			launch: { view: 'focused', file: 'Main.dc.html' }
@@ -1104,7 +1214,7 @@ addEventListener('resize', fit); addEventListener('orientationchange', fit)
 if (window.visualViewport) visualViewport.addEventListener('resize', fit)
 fit()
 // Teclado: espaço pausa/retoma · ← → capítulo anterior/próximo · R reinicia · 1/2/3 pulam ao capítulo
-const CH = [['Abertura', 0], ['Documentos', CUES[I.openOut][1]], ['BID', CUES[I.docsOut][1]], ['Conversas', CUES[I.bidOut][1]], ['Fechamento', CUES[I.waOut][1]]]
+const CH = [['Abertura', 0], ['BID', CUES[I.openOut][1]], ['Documentos', CUES[I.bidOut][1]], ['Conversas', CUES[I.docsOut][1]], ['Fechamento', CUES[I.waOut][1]]]
 function elapsed() { return comp.frozen != null ? comp.frozen : performance.now() - comp.t0 }
 const hint = document.querySelector('.hint'); let hintTimer = null
 function say(txt) { hint.textContent = txt; hint.classList.add('on'); clearTimeout(hintTimer); hintTimer = setTimeout(() => hint.classList.remove('on'), 1400) }
@@ -1123,8 +1233,8 @@ addEventListener('keydown', (e) => {
 	else if (e.key === 'ArrowRight') { e.preventDefault(); jump(1) }
 	else if (e.key === 'ArrowLeft') { e.preventDefault(); jump(-1) }
 	else if (e.key === 'r' || e.key === 'R') { comp.startAt('Abertura'); say('Do início') }
-	else if (e.key === '1') { comp.startAt('SharePoint'); say('Documentos') }
-	else if (e.key === '2') { comp.startAt('BID'); say('BID') }
+	else if (e.key === '1') { comp.startAt('BID'); say('BID') }
+	else if (e.key === '2') { comp.startAt('SharePoint'); say('Documentos') }
 	else if (e.key === '3') { comp.startAt('Conversas'); say('Conversas') }
 	else if (e.key === 'f' || e.key === 'F') toggleFS()
 })
