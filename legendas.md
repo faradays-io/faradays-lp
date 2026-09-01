@@ -2,7 +2,7 @@
 
 ## Contexto
 
-**O que é.** Um showcase de ~68 segundos da plataforma Faradays, em HTML animado (roda sozinho, sem arquivo de vídeo). A versão que vale é o `index.html` desta branch (`showcase-video` da LP); existe também uma prancha editável em <https://claude.ai/code/artifact/635fdcc2-1102-4e7a-99a4-075da06f4758>. Estilo dos vídeos de apresentação do Claude: cartelas de título grandes, cortes casados, zoom em componentes. Fundo igual ao da LP — `#f8f8f8` com o film grain dinâmico do `GrainOverlay` (feTurbulence 0.25, opacidade .12, `grain-jump`), títulos e legendas em tinta escura; pensado para celular na horizontal (na vertical aparece a instrução de girar). O app reproduzido pixel a pixel (tokens do `globals.css`, Geist/Aspekta/JetBrains Mono, ícones Phosphor).
+**O que é.** Um showcase de ~60 segundos da plataforma Faradays, em HTML animado (roda sozinho, sem arquivo de vídeo). A versão que vale é o `index.html` desta branch (`showcase-video` da LP); existe também uma prancha editável em <https://claude.ai/code/artifact/635fdcc2-1102-4e7a-99a4-075da06f4758>. Estilo dos vídeos de apresentação do Claude: cartelas de título grandes, cortes casados, zoom em componentes. Fundo igual ao da LP — `#f8f8f8` com o film grain dinâmico do `GrainOverlay` (feTurbulence 0.25, opacidade .12, `grain-jump`), títulos e legendas em tinta escura; pensado para celular na horizontal (na vertical aparece a instrução de girar). O app reproduzido pixel a pixel (tokens do `globals.css`, Geist/Aspekta/JetBrains Mono, ícones Phosphor).
 
 **Roteiro atual.**
 
@@ -10,9 +10,9 @@
 |---|---|---|
 | 0:00 | Abertura | cartela-pergunta: "Ainda" grande e centralizado → "gerenciando" digitada estourando a tela → zoom out revela "Ainda gerenciando manualmente" com mocks animados ao fundo → sobe "documentos, cotações e conversas?" → a cena recua e no meio do recuo MATCH CUT seco para o "Conheça" já em zoom out contínuo → logo Faradays com "para compradores de alto volume". Animações aceleradas; a dica de girar o celular está desligada (cues comentados no `build.mjs`) |
 | 0:05 | 1 · BID | cartela-pergunta **"Cotação por e-mail, comparação na planilha?"** com a coreografia da abertura ("Cotação" grande → zoom out revela a frase, com "por e-mail," subindo junto) sobre mocks densos: corpo de e-mail da ANHUI aberto, planilhas grandes ("comparativo_v3_FINAL.xlsx" com célula ?? e destaque amarelo; "cotações_agosto_v7.xlsx" com #REF!), pilha de 3 notificações, badge "27 não lidas", pill "RE: RE: RE:"; lista de BIDs → modal → Disparar BID (4) → envelopes → **vista dividida** com a legenda "Caixa de e-mail do fornecedor" em cima do Outlook (pill *fornecedor* na barra): o e-mail chega com o Outlook ainda entrando, o painel de leitura e o reply abrem encadeados e a resposta entra em cascata rápida, com preço → o e-mail voa de volta → corte seco para o Comparativo já em zoom, com a linha da ANHUI chegando "lendo e-mail…" (shimmer de gradiente) → ao preencher, a linha acende (azul, barra à esquerda) → a IA sugere (ponto piscante) → clique na linha → Fechar cotação |
-| 0:28 | 2 · Documentos | cartela-pergunta **"E os documentos dos seus fornecedores, em dia?"** (saiu o ícone do SharePoint da cartela); a câmera fecha no painel do drive enquanto ele entra; **sem clique**: os três arquivos novos passam de "sincronizando…" a "sincronizado · agora" (linha em destaque, badge do painel acompanha); com a pilha já voando para a tabela, **corte seco para a vista inteira**; a IA lê a validade (zoom nos status); corte seco para a aba Pastas |
-| 0:45 | 3 · Conversas | cartela-pergunta **"Seu representante ainda depende do administrativo?"**; **só o celular do representante**, centralizado e ampliado: ele pede o COA → "digitando…" → a IA responde sozinha com o arquivo (rótulo *Agente IA · resposta automática* no balão) → ele pergunta o preço → a IA pergunta a marca → emite a cotação. Legendas grandes à esquerda marcam cada beat. No fim o celular vai para a direita, o sistema entra ao lado com a conversa inteira ("E toda a conversa fica registrada no sistema") e a câmera fecha na conversa |
-| 1:05 | Fechamento | logo + barra de busca onde `www.faradays.io` é digitado (sem botões — o vídeo recomeça sozinho) |
+| 0:24 | 2 · Documentos | cartela-pergunta **"E os documentos dos seus fornecedores, em dia?"** (saiu o ícone do SharePoint da cartela); a câmera fecha no painel do drive enquanto ele entra; **sem clique**: os três arquivos novos passam de "sincronizando…" a "sincronizado · agora" (linha em destaque, badge do painel acompanha); com a pilha já voando para a tabela, **corte seco para a vista inteira**; a IA lê a validade (zoom nos status); corte seco para a aba Pastas |
+| 0:39 | 3 · Conversas | cartela-pergunta **"Seu representante ainda depende do administrativo?"**; **só o celular do representante**, centralizado e ampliado: ele pede o COA → "digitando…" → a IA responde sozinha com o arquivo (rótulo *Agente IA · resposta automática* no balão) → ele pergunta o preço → a IA pergunta a marca → emite a cotação. Legendas grandes à esquerda marcam cada beat. No fim o celular vai para a direita, o sistema entra ao lado com a conversa inteira ("E toda a conversa fica registrada no sistema") e a câmera fecha na conversa |
+| 0:57 | Fechamento | logo + barra de busca onde `www.faradays.io` é digitado (sem botões — o vídeo recomeça sozinho) |
 
 **Decisões já tomadas** (não precisa repetir, só desfazer se quiser): sem espiral de Fibonacci; cartelas só com o título, palavras subindo; cartela ↔ demo em fade; match cut seco (sem fade, corta no meio do movimento) só em tabela → Pastas e disparo → comparativo; sem toasts e sem cards-eco; balões do sistema em azul `#0065e0` com texto branco; IA sugere o fornecedor por badge + ponto piscante, o usuário clica; nada de Monfiza — tudo Faradays. No cap. 3 ninguém do time digita: o COA também sai da IA (saiu o diálogo de anexo/arraste do SharePoint) e o sistema só aparece no fim, com a conversa já registrada. **Identidade visual da IA** (não repetir, só desfazer se quiser): gradiente Gemini (#4285F4→#9B72CB→#D96570) em todo rótulo/badge de IA (pills brancas "✦ E-mail · IA" com borda gradiente, "sugerida pela IA", "Agente IA" nos balões), varredura colorida na linha enquanto a IA lê, burst de sparkles quando conclui (validade lida, comparativo preenchido, cotação emitida) e glow de borda estilo Siri/Apple Intelligence no celular enquanto "digita". Dados são mock (preços, datas, nomes de representantes). Mascote pixelado numa prancha ao lado, fora do vídeo. **Ordem dos capítulos** pela ordem do pitch (feedback: começar pelo produto principal): BID → Documentos → Conversas. **Cartelas de capítulo em pergunta** (uma dor por capítulo; só a abertura começa com "Ainda"). **Dica de girar o celular desligada** para caber em ~1min (cues comentados; o overlay de girar na vertical continua). **Cartela do BID como mini-cena** (Conheça 0,8s e logo 1,1s para compensar). **Sem pausa morta nas cartelas-pergunta**: a saída dispara assim que a última animação assenta. **Linha de apoio** "para compradores de alto volume" sob o logo na abertura.
 
@@ -27,18 +27,18 @@ Uma linha curta na base da tela, aparecendo e sumindo com a cena. Marque as que 
 | Entra | Tempo | Cena | Legenda sugerida | Alternativa |
 |---|---|---|---|---|
 | [ ] | 0:09 | modal de disparo | Um BID para todos os exportadores mapeados. | Só quem exporta o produto recebe. |
-| [ ] | 0:11 | envelopes voando | E-mail e WhatsApp, num clique. | Quatro exportadores, um disparo. |
+| [ ] | 0:10 | envelopes voando | E-mail e WhatsApp, num clique. | Quatro exportadores, um disparo. |
 | [ ] | 0:13 | e-mail do exportador recebe o BID | O exportador recebe o BID na caixa dele — e responde ali mesmo. | Sem portal, sem formulário: ele responde o e-mail. |
-| [ ] | 0:16 | resposta volta ao sistema | A resposta volta sozinha para o comparativo. | A IA lê o e-mail e preenche o comparativo. |
-| [ ] | 0:19 | comparativo em zoom | Respostas lidas pela IA, comparadas na mesma base FOB. | /KG e /MT nunca se misturam. |
-| [ ] | 0:21 | sugestão da IA | A IA aponta a melhor oferta. Você decide. | Sugestão da IA; a escolha é sua. |
-| [ ] | 0:26 | fechar cotação | Fechou. As contra-ofertas saem sozinhas. | Cotação fechada, contra-ofertas enviadas. |
-| [ ] | 0:32 | painel do SharePoint entra | Arraste do SharePoint. O sistema lê tipo, produto e validade. | Seus certificados, direto do drive. |
-| [ ] | 0:38 | zoom nos status | Validade lida pela IA — sem digitar nada. | Sem data? A IA acha no PDF. |
-| [ ] | 0:42 | aba Pastas | As pastas do drive, espelhadas no sistema. | A mesma árvore do SharePoint, com status. |
-| [ ] | 0:51 | arquivo enviado no chat | O representante pede; você manda do SharePoint. | Documento no WhatsApp em um arraste. |
-| [ ] | 0:56 | IA responde no chat | A IA responde no WhatsApp e emite a cotação. | O representante pergunta, a IA cota. |
-| [ ] | 0:59 | celular do representante ao lado | O que ele manda no WhatsApp chega no sistema na hora. | Uma conversa, dois lados. |
+| [ ] | 0:15 | resposta volta ao sistema | A resposta volta sozinha para o comparativo. | A IA lê o e-mail e preenche o comparativo. |
+| [ ] | 0:18 | comparativo em zoom | Respostas lidas pela IA, comparadas na mesma base FOB. | /KG e /MT nunca se misturam. |
+| [ ] | 0:20 | sugestão da IA | A IA aponta a melhor oferta. Você decide. | Sugestão da IA; a escolha é sua. |
+| [ ] | 0:24 | fechar cotação | Fechou. As contra-ofertas saem sozinhas. | Cotação fechada, contra-ofertas enviadas. |
+| [ ] | 0:28 | painel do SharePoint entra | Arraste do SharePoint. O sistema lê tipo, produto e validade. | Seus certificados, direto do drive. |
+| [ ] | 0:33 | zoom nos status | Validade lida pela IA — sem digitar nada. | Sem data? A IA acha no PDF. |
+| [ ] | 0:37 | aba Pastas | As pastas do drive, espelhadas no sistema. | A mesma árvore do SharePoint, com status. |
+| [ ] | 0:43 | arquivo enviado no chat | O representante pede; você manda do SharePoint. | Documento no WhatsApp em um arraste. |
+| [ ] | 0:48 | IA responde no chat | A IA responde no WhatsApp e emite a cotação. | O representante pergunta, a IA cota. |
+| [ ] | 0:50 | celular do representante ao lado | O que ele manda no WhatsApp chega no sistema na hora. | Uma conversa, dois lados. |
 
 ## Adicionar · outros elementos possíveis
 
@@ -270,11 +270,11 @@ As mensagens são as mesmas da conversa (wa.m1 … wa.m6) — mudar lá muda aqu
 
 | id | Ação | Tempo | Overline | Atual | Novo | Alternativas |
 |---|---|---|---|---|---|---|
-| leg.1 | manter | 0:49 (1ª mensagem) | WhatsApp do representante | O representante pergunta pelo WhatsApp, como sempre. | | Ele pergunta onde já pergunta: no WhatsApp. |
-| leg.2 | manter | 0:51 (COA chega) | Agente IA · resposta automática | A IA responde na hora — ninguém do seu time precisou digitar. | | Resposta em segundos, sem ninguém do seu lado. |
-| leg.3 | manter | 0:54 (pergunta da marca) | Agente IA · resposta automática | Tira a dúvida da marca… | | Confirma a marca… |
-| leg.4 | manter | 0:56 (cotação) | Agente IA · cotação emitida | …e emite a cotação, com ICMS e câmbio do dia. | | …e cota na hora, com ICMS e câmbio do dia. |
-| leg.5 | manter | 0:59 (sistema entra) | Sistema Faradays | E toda a conversa fica registrada no sistema. | | Tudo registrado no sistema, para a equipe acompanhar. |
+| leg.1 | manter | 0:41 (1ª mensagem) | WhatsApp do representante | O representante pergunta pelo WhatsApp, como sempre. | | Ele pergunta onde já pergunta: no WhatsApp. |
+| leg.2 | manter | 0:43 (COA chega) | Agente IA · resposta automática | A IA responde na hora — ninguém do seu time precisou digitar. | | Resposta em segundos, sem ninguém do seu lado. |
+| leg.3 | manter | 0:45 (pergunta da marca) | Agente IA · resposta automática | Tira a dúvida da marca… | | Confirma a marca… |
+| leg.4 | manter | 0:48 (cotação) | Agente IA · cotação emitida | …e emite a cotação, com ICMS e câmbio do dia. | | …e cota na hora, com ICMS e câmbio do dia. |
+| leg.5 | manter | 0:51 (sistema entra) | Sistema Faradays | E toda a conversa fica registrada no sistema. | | Tudo registrado no sistema, para a equipe acompanhar. |
 
 ### Diálogo de anexo
 

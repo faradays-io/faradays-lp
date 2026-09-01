@@ -813,7 +813,7 @@ ${Array.from({ length: 10 }, (_, i) => `.q.qb.bgin .qel:nth-child(${i + 1}){anim
 .caret{display:inline-block;animation:blink .8s step-end infinite}
 @keyframes blink{50%{opacity:0}}
 .tc.show .w{animation:rise .85s var(--ease) both}
-.tc.show .w:nth-child(2){animation-delay:.08s}.tc.show .w:nth-child(3){animation-delay:.16s}.tc.show .w:nth-child(4){animation-delay:.24s}.tc.show .w:nth-child(5){animation-delay:.32s}
+${Array.from({ length: 11 }, (_, i) => `.tc.show .w:nth-child(${i + 2}){animation-delay:${((i + 1) * 0.07).toFixed(2)}s}`).join('')}
 .zoomer{transform-origin:0 0;transition:transform 1.15s var(--ease)}
 .zoomer.snap{transition:none}
 .nr.on{background:rgba(0,101,224,.1);color:${T.brand};font-weight:500}
@@ -924,21 +924,21 @@ const CUES = [
 	['boot', 0], ['q1', 500], ['qType', 1100], ['qZoom', 1150], ['qLine2', 2000], ['qExit', 2900],
 	['meet', 3200], ['meetOut', 4000], ['open', 4200], ['openOut', 5300], ['bZoom', 5700], ['bLine2', 6400],
 	// cap. 1 — Cotação de compra (BID)
-	['ch2Out', 7200], ['cRow', 8400], ['kRow', 9000], ['cDisp', 10400], ['kDisp', 11000], ['env', 12100],
-	['split', 12700], ['capMail', 13700], ['mailIn', 13400], ['mailOpen', 13800], ['replyOpen', 14200], ['t1', 14500],
-	['t2', 14700], ['t3', 14900], ['t4', 15100], ['cSend', 15500], ['kSend', 16100], ['flyGone', 17200],
-	['unsplit', 17400], ['cutA2', 18500], ['cut2', 18700], ['read2', 20000], ['sug', 21000], ['cVenc', 22300],
-	['kVenc', 22900], ['zoomOut2', 24300], ['cFechar', 25200], ['kFechar', 25800], ['bidOut', 28000], ['rst1', 28900],
+	['ch2Out', 7200], ['cRow', 8400], ['kRow', 9000], ['cDisp', 9500], ['kDisp', 10100], ['env', 11200],
+	['split', 11800], ['capMail', 12800], ['mailIn', 12500], ['mailOpen', 12900], ['replyOpen', 13300], ['t1', 13600],
+	['t2', 13800], ['t3', 14000], ['t4', 14200], ['cSend', 14600], ['kSend', 15200], ['flyGone', 16300],
+	['unsplit', 16500], ['cutA2', 17600], ['cut2', 17800], ['read2', 19100], ['sug', 20100], ['cVenc', 20200],
+	['kVenc', 21000], ['zoomOut2', 22000], ['cFechar', 22900], ['kFechar', 23500], ['bidOut', 24400], ['rst1', 25300],
 	// cap. 2 — Documentos (SharePoint)
-	['ch1Out', 31100], ['spIn', 32000], ['zoomSp', 32250], ['sync1', 33000], ['sync2', 33500], ['sync3', 34000],
-	['done1', 34600], ['done2', 35000], ['done3', 35400], ['lift', 35700], ['drop', 36000], ['cutSp', 36350],
-	['r1', 36450], ['r2', 36600], ['r3', 36750], ['spOut', 37200], ['zoomStatus', 37500], ['read', 38600],
-	['zoomOut1', 40300], ['cPastas', 41100], ['cutA1', 41700], ['cut1', 41900], ['docsOut', 44500], ['rst2', 45400],
+	['ch1Out', 27500], ['spIn', 28400], ['zoomSp', 28650], ['sync1', 29200], ['sync2', 29500], ['sync3', 29800],
+	['done1', 30300], ['done2', 30600], ['done3', 30900], ['lift', 31100], ['drop', 31400], ['cutSp', 31750],
+	['r1', 31850], ['r2', 32000], ['r3', 32150], ['spOut', 32600], ['zoomStatus', 32900], ['read', 34000],
+	['zoomOut1', 35700], ['cPastas', 36500], ['cutA1', 37100], ['cut1', 37300], ['docsOut', 38600], ['rst2', 39500],
 	// cap. 3 — Conversas com IA (WhatsApp)
-	['ch3Out', 47400], ['phoneIn', 48000], ['p1', 49100], ['cap1', 49200], ['ptyp1', 49900], ['p2', 50900],
-	['cap2', 51100], ['p3', 52000], ['ptyp2', 52600], ['p4', 53700], ['cap3', 53800], ['p5', 54600],
-	['ptyp3', 55100], ['p6', 56300], ['cap4', 56400], ['toSys', 58600], ['cap5', 59100], ['zoomConv', 61000],
-	['zoomOut3', 63700], ['waOut', 65200], ['rst3', 66100], ['end', 67800]
+	['ch3Out', 40100], ['phoneIn', 40200], ['p1', 40700], ['cap1', 40800], ['ptyp1', 41500], ['p2', 42500],
+	['cap2', 42700], ['p3', 43600], ['ptyp2', 44200], ['p4', 45300], ['cap3', 45400], ['p5', 46200],
+	['ptyp3', 46700], ['p6', 47900], ['cap4', 48000], ['toSys', 50200], ['cap5', 50700], ['zoomConv', 52600],
+	['zoomOut3', 55300], ['waOut', 56800], ['rst3', 57700], ['end', 59400]
 ].sort((a, b) => a[1] - b[1])
 
 const logic = `
@@ -1099,7 +1099,7 @@ class Component extends DCLogic {
 			sug: zpt(560, 480, ZP), cVenc: zpt(400, 240, ZP),
 			cFechar: [1432, 903]
 		};
-		const cx = seq(null, ['cRow', 'cRow'], ['cDisp', 'cDisp'], ['split', 'cSend'], ['sug', 'sug'], ['cVenc', 'cVenc'], ['zoomOut2', 'cFechar'],
+		const cx = seq(null, ['cRow', 'cRow'], ['cDisp', 'cDisp'], ['split', 'cSend'], ['sug', 'cVenc'], ['zoomOut2', 'cFechar'],
 			['rst1', 'idle'], ['cPastas', 'cPastas']);
 		const p = cx ? CP[cx] : CP.idle;
 		st.cur = tr(p[0], p[1]);
@@ -1154,7 +1154,7 @@ fs.writeFileSync(
 					y: 0,
 					w: 380,
 					text:
-						'Roteiro (68s)\n\n0:00 Abertura — cartela-pergunta ("Ainda gerenciando manualmente / documentos, cotações e conversas?") com mocks animados, digitação e zoom out acelerados; MATCH CUT para o Conheça já em zoom out; logo Faradays + "para compradores de alto volume". Dica de girar o celular desligada (cues comentados)\n0:05 Cotação por e-mail, comparação na planilha? — cartela com a coreografia da abertura ("Cotação" grande → zoom out sobre corpo de e-mail, planilhas grandes e notificações; a cartela sai recuando em zoom out) → lista → modal → Disparar BID (4) → envelopes → vista dividida: a caixa de e-mail do exportador recebe o BID e responde com preço → o e-mail voa de volta → corte seco para o Comparativo JÁ EM ZOOM, com a linha da ANHUI chegando "lendo e-mail…" → IA sugere (ponto piscante) → clique na linha → Fechar cotação\n0:28 E os documentos dos seus fornecedores, em dia? — a câmera fecha no painel do drive enquanto ele entra; os 3 arquivos novos sincronizam sozinhos (sem clique); com a pilha já voando, corte seco para a vista inteira; IA lê validade (zoom nos status), corte seco para a aba Pastas\n0:45 Seu representante ainda depende do administrativo? — só o celular do representante, centralizado: ele pede o COA → "digitando…" (glow colorido estilo Siri) → a IA responde sozinha (rótulo Agente IA nos balões) → pergunta a marca → emite a cotação; no fim o celular vai para a direita, o sistema entra ao lado com a conversa inteira e a câmera fecha nela\n1:05 Fechamento — logo + barra de busca digitando www.faradays.io (loop)\n\nTransições: cartela ↔ demo em fade; match cut seco (sem fade, corta no meio do movimento) na pergunta→Conheça, no disparo→comparativo e em tabela→Pastas.\n\nChips: Início pula ao capítulo; Tempo vai a um instante; Pausar congela; Loop repete.'
+						'Roteiro (59s)\n\n0:00 Abertura — cartela-pergunta ("Ainda gerenciando manualmente / documentos, cotações e conversas?") com mocks animados, digitação e zoom out acelerados; MATCH CUT para o Conheça já em zoom out; logo Faradays + "para compradores de alto volume". Dica de girar o celular desligada (cues comentados)\n0:05 Cotação por e-mail, comparação na planilha? — cartela com a coreografia da abertura ("Cotação" grande → zoom out sobre corpo de e-mail, planilhas grandes e notificações; a cartela sai recuando em zoom out) → lista → modal → Disparar BID (4) → envelopes → vista dividida: a caixa de e-mail do exportador recebe o BID e responde com preço → o e-mail voa de volta → corte seco para o Comparativo JÁ EM ZOOM, com a linha da ANHUI chegando "lendo e-mail…" → IA sugere (ponto piscante) → clique na linha → Fechar cotação\n0:24 E os documentos dos seus fornecedores, em dia? — a câmera fecha no painel do drive enquanto ele entra; os 3 arquivos novos sincronizam sozinhos (sem clique); com a pilha já voando, corte seco para a vista inteira; IA lê validade (zoom nos status), corte seco para a aba Pastas\n0:39 Seu representante ainda depende do administrativo? — só o celular do representante, centralizado: ele pede o COA → "digitando…" (glow colorido estilo Siri) → a IA responde sozinha (rótulo Agente IA nos balões) → pergunta a marca → emite a cotação; no fim o celular vai para a direita, o sistema entra ao lado com a conversa inteira e a câmera fecha nela\n0:57 Fechamento — logo + barra de busca digitando www.faradays.io (loop)\n\nTransições: cartela ↔ demo em fade; match cut seco (sem fade, corta no meio do movimento) na pergunta→Conheça, no disparo→comparativo e em tabela→Pastas.\n\nChips: Início pula ao capítulo; Tempo vai a um instante; Pausar congela; Loop repete.'
 				}
 			],
 			launch: { view: 'focused', file: 'Main.dc.html' }
