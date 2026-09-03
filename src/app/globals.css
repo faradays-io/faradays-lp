@@ -364,6 +364,109 @@
 	background-position: center;
 }
 
+/* ---- Identidade de IA -------------------------------------------------
+   Paleta fria compartilhada com o vídeo do showcase (azul #1d6ae5 · céu
+   #38bdf8 · índigo #7c8cf8 · sparkle #4aa8ff). Semântica: shimmer = IA
+   agindo agora; badge com borda em gradiente = coisa rotulada como feita
+   por IA; varredura de fundo = linha sendo lida/preenchida; ponto
+   piscante = sugestão da IA. Aplicar só em elementos ligados a IA. */
+
+/* Shimmer de texto: rótulos de IA em ação ("digitando…", "sugerida"). */
+.ai-shimmer {
+	background: linear-gradient(
+		90deg,
+		#1d6ae5,
+		#38bdf8,
+		#7c8cf8,
+		#38bdf8,
+		#1d6ae5
+	);
+	background-size: 200% 100%;
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+	animation: ai-sweep 1.8s linear infinite;
+}
+
+/* Pill com borda em gradiente: tags do que foi feito por IA. O fundo é o
+   token do card (o showcase usa #fff — aqui o tema resolve o escuro). */
+.ai-badge {
+	background:
+		linear-gradient(var(--card), var(--card)) padding-box,
+		linear-gradient(90deg, #1d6ae5, #38bdf8, #7c8cf8) border-box;
+	border: 1px solid transparent;
+	color: #1d6ae5;
+}
+.dark .ai-badge {
+	color: #8d9fff;
+}
+
+/* Varredura de fundo numa linha sendo lida/preenchida pela IA. */
+.row-ai {
+	background: linear-gradient(
+		100deg,
+		rgba(29, 106, 229, 0.1),
+		rgba(56, 189, 248, 0.13),
+		rgba(124, 140, 248, 0.1),
+		rgba(29, 106, 229, 0.1)
+	);
+	background-size: 280% 100%;
+	animation: ai-sweep 2.2s linear infinite;
+}
+
+@keyframes ai-sweep {
+	from {
+		background-position: 0% 0;
+	}
+	to {
+		background-position: 200% 0;
+	}
+}
+
+/* Ícone Sparkle pulsando (cor #4aa8ff) enquanto a IA age. */
+.ai-spark {
+	animation: ai-pulse 1.5s ease-in-out infinite;
+}
+@keyframes ai-pulse {
+	0%,
+	100% {
+		transform: scale(1);
+		opacity: 0.85;
+	}
+	50% {
+		transform: scale(1.22);
+		opacity: 1;
+	}
+}
+
+/* Ponto piscante da sugestão da IA. */
+.pulse-ai {
+	position: relative;
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 9999px;
+	background: linear-gradient(135deg, #1d6ae5, #38bdf8, #7c8cf8);
+}
+.pulse-ai::after {
+	content: '';
+	position: absolute;
+	inset: -4px;
+	border-radius: 9999px;
+	border: 2px solid #4aa8ff;
+	animation: pulse-ai-ring 1.4s ease-out infinite;
+}
+@keyframes pulse-ai-ring {
+	0% {
+		opacity: 0.9;
+		transform: scale(0.6);
+	}
+	100% {
+		opacity: 0;
+		transform: scale(1.6);
+	}
+}
+
 /* Mock "sunrise over mountains" — CSS stand-in for the hero photograph. */
 .hero-sky {
 	background:

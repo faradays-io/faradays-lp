@@ -19,6 +19,7 @@ import {
 	Paperclip,
 	Pulse,
 	ShieldCheck,
+	Sparkle,
 	Table,
 	TrendUp,
 	WhatsappLogo
@@ -249,6 +250,8 @@ const BTN_OUTLINE =
 	'bg-background flex h-6 shrink-0 items-center gap-1.5 rounded-md border px-2 font-mono text-[9px] font-medium tracking-wide uppercase'
 
 const TAG_TONES = {
+	/* Identidade de IA: pill com borda em gradiente frio (globals.css). */
+	ai: 'ai-badge',
 	neutral: 'bg-muted text-muted-foreground',
 	info: 'bg-blue-600/10 text-blue-700',
 	success: 'bg-green-600/10 text-green-700',
@@ -462,13 +465,17 @@ const STEPS: readonly { at: number; typing?: 'bot' }[] = [
 const FINAL_STEP = 6
 
 function TypingDots() {
+	/* Pontinhos na paleta fria da IA — é ela quem está digitando. */
 	return (
 		<span className="flex items-center gap-1 px-1 py-1.5" aria-hidden>
-			{[0, 1, 2].map((i) => (
+			{['#1d6ae5', '#38bdf8', '#7c8cf8'].map((color, i) => (
 				<span
-					key={i}
-					className="bg-foreground/40 size-1.5 animate-bounce rounded-full"
-					style={{ animationDelay: `${i * 0.15}s` }}
+					key={color}
+					className="size-1.5 animate-bounce rounded-full"
+					style={{
+						backgroundColor: color,
+						animationDelay: `${i * 0.15}s`
+					}}
 				/>
 			))}
 		</span>
@@ -634,8 +641,15 @@ function ConversasScreen({
 						<p className="truncate text-xs font-medium">
 							{t.contact}
 						</p>
-						<p className="text-muted-foreground truncate font-mono text-[9px]">
-							{typing ? t.typing : t.channel}
+						<p className="truncate font-mono text-[9px]">
+							{/* Shimmer frio = IA agindo agora (digitando). */}
+							{typing ? (
+								<span className="ai-shimmer">{t.typing}</span>
+							) : (
+								<span className="text-muted-foreground">
+									{t.channel}
+								</span>
+							)}
 						</p>
 					</div>
 					<span className={BTN_OUTLINE}>
@@ -659,7 +673,11 @@ function ConversasScreen({
 					{/* A guarda em cena: duas marcas no catálogo → a IA
 					   pergunta em vez de escolher. */}
 					<Bubble from={3} step={step} side="bot">
-						<span className="text-foreground/50 font-mono text-[9px] tracking-widest uppercase">
+						<span className="text-foreground/50 flex items-center gap-1 font-mono text-[9px] tracking-widest uppercase">
+							<Sparkle
+								weight="fill"
+								className="size-2.5 shrink-0 text-[#4aa8ff]"
+							/>
 							Faradays
 						</span>
 						<p className="text-body-sm mt-0.5">
@@ -677,7 +695,11 @@ function ConversasScreen({
 					</Bubble>
 
 					<Bubble from={6} step={step} side="bot">
-						<span className="text-foreground/50 font-mono text-[9px] tracking-widest uppercase">
+						<span className="text-foreground/50 flex items-center gap-1 font-mono text-[9px] tracking-widest uppercase">
+							<Sparkle
+								weight="fill"
+								className="size-2.5 shrink-0 text-[#4aa8ff]"
+							/>
 							Faradays
 						</span>
 						<p className="text-body-sm mt-0.5 flex items-center gap-1.5">
@@ -745,7 +767,14 @@ function VendaScreen({ t }: { t: Copy }) {
 				<p className="truncate font-mono text-[11px] font-semibold">
 					COT-V-0187 · Nestlé SP
 				</p>
-				<Tag tone="info">{t.vendaBadge}</Tag>
+				{/* Cotação montada pela IA na conversa → badge de IA. */}
+				<Tag tone="ai" className="gap-1">
+					<Sparkle
+						weight="fill"
+						className="size-2 shrink-0 text-[#4aa8ff]"
+					/>
+					{t.vendaBadge}
+				</Tag>
 				<span className="flex-1" />
 				<span data-poi="venda-gerar" className={BTN_PRIMARY}>
 					<FilePdf className="size-3" />
@@ -891,18 +920,18 @@ function RfqScreen({ t }: { t: Copy }) {
 					<span className="text-right">{t.colPrazo}</span>
 					<span className="text-center">{t.colVenc}</span>
 				</div>
-				<div
-					className={cn(
-						RFQ_GRID,
-						'border-b bg-green-500/5 px-2.5 py-2'
-					)}
-				>
+				{/* Linha vencedora: sugestão da IA (varredura fria + ponto
+				   piscante + shimmer) — quem confirma é o humano, no check. */}
+				<div className={cn(RFQ_GRID, 'row-ai border-b px-2.5 py-2')}>
 					<span className="flex min-w-0 items-center gap-1.5">
 						<span className="truncate text-[10px] font-medium">
 							ANHUI JINHE
 						</span>
-						<span className="shrink-0 text-[8px] font-semibold tracking-wide text-green-700 uppercase">
-							{t.sugerida}
+						<span className="flex shrink-0 items-center gap-1.5">
+							<span aria-hidden className="pulse-ai scale-75" />
+							<span className="ai-shimmer text-[8px] font-semibold tracking-wide uppercase">
+								{t.sugerida}
+							</span>
 						</span>
 					</span>
 					<span className="text-right font-mono text-[10px] tabular-nums">
@@ -930,7 +959,14 @@ function RfqScreen({ t }: { t: Copy }) {
 						<span className="truncate text-[10px] font-medium">
 							ENSIGN
 						</span>
-						<Tag tone="warning">{t.rfqBadgeIa}</Tag>
+						{/* Resposta extraída de planilha pela IA. */}
+						<Tag tone="ai" className="gap-1">
+							<Sparkle
+								weight="fill"
+								className="size-2 shrink-0 text-[#4aa8ff]"
+							/>
+							{t.rfqBadgeIa}
+						</Tag>
 					</span>
 					<span className="text-right font-mono text-[10px] tabular-nums">
 						5,1100
