@@ -606,7 +606,7 @@ const openCard = darkCard(
 	'{{c.open}}',
 	`<div style="display:flex;flex-direction:column;align-items:center;gap:34px">
 		<div class="w" style="position:relative;display:flex">${wordmark(680, T.fg)}</div>
-		<div class="w" style="font-family:${MONO};font-size:29px;font-weight:500;letter-spacing:.26em;padding-left:.26em;text-transform:uppercase;color:${T.mutedFg}">para compradores de alto volume</div>
+		<div class="w" style="font-family:${MONO};font-size:29px;font-weight:500;letter-spacing:.26em;padding-left:.26em;text-transform:uppercase;color:${T.mutedFg}">para indústrias que compram e vendem <span class="acende"><span class="frio">muito bem</span><span class="quente ai-shimmer" aria-hidden="true">muito bem</span></span></div>
 		<div style="display:flex;gap:20px;margin-top:14px">
 			${['Gerenciamento de documentos com IA', 'Cotação de venda automática', 'Cotação de compra em um clique'].map((t, k) => `<div class="qfb" style="transition-delay:${(0.85 + k * 0.15).toFixed(2)}s;animation-delay:${(0.35 + k * 0.15).toFixed(2)}s">${ico('Sparkle', 18, 'fill', 'position:relative;color:#ffffff', 'ai-spark')}<span style="position:relative">${t}</span></div>`).join('')}
 		</div>
@@ -866,6 +866,15 @@ ${Array.from({ length: 11 }, (_, i) => `.tc.show .w:nth-child(${i + 2}){animatio
 /* IA em ação: shimmer de gradiente no texto (estilo Gemini) */
 .ai-shimmer{background:linear-gradient(90deg,#1d6ae5,#38bdf8,#7c8cf8,#38bdf8,#1d6ae5);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:aiSweep 1.8s linear infinite}
 @keyframes aiSweep{from{background-position:0% 0}to{background-position:200% 0}}
+/* "muito bem" acendendo: duas camadas empilhadas — a cinza some, a colorida entra.
+   Cross-fade em vez de animar o gradiente porque background-clip:text não interpola
+   entre uma cor sólida e um gradiente. O sweep é o mesmo aiSweep dos badges. */
+.acende{position:relative;display:inline-block}
+.acende>span{display:block}
+.acende .frio{color:${T.mutedFg};transition:opacity .6s var(--ease)}
+.acende .quente{position:absolute;inset:0;opacity:0;transition:opacity .6s var(--ease)}
+.tc.show .acende .frio{opacity:0;transition-delay:1.15s}
+.tc.show .acende .quente{opacity:1;transition-delay:1.15s}
 .ai-spark{animation:aiPulse 1.5s ease-in-out infinite}
 .ai-badge{background:linear-gradient(#ffffff,#ffffff) padding-box,linear-gradient(90deg,#1d6ae5,#38bdf8,#7c8cf8) border-box;border:1px solid transparent}
 /* mini explosão de sparkles quando a IA conclui (valor preenchido, cotação emitida) */
@@ -1162,7 +1171,7 @@ fs.writeFileSync(
 					y: 0,
 					w: 380,
 					text:
-						'Roteiro (61s)\n\n0:00 Abertura — cartela-pergunta ("Ainda gerenciando manualmente / documentos, cotações e conversas?") com mocks animados, digitação e zoom out acelerados; MATCH CUT para o Conheça já em zoom out; logo Faradays + "para compradores de alto volume" e três badges de features (documentos com IA · venda automática · compra em um clique) acendendo do cinza para o gradiente de IA. Dica de girar o celular desligada (cues comentados)\n0:07 Cotação por e-mail, comparação na planilha? — cartela com a coreografia da abertura ("Cotação" grande → zoom out sobre corpo de e-mail, planilhas grandes e notificações; a cartela sai recuando em zoom out) → lista → modal → Disparar BID (4) → envelopes → vista dividida: a caixa de e-mail do exportador recebe o BID e responde com preço → o e-mail voa de volta → corte seco para o Comparativo JÁ EM ZOOM, com a linha da ANHUI chegando "lendo e-mail…" → IA sugere (ponto piscante) → clique na linha → Fechar cotação\n0:26 E os documentos dos seus fornecedores, em dia? — a câmera fecha no painel do drive enquanto ele entra; os 3 arquivos novos sincronizam sozinhos (sem clique); com a pilha já voando, corte seco para a vista inteira; IA lê validade (zoom nos status), corte seco para a aba Pastas\n0:40 Seu representante ainda depende do administrativo? — só o celular do representante, centralizado: ele pede o COA → "digitando…" (glow colorido estilo Siri) → a IA responde sozinha (rótulo Agente IA nos balões) → pergunta a marca → emite a cotação; no fim o celular vai para a direita, o sistema entra ao lado com a conversa inteira e a câmera fecha nela\n0:58 Fechamento — logo + barra de busca digitando www.faradays.io (loop)\n\nTransições: cartela ↔ demo em fade; match cut seco (sem fade, corta no meio do movimento) na pergunta→Conheça, no disparo→comparativo e em tabela→Pastas.\n\nChips: Início pula ao capítulo; Tempo vai a um instante; Pausar congela; Loop repete.'
+						'Roteiro (61s)\n\n0:00 Abertura — cartela-pergunta ("Ainda gerenciando manualmente / documentos, cotações e conversas?") com mocks animados, digitação e zoom out acelerados; MATCH CUT para o Conheça já em zoom out; logo Faradays + "para indústrias que compram e vendem muito bem" e três badges de features (documentos com IA · venda automática · compra em um clique) acendendo do cinza para o gradiente de IA. Dica de girar o celular desligada (cues comentados)\n0:07 Cotação por e-mail, comparação na planilha? — cartela com a coreografia da abertura ("Cotação" grande → zoom out sobre corpo de e-mail, planilhas grandes e notificações; a cartela sai recuando em zoom out) → lista → modal → Disparar BID (4) → envelopes → vista dividida: a caixa de e-mail do exportador recebe o BID e responde com preço → o e-mail voa de volta → corte seco para o Comparativo JÁ EM ZOOM, com a linha da ANHUI chegando "lendo e-mail…" → IA sugere (ponto piscante) → clique na linha → Fechar cotação\n0:26 E os documentos dos seus fornecedores, em dia? — a câmera fecha no painel do drive enquanto ele entra; os 3 arquivos novos sincronizam sozinhos (sem clique); com a pilha já voando, corte seco para a vista inteira; IA lê validade (zoom nos status), corte seco para a aba Pastas\n0:40 Seu representante ainda depende do administrativo? — só o celular do representante, centralizado: ele pede o COA → "digitando…" (glow colorido estilo Siri) → a IA responde sozinha (rótulo Agente IA nos balões) → pergunta a marca → emite a cotação; no fim o celular vai para a direita, o sistema entra ao lado com a conversa inteira e a câmera fecha nela\n0:58 Fechamento — logo + barra de busca digitando www.faradays.io (loop)\n\nTransições: cartela ↔ demo em fade; match cut seco (sem fade, corta no meio do movimento) na pergunta→Conheça, no disparo→comparativo e em tabela→Pastas.\n\nChips: Início pula ao capítulo; Tempo vai a um instante; Pausar congela; Loop repete.'
 				}
 			],
 			launch: { view: 'focused', file: 'Main.dc.html' }
