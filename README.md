@@ -1,6 +1,6 @@
 # Showcase Faradays
 
-Vídeo de apresentação da plataforma em HTML animado (~61 s em loop, 1920×1080), com o mesmo ground da LP (`#f8f8f8` + film grain dinâmico do `GrainOverlay`), sem arquivo de vídeo — abre em qualquer navegador e roda sozinho. Pensado também para celular: na horizontal ocupa a tela toda; na vertical mostra a instrução de girar (o vídeo espera e retoma ao girar; dá para pular com "Assistir assim mesmo").
+Vídeo de apresentação da plataforma em HTML animado (~63 s em loop, com 2 s de tela em branco na cabeça, 1920×1080), com o mesmo ground da LP (`#f8f8f8` + film grain dinâmico do `GrainOverlay`), sem arquivo de vídeo — abre em qualquer navegador e roda sozinho. Pensado também para celular: na horizontal ocupa a tela toda; na vertical mostra a instrução de girar (o vídeo espera e retoma ao girar; dá para pular com "Assistir assim mesmo").
 
 - `index.html` — o showcase. Capítulos na ordem do pitch (produto principal primeiro), cada um aberto por uma cartela-pergunta: "Cotação por e-mail, comparação na planilha?" (mini-cena com a coreografia da abertura, sobre corpo de e-mail, planilhas grandes e notificações) (BID: lista → disparo → caixa de e-mail do exportador → comparativo) · "E os documentos dos seus fornecedores, em dia?" (SharePoint: zoom no painel do drive enquanto os 3 arquivos novos sincronizam sozinhos, corte seco para a vista inteira) · "Seu representante ainda depende do administrativo?" (só o celular do representante, a IA respondendo sozinha; no fim o sistema entra com a conversa inteira). Abertura: cartela-pergunta ("Ainda gerenciando manualmente / documentos, cotações e conversas?", com digitação, zoom out sobre mocks animados e saída recuando com match cut), "Conheça" em zoom out contínuo e o logo com "para compradores de alto volume" (a dica de girar o celular está desligada nos cues); fechamento com a barra de busca digitando `www.faradays.io`, e o vídeo recomeça sozinho.
 - `mascote.html` — o mascote pixelado (estrela), com direções de cor, expressões e escala.
@@ -17,6 +17,8 @@ Vídeo de apresentação da plataforma em HTML animado (~61 s em loop, 1920×108
 | `F` | tela cheia (no celular tenta travar na horizontal) |
 
 Ao passar o mouse (ou pausar) aparecem os controles: play/pause no centro, a linha do tempo dividida por capítulo embaixo (clique num trecho para pular até ele), o relógio e o botão de tela cheia. Somem 2 s depois enquanto o vídeo roda.
+
+Em **tela cheia** o vídeo entra em modo apresentação/gravação: ao entrar, pausa e **nenhum overlay aparece** — nem linha do tempo, nem play/pause, nem cursor, nem ao mexer o mouse ou pausar. O espaço (ou o clique) começa a take numa tela limpa, que abre com os 2 s em branco; para sair, `Esc` ou `F`. Fora da tela cheia os controles voltam ao normal (fixos enquanto pausado).
 
 Parâmetros de URL: `?t=30` começa no segundo 30 · `?pause` abre pausado · `?inicio=BID` começa num capítulo (`BID`, `SharePoint`, `Conversas`) · `?noloop` para no fechamento (por padrão repete).
 

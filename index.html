@@ -767,7 +767,7 @@ html,body{background:#f8f8f8}
 <script>
 class DCLogic { constructor(props) { this.props = props } }
 
-const CUES = [["boot",0],["q1",500],["qType",1100],["qZoom",1150],["qLine2",2000],["qExit",2900],["meet",3200],["meetOut",4000],["open",4200],["openOut",7200],["bZoom",7600],["bLine2",8300],["ch2Out",9100],["cRow",10300],["kRow",10900],["cDisp",11400],["kDisp",12000],["env",13100],["split",13700],["mailIn",14400],["capMail",14700],["mailOpen",14800],["replyOpen",15200],["t1",15500],["t2",15700],["t3",15900],["t4",16100],["cSend",16500],["kSend",17100],["flyGone",18200],["unsplit",18400],["cutA2",19500],["cut2",19700],["read2",21000],["sug",22000],["cVenc",22100],["kVenc",22900],["zoomOut2",23900],["cFechar",24800],["kFechar",25400],["bidOut",26300],["rst1",27200],["ch1Out",29400],["spIn",30300],["zoomSp",30550],["sync1",31100],["sync2",31400],["sync3",31700],["done1",32200],["done2",32500],["done3",32800],["lift",33000],["drop",33300],["cutSp",33650],["r1",33750],["r2",33900],["r3",34050],["spOut",34500],["zoomStatus",34800],["read",35900],["zoomOut1",37600],["cPastas",38400],["cutA1",39000],["cut1",39200],["docsOut",40500],["rst2",41400],["ch3Out",42000],["phoneIn",42100],["p1",42600],["cap1",42700],["ptyp1",43400],["p2",44400],["cap2",44600],["p3",45500],["ptyp2",46100],["p4",47200],["cap3",47300],["p5",48100],["ptyp3",48600],["p6",49800],["cap4",49900],["toSys",52100],["cap5",52600],["zoomConv",54500],["zoomOut3",57200],["waOut",58700],["rst3",59600],["end",61300]];
+const CUES = [["boot",0],["q1",2500],["qType",3100],["qZoom",3150],["qLine2",4000],["qExit",4900],["meet",5200],["meetOut",6000],["open",6200],["openOut",9200],["bZoom",9600],["bLine2",10300],["ch2Out",11100],["cRow",12300],["kRow",12900],["cDisp",13400],["kDisp",14000],["env",15100],["split",15700],["mailIn",16400],["capMail",16700],["mailOpen",16800],["replyOpen",17200],["t1",17500],["t2",17700],["t3",17900],["t4",18100],["cSend",18500],["kSend",19100],["flyGone",20200],["unsplit",20400],["cutA2",21500],["cut2",21700],["read2",23000],["sug",24000],["cVenc",24100],["kVenc",24900],["zoomOut2",25900],["cFechar",26800],["kFechar",27400],["bidOut",28300],["rst1",29200],["ch1Out",31400],["spIn",32300],["zoomSp",32550],["sync1",33100],["sync2",33400],["sync3",33700],["done1",34200],["done2",34500],["done3",34800],["lift",35000],["drop",35300],["cutSp",35650],["r1",35750],["r2",35900],["r3",36050],["spOut",36500],["zoomStatus",36800],["read",37900],["zoomOut1",39600],["cPastas",40400],["cutA1",41000],["cut1",41200],["docsOut",42500],["rst2",43400],["ch3Out",44000],["phoneIn",44100],["p1",44600],["cap1",44700],["ptyp1",45400],["p2",46400],["cap2",46600],["p3",47500],["ptyp2",48100],["p4",49200],["cap3",49300],["p5",50100],["ptyp3",50600],["p6",51800],["cap4",51900],["toSys",54100],["cap5",54600],["zoomConv",56500],["zoomOut3",59200],["waOut",60700],["rst3",61600],["end",63300]];
 const I = {}; CUES.forEach((c, k) => { I[c[0]] = k; });
 const START = { Abertura: 0, BID: I.openOut, SharePoint: I.bidOut, Conversas: I.docsOut };
 // Janela do app na prancha (px) — a câmera é um transform na janela.
@@ -993,7 +993,10 @@ fitEl.addEventListener('click', (e) => { if (!e.target.closest('.tl')) togglePau
 // (somem 2,2 s depois, se estiver rodando), ficam fixos enquanto pausado e por 1,4 s após um pulo.
 const tl = document.querySelector('.tl'), track = tl.querySelector('.tl-track'), clock = tl.querySelector('.tl-clock'), shade = document.querySelector('.tl-shade'), pp = document.querySelector('.pp')
 let ctlTimer = null
-function setControls(on) { tl.classList.toggle('on', on); shade.classList.toggle('on', on); pp.classList.toggle('on', on); fitEl.classList.toggle('nocur', !on) }
+// Em tela cheia (modo apresentação/gravação) nenhum overlay aparece — nem ao mexer o
+// mouse, nem pausado; o cursor também fica oculto. Para sair: Esc ou F.
+function quiet() { return !!document.fullscreenElement }
+function setControls(on) { on = on && !quiet(); tl.classList.toggle('on', on); shade.classList.toggle('on', on); pp.classList.toggle('on', on); fitEl.classList.toggle('nocur', !on) }
 function showControls(temp) {
 	setControls(true); clearTimeout(ctlTimer)
 	if (temp) ctlTimer = setTimeout(() => { if (comp.frozen == null) setControls(false) }, 1100)
@@ -1041,6 +1044,11 @@ async function toggleFS() {
 		else { await document.documentElement.requestFullscreen(); try { await screen.orientation.lock('landscape') } catch {} }
 	} catch {}
 }
+// Ao entrar em tela cheia: pausa (a take começa no espaço/clique) e esconde os overlays.
+document.addEventListener('fullscreenchange', () => {
+	if (document.fullscreenElement) { if (comp.frozen == null) togglePause(); clearTimeout(ctlTimer); setControls(false) }
+	else showControls(true)
+})
 // Celular na vertical: instrução para girar; o vídeo espera (e retoma sozinho ao girar).
 const rot = document.querySelector('.rot'), portrait = matchMedia('(orientation: portrait) and (pointer: coarse) and (max-width: 1024px)')
 let rotSkip = false, autoPaused = false

@@ -935,6 +935,9 @@ const stage = `<div class="stage" style="position:relative;width:1920px;height:1
 </div>`
 
 /* ---------------- lógica (timeline) ------------------------------------ */
+// Cabeça do vídeo: LEAD ms de tela em branco antes do primeiro cue (o 'boot', em 0).
+// Os tempos da tabela abaixo são relativos ao conteúdo; o offset entra no .map().
+const LEAD = 2000
 const CUES = [
 	// dica de girar o celular — desligada para caber em ~1min (descomente para voltar):
 	// ['hint', 350], ['hintOut', 4900],
@@ -956,7 +959,9 @@ const CUES = [
 	['cap2', 44600], ['p3', 45500], ['ptyp2', 46100], ['p4', 47200], ['cap3', 47300], ['p5', 48100],
 	['ptyp3', 48600], ['p6', 49800], ['cap4', 49900], ['toSys', 52100], ['cap5', 52600], ['zoomConv', 54500],
 	['zoomOut3', 57200], ['waOut', 58700], ['rst3', 59600], ['end', 61300]
-].sort((a, b) => a[1] - b[1])
+]
+	.map(([n, t]) => [n, t === 0 ? 0 : t + LEAD])
+	.sort((a, b) => a[1] - b[1])
 
 const logic = `
 const CUES = ${JSON.stringify(CUES)};
@@ -1171,7 +1176,7 @@ fs.writeFileSync(
 					y: 0,
 					w: 380,
 					text:
-						'Roteiro (61s)\n\n0:00 Abertura — cartela-pergunta ("Ainda gerenciando manualmente / documentos, cotações e conversas?") com mocks animados, digitação e zoom out acelerados; MATCH CUT para o Conheça já em zoom out; logo Faradays + "para indústrias que compram e vendem muito bem" e três badges de features (documentos com IA · venda automática · compra em um clique) acendendo do cinza para o gradiente de IA. Dica de girar o celular desligada (cues comentados)\n0:07 Cotação por e-mail, comparação na planilha? — cartela com a coreografia da abertura ("Cotação" grande → zoom out sobre corpo de e-mail, planilhas grandes e notificações; a cartela sai recuando em zoom out) → lista → modal → Disparar BID (4) → envelopes → vista dividida: a caixa de e-mail do exportador recebe o BID e responde com preço → o e-mail voa de volta → corte seco para o Comparativo JÁ EM ZOOM, com a linha da ANHUI chegando "lendo e-mail…" → IA sugere (ponto piscante) → clique na linha → Fechar cotação\n0:26 E os documentos dos seus fornecedores, em dia? — a câmera fecha no painel do drive enquanto ele entra; os 3 arquivos novos sincronizam sozinhos (sem clique); com a pilha já voando, corte seco para a vista inteira; IA lê validade (zoom nos status), corte seco para a aba Pastas\n0:40 Seu representante ainda depende do administrativo? — só o celular do representante, centralizado: ele pede o COA → "digitando…" (glow colorido estilo Siri) → a IA responde sozinha (rótulo Agente IA nos balões) → pergunta a marca → emite a cotação; no fim o celular vai para a direita, o sistema entra ao lado com a conversa inteira e a câmera fecha nela\n0:58 Fechamento — logo + barra de busca digitando www.faradays.io (loop)\n\nTransições: cartela ↔ demo em fade; match cut seco (sem fade, corta no meio do movimento) na pergunta→Conheça, no disparo→comparativo e em tabela→Pastas.\n\nChips: Início pula ao capítulo; Tempo vai a um instante; Pausar congela; Loop repete.'
+						'Roteiro (63s · 2 s de tela em branco na cabeça)\n\n0:00 Tela em branco — cabeça de 2 s para gravação (só o ground da LP com o film grain)\n0:02 Abertura — cartela-pergunta ("Ainda gerenciando manualmente / documentos, cotações e conversas?") com mocks animados, digitação e zoom out acelerados; MATCH CUT para o Conheça já em zoom out; logo Faradays + "para indústrias que compram e vendem muito bem" e três badges de features (documentos com IA · venda automática · compra em um clique) acendendo do cinza para o gradiente de IA. Dica de girar o celular desligada (cues comentados)\n0:09 Cotação por e-mail, comparação na planilha? — cartela com a coreografia da abertura ("Cotação" grande → zoom out sobre corpo de e-mail, planilhas grandes e notificações; a cartela sai recuando em zoom out) → lista → modal → Disparar BID (4) → envelopes → vista dividida: a caixa de e-mail do exportador recebe o BID e responde com preço → o e-mail voa de volta → corte seco para o Comparativo JÁ EM ZOOM, com a linha da ANHUI chegando "lendo e-mail…" → IA sugere (ponto piscante) → clique na linha → Fechar cotação\n0:28 E os documentos dos seus fornecedores, em dia? — a câmera fecha no painel do drive enquanto ele entra; os 3 arquivos novos sincronizam sozinhos (sem clique); com a pilha já voando, corte seco para a vista inteira; IA lê validade (zoom nos status), corte seco para a aba Pastas\n0:42 Seu representante ainda depende do administrativo? — só o celular do representante, centralizado: ele pede o COA → "digitando…" (glow colorido estilo Siri) → a IA responde sozinha (rótulo Agente IA nos balões) → pergunta a marca → emite a cotação; no fim o celular vai para a direita, o sistema entra ao lado com a conversa inteira e a câmera fecha nela\n1:00 Fechamento — logo + barra de busca digitando www.faradays.io (loop)\n\nTransições: cartela ↔ demo em fade; match cut seco (sem fade, corta no meio do movimento) na pergunta→Conheça, no disparo→comparativo e em tabela→Pastas.\n\nChips: Início pula ao capítulo; Tempo vai a um instante; Pausar congela; Loop repete.'
 				}
 			],
 			launch: { view: 'focused', file: 'Main.dc.html' }
@@ -1261,7 +1266,10 @@ fitEl.addEventListener('click', (e) => { if (!e.target.closest('.tl')) togglePau
 // (somem 2,2 s depois, se estiver rodando), ficam fixos enquanto pausado e por 1,4 s após um pulo.
 const tl = document.querySelector('.tl'), track = tl.querySelector('.tl-track'), clock = tl.querySelector('.tl-clock'), shade = document.querySelector('.tl-shade'), pp = document.querySelector('.pp')
 let ctlTimer = null
-function setControls(on) { tl.classList.toggle('on', on); shade.classList.toggle('on', on); pp.classList.toggle('on', on); fitEl.classList.toggle('nocur', !on) }
+// Em tela cheia (modo apresentação/gravação) nenhum overlay aparece — nem ao mexer o
+// mouse, nem pausado; o cursor também fica oculto. Para sair: Esc ou F.
+function quiet() { return !!document.fullscreenElement }
+function setControls(on) { on = on && !quiet(); tl.classList.toggle('on', on); shade.classList.toggle('on', on); pp.classList.toggle('on', on); fitEl.classList.toggle('nocur', !on) }
 function showControls(temp) {
 	setControls(true); clearTimeout(ctlTimer)
 	if (temp) ctlTimer = setTimeout(() => { if (comp.frozen == null) setControls(false) }, 1100)
@@ -1309,6 +1317,11 @@ async function toggleFS() {
 		else { await document.documentElement.requestFullscreen(); try { await screen.orientation.lock('landscape') } catch {} }
 	} catch {}
 }
+// Ao entrar em tela cheia: pausa (a take começa no espaço/clique) e esconde os overlays.
+document.addEventListener('fullscreenchange', () => {
+	if (document.fullscreenElement) { if (comp.frozen == null) togglePause(); clearTimeout(ctlTimer); setControls(false) }
+	else showControls(true)
+})
 // Celular na vertical: instrução para girar; o vídeo espera (e retoma sozinho ao girar).
 const rot = document.querySelector('.rot'), portrait = matchMedia('(orientation: portrait) and (pointer: coarse) and (max-width: 1024px)')
 let rotSkip = false, autoPaused = false
