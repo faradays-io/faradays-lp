@@ -167,43 +167,45 @@ export function HomeFooter() {
 			   `id="cta"` mudou de casa junto: é o alvo dos links "Veja uma
 			   demo" da nav e do hero.
 
-			   A banda sangra de ponta a ponta da tela (só ela — o resto do
-			   rodapé segue no canvas) e o card por cima segura a copy
-			   empilhada. Sem `pb`: o card encosta na borda de baixo da
-			   banda, como na referência — é o respiro no topo que define a
-			   altura da faixa: o `min-h` dá a altura da banda e o card
-			   encosta na base dela (`items-end`), então a sobra de imagem
-			   fica toda acima dele. Encostado embaixo, o card perde o raio
-			   nos cantos de baixo e a sombra sai só para a direita (a luz
-			   da foto vem da esquerda). O `overflow-hidden` corta o que
-			   dela passaria da borda inferior da banda. */}
+			   Só a imagem sangra de ponta a ponta da tela; o conteúdo fica
+			   no canvas, como no resto da página — daí os dois elementos:
+			   o de fora carrega o fundo e o corte, o de dentro é o canvas
+			   com a goteira. Sem `pb`: o card encosta na borda de baixo da
+			   banda, como na referência — é o `min-h` que dá a altura da
+			   faixa e o `items-end` que joga a sobra de imagem toda para
+			   cima dele. Encostado embaixo, o card perde o raio nos cantos
+			   de baixo e a sombra sai só para a direita (a luz da foto vem
+			   da esquerda). O `overflow-hidden` corta o que dela passaria
+			   da borda inferior da banda. */}
 			<div
 				id="cta"
-				className="mb-20 flex min-h-[56rem] w-full items-end overflow-hidden bg-[url(/bg.png)] bg-cover bg-center px-[var(--gutter)] pt-24"
+				className="mb-20 w-full overflow-hidden bg-[url(/bg.png)] bg-cover bg-center"
 			>
-				<div className="bg-card/50 mx-auto flex min-h-[32rem] w-full max-w-3xl flex-col items-center justify-center rounded-t-2xl px-10 py-14 text-center shadow-[2rem_0_4rem_-1rem_rgba(0,0,0,0.35)] backdrop-blur-xl md:px-14 md:py-20">
-					<h2
-						className={cn(
-							ptSerif.className,
-							'w-full text-[5rem]/[1.02] font-normal text-balance'
-						)}
-					>
-						{t.ctaHeading}
-					</h2>
-					<p className="text-foreground/70 mt-6 w-full text-xl/[1.35] text-pretty">
-						{t.ctaSub}
-					</p>
-					<AiGradientButton asChild className="mt-10">
-						<a
-							href={BOOKING_URL}
-							target="_blank"
-							rel="noopener noreferrer"
+				<div className="max-w-page mx-auto flex min-h-[56rem] w-full items-end px-[var(--gutter)] pt-24">
+					<div className="bg-card/50 mx-auto flex min-h-[32rem] w-full max-w-3xl flex-col items-center justify-center rounded-t-2xl px-10 py-14 text-center shadow-[2rem_0_4rem_-1rem_rgba(0,0,0,0.35)] backdrop-blur-xl md:px-14 md:py-20">
+						<h2
+							className={cn(
+								ptSerif.className,
+								'w-full text-[5rem]/[1.02] font-normal text-balance'
+							)}
 						>
-							<SplitHoverText as="span">
-								{t.bookDemo}
-							</SplitHoverText>
-						</a>
-					</AiGradientButton>
+							{t.ctaHeading}
+						</h2>
+						<p className="text-foreground/70 mt-6 w-full text-xl/[1.35] text-pretty">
+							{t.ctaSub}
+						</p>
+						<AiGradientButton asChild className="mt-10">
+							<a
+								href={BOOKING_URL}
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								<SplitHoverText as="span">
+									{t.bookDemo}
+								</SplitHoverText>
+							</a>
+						</AiGradientButton>
+					</div>
 				</div>
 			</div>
 
