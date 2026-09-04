@@ -278,6 +278,11 @@
 	/* `max-w-section` — shared content width of every landing section. */
 	--container-section: 115rem;
 
+	/* Giro da fita de IA como utilitário (`animate-ai-sweep`), para o botão
+	   de CTA: reaproveita as keyframes `ai-sweep` da identidade de IA (0 →
+	   200% de background-position). `--speed` afina a volta por instância. */
+	--animate-ai-sweep: ai-sweep var(--speed, 2s) infinite linear;
+
 	/* Slow ken-burns pan for ambient/mock media blocks. */
 	--animate-slow-pan: slow-pan 24s ease-in-out infinite alternate;
 	@keyframes slow-pan {
@@ -371,9 +376,11 @@
    por IA; varredura de fundo = linha sendo lida/preenchida; ponto
    piscante = sugestão da IA. Aplicar só em elementos ligados a IA. */
 
-/* Shimmer de texto: rótulos de IA em ação ("digitando…", "sugerida"). */
-.ai-shimmer {
-	background: linear-gradient(
+/* A fita da identidade: os cinco stops fecham no mesmo azul dos dois lados,
+   então o loop de 0 a 200% não tem costura. Fica na var porque o shimmer de
+   texto e a borda do botão de CTA usam exatamente a mesma fita. */
+:root {
+	--ai-ribbon: linear-gradient(
 		90deg,
 		#1d6ae5,
 		#38bdf8,
@@ -381,6 +388,11 @@
 		#38bdf8,
 		#1d6ae5
 	);
+}
+
+/* Shimmer de texto: rótulos de IA em ação ("digitando…", "sugerida"). */
+.ai-shimmer {
+	background: var(--ai-ribbon);
 	background-size: 200% 100%;
 	-webkit-background-clip: text;
 	background-clip: text;
@@ -401,17 +413,53 @@
 	color: #8d9fff;
 }
 
-/* Varredura de fundo numa linha sendo lida/preenchida pela IA. */
-.row-ai {
-	background: linear-gradient(
+/* Varredura de fundo numa linha sendo lida/preenchida pela IA. O gradiente
+   fica na var para a variante de hover usar exatamente a mesma fita. */
+:root {
+	--ai-row-sweep: linear-gradient(
 		100deg,
 		rgba(29, 106, 229, 0.1),
 		rgba(56, 189, 248, 0.13),
 		rgba(124, 140, 248, 0.1),
 		rgba(29, 106, 229, 0.1)
 	);
+}
+.row-ai {
+	background: var(--ai-row-sweep);
 	background-size: 280% 100%;
 	animation: ai-sweep 2.2s linear infinite;
+}
+
+/* Mesma varredura armada no hover: é o realce das linhas do índice da home
+   (soluções e blog) quando o ponteiro passa. A fita mora numa camada
+   própria porque background-image não interpola — o que entra em fade é a
+   opacidade dela. `z-index: -1` mantém a camada atrás do texto da linha
+   (elemento posicionado pinta depois de irmão estático). Só onde há hover
+   de verdade: no toque o :hover fica preso depois do tap. */
+@media (hover: hover) {
+	.row-ai-hover {
+		position: relative;
+	}
+	.row-ai-hover::before {
+		content: '';
+		position: absolute;
+		z-index: -1;
+		inset: 0;
+		background: var(--ai-row-sweep);
+		background-size: 280% 100%;
+		opacity: 0;
+		transition: opacity 0.2s;
+		pointer-events: none;
+	}
+	.row-ai-hover:hover::before {
+		opacity: 1;
+		animation: ai-sweep 2.2s linear infinite;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.row-ai-hover:hover::before {
+		animation: none;
+	}
 }
 
 @keyframes ai-sweep {

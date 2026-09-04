@@ -691,60 +691,6 @@ export function HeroFeatureFlow() {
 			])
 			initial = false
 
-			/* Traço (fonte: docs/assets/feature-flow-stroke.svg) — ÚNICO efeito com scrub da seção. Começa no
-			   mesmo ponto da diagonal da demo (scroll 8, absoluto) com o
-			   início do path no topo da viewport e termina 0.4vh antes do
-			   sticky soltar (fim da seção). Dois tweens na mesma timeline:
-			   - stroke-dashoffset 1010 (nada) → 0 (completo). pathLength=
-			     "1000" normaliza as unidades em mil passos (o CSSPlugin do
-			     GSAP arredonda px para inteiro — autoRound — e com
-			     pathLength=1 o traço pulava de 1 a 0); gap 1100 > 1000
-			     garante que o próximo dash nunca entra; os 10 extras
-			     escondem o cap redondo (raio 50 ≈ 8 unidades normalizadas)
-			     antes do início.
-			   - y da svg: ela é mais alta que a viewport, então desliza de
-			     "topo alinhado" a "base alinhada" enquanto desenha — o path
-			     inteiro passa pela tela. */
-			const stroke = q('[data-flow-stroke]')
-			const strokeSvg = q('[data-flow-stroke-svg]')
-			const strokeTl =
-				stroke && strokeSvg
-					? reduce
-						? gsap.timeline().set(stroke, { strokeDashoffset: 0 })
-						: gsap
-								.timeline({
-									defaults: { ease: 'none' },
-									scrollTrigger: {
-										start: 8,
-										endTrigger: root,
-										end: () =>
-											`bottom-=${vh() * 0.4} bottom`,
-										scrub: 0.8,
-										invalidateOnRefresh: true
-									}
-								})
-								.fromTo(
-									stroke,
-									{ strokeDashoffset: 1010 },
-									{ strokeDashoffset: 0, autoRound: false },
-									0
-								)
-								.fromTo(
-									strokeSvg,
-									{ y: 0 },
-									{
-										y: () =>
-											Math.min(
-												0,
-												vh() -
-													strokeSvg.getBoundingClientRect()
-														.height
-											)
-									},
-									0
-								)
-					: null
-
 			// Resize/reflow: re-mede os alvos das timelines paradas.
 			const timelines = [cursorTl, ...tours]
 			const onRefresh = () => {
@@ -757,10 +703,6 @@ export function HeroFeatureFlow() {
 			return () => {
 				gsap.ticker.remove(applyY)
 				ScrollTrigger.removeEventListener('refresh', onRefresh)
-				strokeTl?.scrollTrigger?.kill()
-				strokeTl?.kill()
-				if (stroke) gsap.set(stroke, { clearProps: 'strokeDashoffset' })
-				if (strokeSvg) gsap.set(strokeSvg, { clearProps: 'transform' })
 				trigger.kill()
 				holdTriggers.forEach((holdTrigger) => holdTrigger.kill())
 				tourTriggers.forEach((tourTrigger) => tourTrigger.kill())
@@ -795,15 +737,30 @@ export function HeroFeatureFlow() {
 				index={feature.graphic}
 				className="mb-2 w-full max-w-sm lg:hidden"
 			/>
-			<span className="text-foreground/50 w-full max-w-md font-mono text-sm tracking-widest uppercase">
-				({feature.eyebrow[lang]})
-			</span>
-			<h3 className="font-heading text-h2 w-full max-w-md text-balance">
-				{feature.title[lang]}
-			</h3>
-			<p className="text-body-lg text-foreground/70 w-full max-w-md">
-				{feature.description[lang]}
-			</p>
+			{/* Véu de leitura: o rastro do ASCII passa atrás da copy e
+			   competia com ela. Uma placa da cor do fundo, translúcida e
+			   desfocada — o blur dissolve as bordas, então ela acalma o
+			   campo só onde há texto sem virar cartão (máscara não serve:
+			   o texto muda de lado a cada bloco e a placa acompanha).
+			   `relative` no miolo porque irmão estático pinta ANTES de
+			   irmão posicionado — sem isso o véu cobriria a copy. */}
+			<div className="relative w-full max-w-md">
+				<div
+					aria-hidden
+					className="bg-background/85 pointer-events-none absolute -inset-x-6 -inset-y-5 blur-xl"
+				/>
+				<div className="relative flex flex-col gap-6">
+					<span className="text-foreground/50 w-full font-mono text-sm tracking-widest uppercase">
+						({feature.eyebrow[lang]})
+					</span>
+					<h3 className="font-heading text-h2 w-full text-balance">
+						{feature.title[lang]}
+					</h3>
+					<p className="text-body-lg text-foreground/70 w-full">
+						{feature.description[lang]}
+					</p>
+				</div>
+			</div>
 		</>
 	)
 
@@ -818,40 +775,6 @@ export function HeroFeatureFlow() {
 					<div data-flow-intro className="h-full opacity-0">
 						<AsciiFieldGl className="[mask-image:linear-gradient(to_bottom,transparent,black_18%,black_82%,transparent)]" />
 					</div>
-				</div>
-			</div>
-
-			{/* Traço decorativo (docs/assets/feature-flow-stroke.svg, inline): camada sticky atrás
-			   dos textos e da demo. Sobe 60svh (a altura do HomeHero) para
-			   o sticky engajar já no topo da página — o path nasce no topo
-			   da viewport no primeiro scroll. A svg é larga (62vw, ~2.4× de
-			   altura — viewBox 1660×4015, a cauda cabe dentro) e o flow a
-			   desliza para cima enquanto desenha. Fita clara, grossa e com blur
-			   leve; a máscara na base do sticky faz o traço esmaecer antes
-			   da borda — nunca termina "seco", nem quando o sticky solta.
-			   Só desktop. O layer clipa a própria svg, não é ancestral do
-			   sticky da demo. */}
-			<div
-				aria-hidden
-				className="pointer-events-none absolute inset-x-0 top-[-60svh] bottom-0 z-0 hidden lg:block"
-			>
-				<div className="sticky top-0 h-svh overflow-hidden [mask-image:linear-gradient(to_bottom,black_62%,transparent)]">
-					<svg
-						data-flow-stroke-svg
-						viewBox="0 0 1660 4015"
-						fill="none"
-						className="text-foreground/[0.07] absolute top-0 left-[19vw] w-[62vw] blur-[3px] will-change-transform"
-					>
-						<path
-							data-flow-stroke
-							pathLength={1000}
-							strokeDasharray="1000 1100"
-							d="M1452.05 76.002C1452.05 76.002 571.55 120.044 571.55 826.886C571.55 1640.23 1683.54 1555.39 1576.66 2338.76C1488.31 2986.22 -224.502 3491.8 122.147 2338.76C468.796 1185.72 967.215 3938 967.215 3938"
-							stroke="currentColor"
-							strokeWidth={170}
-							strokeLinecap="round"
-						/>
-					</svg>
 				</div>
 			</div>
 

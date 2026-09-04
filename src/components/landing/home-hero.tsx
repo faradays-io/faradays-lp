@@ -8,7 +8,7 @@ import { SplitHoverText } from '@/components/custom-ui/split-hover-text'
 import { HeroToolIcons } from '@/components/landing/hero-tool-icons'
 import { useRecedeOut } from '@/components/landing/recede-out'
 import { useCopy } from '@/components/language-provider'
-import { Button } from '@/components/ui/button'
+import { AiGradientButton } from '@/components/ui/ai-gradient-button'
 import type { Localized } from '@/lib/i18n'
 import { usePageReady } from '@/lib/page-ready'
 
@@ -77,8 +77,8 @@ export function HomeHero() {
 	useRecedeOut(copyRef, { start: 8 })
 
 	/* z-10 na section (sem fundo próprio — o wrapper da página já pinta o
-	   bg-background): a camada do traço do HeroFeatureFlow sobe até o topo
-	   da página; a copy fica acima dela e o traço aparece por baixo. */
+	   bg-background): mantém a copy acima das camadas de fundo do
+	   HeroFeatureFlow, que começam logo abaixo da dobra. */
 	return (
 		<section
 			id="hero"
@@ -121,13 +121,13 @@ export function HomeHero() {
 					data-hero-item
 					className="mt-8 flex items-center gap-3 opacity-0"
 				>
-					<Button asChild size="lg" className="px-6">
+					<AiGradientButton asChild>
 						<Link href="#cta">
 							<SplitHoverText as="span">
 								{t.bookDemo}
 							</SplitHoverText>
 						</Link>
-					</Button>
+					</AiGradientButton>
 				</div>
 			</div>
 		</section>

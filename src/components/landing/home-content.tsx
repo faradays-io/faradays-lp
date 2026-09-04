@@ -38,9 +38,11 @@ const COPY = {
 } satisfies Localized<Record<string, string>>
 
 /* A estilização é a mesma do resto do site (Aspekta/Fixel, rota em mono
-   como dispositivo estrutural, fundo `.light-home`). */
+   como dispositivo estrutural, fundo `.light-home`). `row-ai-hover` põe a
+   varredura de IA no hover de toda linha do índice — nas linhas "(em breve)"
+   ela fica inerte, que elas não recebem ponteiro. */
 const NAV_ROW =
-	'border-border grid gap-1 border-b px-2 py-4 sm:grid-cols-[8rem_1fr_auto] sm:items-baseline sm:gap-6'
+	'row-ai-hover border-border grid gap-1 border-b px-2 py-4 sm:grid-cols-[8rem_1fr_auto] sm:items-baseline sm:gap-6'
 
 export function HomeContent() {
 	const { lang, setLang } = useLang()
@@ -121,8 +123,7 @@ export function HomeContent() {
 										href={solution.slug}
 										className={cn(
 											NAV_ROW,
-											index === 0 && 'border-t',
-											'hover:bg-foreground/[0.03] transition-colors'
+											index === 0 && 'border-t'
 										)}
 									>
 										{inner}
@@ -143,13 +144,7 @@ export function HomeContent() {
 						)
 					})}
 					<Reveal y={16} delay={0.15 + SOLUTIONS.length * 0.05}>
-						<Link
-							href="/blog"
-							className={cn(
-								NAV_ROW,
-								'hover:bg-foreground/[0.03] transition-colors'
-							)}
-						>
+						<Link href="/blog" className={NAV_ROW}>
 							<span className="text-brand font-mono text-sm">
 								/blog
 							</span>

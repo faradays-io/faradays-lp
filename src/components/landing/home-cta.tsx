@@ -6,7 +6,7 @@ import { SplitHoverText } from '@/components/custom-ui/split-hover-text'
 import { Reveal } from '@/components/landing/reveal'
 import { SECTION_TITLE } from '@/components/landing/type'
 import { useCopy } from '@/components/language-provider'
-import { Button } from '@/components/ui/button'
+import { AiGradientButton } from '@/components/ui/ai-gradient-button'
 import type { Localized } from '@/lib/i18n'
 import { BOOKING_URL } from '@/lib/links'
 import { cn } from '@/lib/utils'
@@ -50,7 +50,7 @@ export function HomeCta() {
 						{t.sub}
 					</p>
 					<div className="mt-9 flex justify-center">
-						<Button asChild size="lg" className="px-6">
+						<AiGradientButton asChild>
 							<Link
 								href={BOOKING_URL}
 								target="_blank"
@@ -60,7 +60,7 @@ export function HomeCta() {
 									{t.bookDemo}
 								</SplitHoverText>
 							</Link>
-						</Button>
+						</AiGradientButton>
 					</div>
 				</Reveal>
 			</div>
