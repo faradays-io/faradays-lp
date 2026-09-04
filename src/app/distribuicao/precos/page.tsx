@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 
-import { HomeCta } from '@/components/landing/home-cta'
 import { HomeFooter } from '@/components/landing/home-footer'
 import { NavBar } from '@/components/landing/nav-bar'
 import { PageTransition } from '@/components/landing/page-transition'
@@ -25,7 +24,6 @@ export default function PrecosPage() {
 				<PricingPlans />
 				<PricingTable />
 				<PricingFaq />
-				<HomeCta />
 			</main>
 			<HomeFooter />
 		</div>

@@ -53,10 +53,6 @@ const COPY = {
 		issued: 'Cotação COT-V-0187 emitida — ICMS SP e câmbio do dia já calculados.',
 		pdfMeta: '2.000 kg · Creapure® · 1 pág.',
 		inputPlaceholder: 'Mensagem',
-		contact2: 'Rep. Sul · Ana',
-		contact2Preview: 'Você: tabela de setembro?',
-		contact3: 'Rep. Nordeste · João',
-		contact3Preview: 'Pedido PD-0453 faturado',
 		// Card de preview do PDF (estágio 2 do hold).
 		pdfName: 'COT-V-0187 · Nestlé SP.pdf',
 		preview: 'pré-visualização',
@@ -142,10 +138,6 @@ const COPY = {
 		issued: "Quote COT-V-0187 issued — SP ICMS and today's exchange rate already computed.",
 		pdfMeta: '2,000 kg · Creapure® · 1 page',
 		inputPlaceholder: 'Message',
-		contact2: 'South rep · Ana',
-		contact2Preview: 'You: September price list?',
-		contact3: 'Northeast rep · João',
-		contact3Preview: 'Order PD-0453 invoiced',
 		pdfName: 'COT-V-0187 · Nestlé SP.pdf',
 		preview: 'preview',
 		navHome: 'Home',
@@ -603,35 +595,8 @@ function ConversasScreen({
 			data-screen="whatsapp"
 			className="absolute inset-0 flex"
 		>
-			{/* Lista de conversas (só em telas largas — o quadro vivo). */}
-			<div className="hidden w-40 shrink-0 flex-col border-r xl:flex">
-				<div className="bg-brand/[0.06] border-b px-2.5 py-2">
-					<p className="truncate text-[11px] font-medium">
-						{t.contact}
-					</p>
-					<p className="text-muted-foreground truncate text-[10px]">
-						{t.issued}
-					</p>
-				</div>
-				<div className="border-b px-2.5 py-2">
-					<p className="truncate text-[11px] font-medium">
-						{t.contact2}
-					</p>
-					<p className="text-muted-foreground truncate text-[10px]">
-						{t.contact2Preview}
-					</p>
-				</div>
-				<div className="border-b px-2.5 py-2">
-					<p className="truncate text-[11px] font-medium">
-						{t.contact3}
-					</p>
-					<p className="text-muted-foreground truncate text-[10px]">
-						{t.contact3Preview}
-					</p>
-				</div>
-			</div>
-
-			{/* Painel da conversa. */}
+			{/* Só o painel da conversa: a lista de contatos saiu, e a
+			   conversa ativa ocupa a tela inteira. */}
 			<div className="flex min-w-0 flex-1 flex-col">
 				<div className="flex items-center gap-2.5 border-b px-3 py-2">
 					<span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[#25d366]/15 text-[#128c4b]">
@@ -1184,18 +1149,32 @@ export function MonfizaAppDemo({ ref }: { ref?: Ref<MonfizaAppDemoHandle> }) {
 		<div className="relative z-10 flex h-full items-center justify-center p-5 md:p-8">
 			{/* aria-hidden: a demo é ilustração das features — a copy real
 			   está nos blocos de texto ao lado. */}
-			{/* Largura no lg+ multiplicada por --demo-w: 1.15 em repouso (a
-			   demo aparece mais larga na dobra) e o flow tweena para 1
-			   junto com a diagonal — a fórmula fica no CSS (rem/vw), então
-			   resize não descalibra nada. */}
+			{/* No lg+ o tamanho vem da classe `.demo-box` (globals.css):
+			   ela interpola entre a medida pinada (52rem) e a da grade do
+			   CTA pelo fator --demo-w, que o flow tweena de 1 (repouso) a 0
+			   (pinada). A altura acompanha pela proporção, então a demo
+			   cresce sem esticar. */}
 			<div
 				data-demo-box
 				aria-hidden
-				className="relative h-full max-h-[36rem] w-[min(34rem,100%)] [--demo-w:1.15] lg:w-[min(52rem*var(--demo-w),52vw*var(--demo-w))]"
+				className="demo-box relative h-full max-h-[36rem] w-[min(34rem,100%)] [--demo-w:1]"
 			>
+				{/* Banda de fundo. As margens são proporcionais (% do próprio
+				   box), não fixas: assim ela acompanha a demo o tempo todo —
+				   viaja na diagonal e encolhe junto quando --demo-w cai para
+				   a medida pinada, mantendo sempre a mesma moldura. Em
+				   repouso os números dão a largura útil da seção (158px de
+				   sobra de cada lado sobre as 10 colunas = 10,207%) e os
+				   64px em cima e embaixo (6,867% da altura de repouso). Só
+				   no desktop; no mobile a demo já toma a largura toda. */}
+				<div
+					data-demo-bg
+					className="pointer-events-none absolute inset-x-[-10.207%] inset-y-[-6.867%] -z-10 hidden rounded-2xl bg-[url(/bg.png)] bg-cover bg-center lg:block"
+				/>
 				{/* Frame do app — único elemento com overflow-hidden (leaf:
-				   nunca um ancestral do sticky). */}
-				<div className="bg-card/95 flex h-full overflow-hidden rounded-lg border shadow-2xl">
+				   nunca um ancestral do sticky). Opaco (e não bg-card/95):
+				   com a banda atrás, translúcido sujaria a UI do app. */}
+				<div className="bg-card flex h-full overflow-hidden rounded-lg border shadow-2xl">
 					<AppSidebar t={t} />
 					<div className="flex min-w-0 flex-1 flex-col">
 						<AppHeader t={t} />

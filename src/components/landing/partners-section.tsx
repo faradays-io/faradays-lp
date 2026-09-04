@@ -187,8 +187,8 @@ export function PartnersSection() {
 	}, [ready])
 
 	return (
-		<section id="partners" ref={rootRef} className="px-7 py-24 md:py-36">
-			<div className="w-full">
+		<section id="partners" ref={rootRef} className="py-24 md:py-36">
+			<div className="max-w-page mx-auto w-full px-[var(--gutter)]">
 				<div className="border-border border">
 					<div className="border-border border-b px-5 py-4">
 						<h2

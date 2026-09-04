@@ -25,10 +25,15 @@ gsap.registerPlugin(ScrollTrigger)
  * trava no centro da viewport.
  *
  * Coreografia (desktop, tudo por gatilho — nada de scrub):
- * 1. Em repouso a demo está um pouco mais larga (--demo-w 1.15) e mais
- *    alta que a posição pinada. O primeiro scroll down toca a diagonal
- *    até a metade direita — e, junto, a largura volta a 1 e o lift some —
- *    em sincronia com a saída do CTA no HomeHero.
+ * 1. Em repouso a demo abre na largura da grade do hero (--demo-w 1),
+ *    sobre a banda de fundo, pousada `--hero-gap` abaixo do hero (e não
+ *    centrada na camada). O primeiro scroll down toca a diagonal até a
+ *    metade direita — e, junto, a demo volta à medida pinada (--demo-w 0)
+ *    e ao centro da viewport — em sincronia com a saída do CTA no
+ *    HomeHero. Tamanho e recuo de repouso vivem no CSS (`.demo-box`),
+ *    amarrados a --demo-w. A banda vai junto: é filha do box e tem
+ *    margens proporcionais, então acompanha a demo em posição e tamanho
+ *    durante toda a coreografia.
  * 2. O texto 1 sobe pela esquerda e SEGURA no centro (container de 300svh
  *    com conteúdo sticky). No início do hold um cursor animado clica no
  *    PDF da conversa e o card de preview surge logo em seguida (mesma
@@ -118,25 +123,27 @@ export function HeroFeatureFlow() {
 			const reduce = window.matchMedia(
 				'(prefers-reduced-motion: reduce)'
 			).matches
-			// Deslocamento da diagonal. 25vw centralizaria a demo na metade
-			// direita; são 22vw porque a caixa hoje mede 52vw — com 25 ela
-			// encostaria na borda da tela (a margem é 50% - largura/2 -
-			// shift). Com 22vw sobram ~29px de respiro à direita, os mesmos
-			// de quando a caixa era mais estreita.
-			const shift = () => window.innerWidth * 0.22
+			// Deslocamento da diagonal, em fração da largura do stage. 25%
+			// centralizaria a demo na metade direita; são 22% porque a caixa
+			// mede 52% enquanto o vw manda (a margem é 50% - largura/2 -
+			// shift) — com 25 ela encostaria na borda. Assim sobram ~29px de
+			// respiro à direita; do ponto em que a caixa trava em 52rem para
+			// cima a margem só cresce. A base é o stage, não o viewport:
+			// acima de 1920px ele para de crescer (`max-w-page`) e a
+			// diagonal para junto, dentro do canvas.
+			const shift = () => stage.offsetWidth * 0.22
 			const vh = () => window.innerHeight
-			// Lift de repouso: na dobra a demo fica ~5svh acima do centro
-			// da sua camada (mais perto do CTA); some conforme a diagonal
-			// avança, então a posição pinada continua a de sempre.
-			const lift = () => Math.round(vh() * 0.05)
 
-			// Compensador de pin: aplica o y da diagonal a cada frame,
-			// misturado com o lift de repouso pelo mesmo progresso.
+			/* Compensador de pin: aplica o y da diagonal a cada frame. O
+			   recuo de repouso (a demo pousando abaixo do hero) não mora
+			   mais aqui — é o `translateY` do `.demo-box` no CSS, amarrado
+			   ao mesmo --demo-w, então não há medida de altura em JS para
+			   ficar obsoleta num resize. */
 			const proxy = { p: 0 }
 			let lastY = 0
 			const applyY = () => {
 				const top = Math.max(0, root.getBoundingClientRect().top)
-				const y = -proxy.p * top - (1 - proxy.p) * lift()
+				const y = -proxy.p * top
 				if (y !== lastY) {
 					lastY = y
 					gsap.set(stage, { y })
@@ -145,8 +152,8 @@ export function HeroFeatureFlow() {
 			gsap.ticker.add(applyY)
 
 			// Diagonal centro → direita/cima, disparada no gatilho. No mesmo
-			// movimento a demo volta à largura pinada (--demo-w 1.15 → 1;
-			// a fórmula da largura vive no CSS do box).
+			// movimento a demo volta à medida pinada (--demo-w 1 → 0; a
+			// fórmula das duas medidas vive no CSS do box).
 			const out = gsap
 				.timeline({ paused: true })
 				.to(stage, { x: shift, duration: 1.1, ease: 'power3.inOut' }, 0)
@@ -154,7 +161,7 @@ export function HeroFeatureFlow() {
 			if (box) {
 				out.to(
 					box,
-					{ '--demo-w': 1, duration: 1.1, ease: 'power3.inOut' },
+					{ '--demo-w': 0, duration: 1.1, ease: 'power3.inOut' },
 					0
 				)
 			}
@@ -836,7 +843,10 @@ export function HeroFeatureFlow() {
 			   sticky viaja do painel até a última feature, soltando sozinho
 			   no fim. Nenhum ancestral pode ganhar overflow-hidden. */}
 			<div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-svh lg:bottom-0 lg:h-auto">
-				<div className="sticky top-0 h-svh">
+				{/* `max-w-page`: a demo (e a diagonal que a joga para a
+				   direita) vive dentro do canvas de 1920px — o fundo ASCII
+				   atrás continua sangrando até as bordas da tela. */}
+				<div className="max-w-page sticky top-0 mx-auto h-svh">
 					<div data-flow-intro className="h-full opacity-0">
 						<div
 							data-demo-stage

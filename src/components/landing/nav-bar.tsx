@@ -167,42 +167,52 @@ export function NavBar({
 	}, [])
 
 	return (
-		<header ref={headerRef} className="fixed inset-x-0 top-0 z-50 p-7">
-			<nav className="flex h-9 w-full items-center justify-between">
-				<div className="flex items-center gap-10">
-					<Link
-						href="/"
-						data-nav-item
-						aria-label="Faradays"
-						className="flex items-center opacity-0"
-					>
-						<FaradaysLockup className="h-6 w-auto" />
-					</Link>
-					{solutions && <SolutionsMenu />}
-					{pricing && <PricingLink />}
-				</div>
-
-				<div className="flex items-center gap-3">
-					<SplitHoverText
-						as="button"
-						data-nav-item
-						aria-label={t.switchLang}
-						onClick={() => setLang(targetLang)}
-						className="bg-background text-foreground/80 hover:text-foreground flex size-9 items-center justify-center rounded-md border font-mono text-sm font-semibold uppercase opacity-0 transition-colors"
-					>
-						{lang}
-					</SplitHoverText>
-					<Button
-						asChild
-						data-nav-item
-						className="h-9 px-5 font-sans text-base normal-case opacity-0"
-					>
-						<Link href="#cta">
-							<SplitHoverText as="span">{t.demo}</SplitHoverText>
+		<header ref={headerRef} className="fixed inset-x-0 top-0 z-50">
+			{/* Mesmo canvas das seções (`max-w-page` + goteira de 28px):
+			   acima de 1920px a nav centraliza com o resto da página em vez
+			   de esticar até as bordas da tela. A goteira conta dentro da
+			   medida, então a logo alinha com o conteúdo das seções — e o
+			   padding vertical segue em 1.75rem, que é o que dá os 92px de
+			   altura que o `pt-23` do main compensa. */}
+			<div className="max-w-page mx-auto w-full px-[var(--gutter)] py-7">
+				<nav className="flex h-9 w-full items-center justify-between">
+					<div className="flex items-center gap-10">
+						<Link
+							href="/"
+							data-nav-item
+							aria-label="Faradays"
+							className="flex items-center opacity-0"
+						>
+							<FaradaysLockup className="h-6 w-auto" />
 						</Link>
-					</Button>
-				</div>
-			</nav>
+						{solutions && <SolutionsMenu />}
+						{pricing && <PricingLink />}
+					</div>
+
+					<div className="flex items-center gap-3">
+						<SplitHoverText
+							as="button"
+							data-nav-item
+							aria-label={t.switchLang}
+							onClick={() => setLang(targetLang)}
+							className="bg-background text-foreground/80 hover:text-foreground flex size-9 items-center justify-center rounded-md border font-mono text-sm font-semibold uppercase opacity-0 transition-colors"
+						>
+							{lang}
+						</SplitHoverText>
+						<Button
+							asChild
+							data-nav-item
+							className="h-9 px-5 font-sans text-base normal-case opacity-0"
+						>
+							<Link href="#cta">
+								<SplitHoverText as="span">
+									{t.demo}
+								</SplitHoverText>
+							</Link>
+						</Button>
+					</div>
+				</nav>
+			</div>
 		</header>
 	)
 }

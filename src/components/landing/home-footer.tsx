@@ -4,14 +4,18 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useEffect, useRef } from 'react'
 
+import { SplitHoverText } from '@/components/custom-ui/split-hover-text'
 import { CopyEmail } from '@/components/landing/copy-email'
 import { FaradaysWordmark } from '@/components/landing/faradays-wordmark'
 import { LEGAL_PAGES } from '@/components/landing/legal-data'
 import { SOLUTIONS } from '@/components/landing/solutions-data'
 import { useCopy, useLang } from '@/components/language-provider'
+import { AiGradientButton } from '@/components/ui/ai-gradient-button'
+import { ptSerif } from '@/lib/fonts'
 import type { Lang, Localized } from '@/lib/i18n'
 import { BOOKING_URL, CONTACT_EMAIL, CONTACT_MAILTO } from '@/lib/links'
 import { usePageReady } from '@/lib/page-ready'
+import { cn } from '@/lib/utils'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -24,6 +28,8 @@ const COPY = {
 	pt: {
 		tagline: 'Inteligência artificial aplicada à sua operação.',
 		location: 'São Paulo · Brasil',
+		ctaHeading: 'Veja a Faradays operando com os seus dados',
+		ctaSub: 'Uma demo de 30 minutos, sem compromisso: você traz um fluxo real da operação e a gente mostra o que muda.',
 		browse: 'Navegue',
 		product: 'Produto',
 		partners: 'Parceiros',
@@ -37,6 +43,8 @@ const COPY = {
 	en: {
 		tagline: 'Artificial intelligence applied to your operation.',
 		location: 'São Paulo · Brazil',
+		ctaHeading: 'See Faradays running on your data',
+		ctaSub: 'A 30-minute demo, no strings attached: you bring a real workflow from your operation and we show what changes.',
 		browse: 'Browse',
 		product: 'Product',
 		partners: 'Partners',
@@ -63,8 +71,7 @@ const footerColumns = (lang: Lang) => {
 				{ label: t.partners, href: '/distribuicao#partners' },
 				{ label: t.testimonials, href: '/distribuicao#testimonials' },
 				{ label: t.pricing, href: '/distribuicao/precos' },
-				{ label: 'Blog', href: '/blog' },
-				{ label: t.bookDemo, href: BOOKING_URL }
+				{ label: 'Blog', href: '/blog' }
 			]
 		},
 		{
@@ -156,8 +163,52 @@ export function HomeFooter() {
 			ref={rootRef}
 			className="relative flex min-h-svh flex-col justify-end overflow-hidden pb-9"
 		>
+			{/* CTA de fechamento — mora aqui em vez de numa seção própria.
+			   `id="cta"` mudou de casa junto: é o alvo dos links "Veja uma
+			   demo" da nav e do hero.
+
+			   A banda sangra de ponta a ponta da tela (só ela — o resto do
+			   rodapé segue no canvas) e o card por cima segura a copy
+			   empilhada. Sem `pb`: o card encosta na borda de baixo da
+			   banda, como na referência — é o respiro no topo que define a
+			   altura da faixa: o `min-h` dá a altura da banda e o card
+			   encosta na base dela (`items-end`), então a sobra de imagem
+			   fica toda acima dele. Encostado embaixo, o card perde o raio
+			   nos cantos de baixo e a sombra sai só para a direita (a luz
+			   da foto vem da esquerda). O `overflow-hidden` corta o que
+			   dela passaria da borda inferior da banda. */}
+			<div
+				id="cta"
+				className="mb-20 flex min-h-[56rem] w-full items-end overflow-hidden bg-[url(/bg.png)] bg-cover bg-center px-[var(--gutter)] pt-24"
+			>
+				<div className="bg-card/50 mx-auto flex min-h-[32rem] w-full max-w-3xl flex-col items-center justify-center rounded-t-2xl px-10 py-14 text-center shadow-[2rem_0_4rem_-1rem_rgba(0,0,0,0.35)] backdrop-blur-xl md:px-14 md:py-20">
+					<h2
+						className={cn(
+							ptSerif.className,
+							'w-full text-[5rem]/[1.02] font-normal text-balance'
+						)}
+					>
+						{t.ctaHeading}
+					</h2>
+					<p className="text-foreground/70 mt-6 w-full text-xl/[1.35] text-pretty">
+						{t.ctaSub}
+					</p>
+					<AiGradientButton asChild className="mt-10">
+						<a
+							href={BOOKING_URL}
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							<SplitHoverText as="span">
+								{t.bookDemo}
+							</SplitHoverText>
+						</a>
+					</AiGradientButton>
+				</div>
+			</div>
+
 			{/* Colunas de navegação: tagline à esquerda, links à direita. */}
-			<div className="grid gap-12 px-7 pb-24 md:grid-cols-[1fr_repeat(3,auto)] md:gap-20 lg:gap-28">
+			<div className="max-w-page mx-auto grid w-full gap-12 px-[var(--gutter)] pt-16 pb-24 md:grid-cols-[1fr_repeat(3,auto)] md:gap-20 lg:gap-28">
 				<div className="flex max-w-sm flex-col gap-4">
 					<p className="font-heading text-h4 text-balance">
 						{t.tagline}
@@ -198,11 +249,14 @@ export function HomeFooter() {
 			{/* Wordmark SVG único, de ponta a ponta da tela; animado só em
 			   md+ (no mobile fica estático). Cada glifo é um <g.wm-letter>
 			   que o arco no scroll gira/desce individualmente. */}
-			<div ref={wordRef} className="w-full px-4 select-none md:px-7">
+			<div
+				ref={wordRef}
+				className="max-w-page mx-auto w-full px-4 select-none md:px-[var(--gutter)]"
+			>
 				<FaradaysWordmark className="block w-full" />
 			</div>
 
-			<div className="flex flex-col items-center gap-3 px-7 font-mono text-sm tracking-widest uppercase lg:flex-row lg:justify-between">
+			<div className="max-w-page mx-auto flex w-full flex-col items-center gap-3 px-[var(--gutter)] font-mono text-sm tracking-widest uppercase lg:flex-row lg:justify-between">
 				<ul className="flex items-center gap-4">
 					{LEGAL_PAGES.map((page) => (
 						<li key={page.slug}>
