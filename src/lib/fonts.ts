@@ -2,8 +2,10 @@ import {
 	Geist,
 	Geist_Mono,
 	JetBrains_Mono,
+	Libre_Baskerville,
 	Manrope,
 	Merriweather,
+	PT_Serif,
 	Space_Grotesk
 } from 'next/font/google'
 import localFont from 'next/font/local'
@@ -45,6 +47,23 @@ export const merriweather = Merriweather({
 	subsets: ['latin'],
 	display: 'swap',
 	variable: '--font-merriweather'
+})
+/* Exceção à regra do bloco: Libre Baskerville NÃO é variável — só existem
+   Regular 400, Italic 400 e Bold 700 —, então as instâncias vêm listadas.
+   Sem 600: pedir `font-semibold` cai no 700 pelo casamento do browser
+   (para peso > 500 ele procura primeiro os pesos acima), sem falso negrito. */
+export const libreBaskerville = Libre_Baskerville({
+	subsets: ['latin'],
+	weight: ['400', '700'],
+	display: 'swap',
+	variable: '--font-libre-baskerville'
+})
+// Mesma história da anterior: PT Serif também não é variável (400/700).
+export const ptSerif = PT_Serif({
+	subsets: ['latin'],
+	weight: ['400', '700'],
+	display: 'swap',
+	variable: '--font-pt-serif'
 })
 
 // ---- Local (src relative to this file) ----------------------------
@@ -175,6 +194,18 @@ export const SPECIMENS: FontSpecimen[] = [
 		category: 'serif',
 		source: 'google',
 		className: merriweather.className
+	},
+	{
+		name: 'Libre Baskerville',
+		category: 'serif',
+		source: 'google',
+		className: libreBaskerville.className
+	},
+	{
+		name: 'PT Serif',
+		category: 'serif',
+		source: 'google',
+		className: ptSerif.className
 	}
 ]
 

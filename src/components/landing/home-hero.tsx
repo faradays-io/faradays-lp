@@ -9,8 +9,10 @@ import { HeroToolIcons } from '@/components/landing/hero-tool-icons'
 import { useRecedeOut } from '@/components/landing/recede-out'
 import { useCopy } from '@/components/language-provider'
 import { AiGradientButton } from '@/components/ui/ai-gradient-button'
+import { ptSerif } from '@/lib/fonts'
 import type { Localized } from '@/lib/i18n'
 import { usePageReady } from '@/lib/page-ready'
+import { cn } from '@/lib/utils'
 
 export const HERO_COPY = {
 	pt: {
@@ -34,11 +36,15 @@ export const HERO_COPY = {
 } satisfies Localized<Record<string, string>>
 
 /**
- * Hero claro (copy no padrão do hero da rota raiz): pill de anúncio,
- * headline display, sub e CTAs com entrada em stagger disparada pelo fim da
- * page transition. O painel ASCII + demo vive logo abaixo, no
- * HeroFeatureFlow — o min-h de 60svh deixa ~40svh dele visível na dobra,
- * o que convida o scroll.
+ * Hero claro: headline à esquerda, sub e CTA à direita, com entrada em
+ * stagger disparada pelo fim da page transition. O painel ASCII + demo vive
+ * logo abaixo, no HeroFeatureFlow — o min-h de 60svh deixa ~40svh dele
+ * visível na dobra, o que convida o scroll.
+ *
+ * Layout na grade de 12 com as colunas laterais vazias (headline nas 2-6,
+ * sub + botão nas 7-11): esse miolo é a medida `--grid-10` do globals.css,
+ * a mesma em que a demo abre logo abaixo — o hero e a demo compartilham as
+ * duas bordas.
  */
 export function HomeHero() {
 	const t = useCopy(HERO_COPY)
@@ -85,49 +91,69 @@ export function HomeHero() {
 			ref={rootRef}
 			className="relative z-10 -mt-23 flex flex-col pt-23"
 		>
-			{/* Copy + CTA — min-h calculado para deixar ~40svh do painel do
-			   HeroFeatureFlow visível na dobra. O padding assimétrico
-			   (pt > pb) empurra o bloco ~40px abaixo do centro, mais perto
-			   da demo. */}
+			{/* Copy + CTA — altura pelo conteúdo, sem nenhuma medida em
+			   svh: o bloco mede padding + copy e ponto, então o respiro
+			   abaixo do texto é sempre o mesmo, seja qual for a altura da
+			   tela. O `pb` é o `--hero-gap`, o mesmo respiro que a demo usa
+			   para pousar logo abaixo daqui — mexer nele move os dois. */}
 			<div
 				ref={copyRef}
 				data-hero-copy
-				className="flex min-h-[calc(60svh-5.75rem)] w-full flex-col items-center justify-center px-7 pt-24 pb-8 text-center"
+				className="my-24 w-full pt-16 pb-[var(--hero-gap)]"
 			>
-				<h1
-					data-hero-item
-					className="font-heading max-w-3xl text-6xl text-balance opacity-0"
-				>
-					{t.headlineLead}{' '}
-					{/* Última palavra + ícones num nowrap: o slot nunca cai
-					   sozinho na linha de baixo. */}
-					<span className="whitespace-nowrap">
-						{t.headlineTail}{' '}
-						<HeroToolIcons
-							label={t.toolsLabel}
-							className="ml-[0.05em]"
-						/>
-					</span>
-				</h1>
+				<div className="max-w-page mx-auto w-full px-[var(--gutter)]">
+					{/* Das 10 colunas do miolo: 5 para a headline, a 7 fica
+					   vazia como respiro e as 4 últimas levam sub + botão.
+					   Abaixo de lg a grade some e os dois blocos empilham —
+					   em coluna estreita não sobra medida para os dois lado
+					   a lado. As bases alinham: a sub encosta na última
+					   linha da headline, não no topo dela. */}
+					<div className="grid grid-cols-1 gap-x-[var(--grid-gap)] gap-y-8 lg:grid-cols-12 lg:items-end">
+						{/* TESTE de tipografia: PT Serif só nesta headline
+						   (a fonte não está no par ativo do registry, então
+						   vem pela className do next/font). `font-medium`
+						   cai no Regular 400 — a família não tem 500. */}
+						<h1
+							data-hero-item
+							className={cn(
+								ptSerif.className,
+								'text-[5rem]/[1.05] font-medium text-balance opacity-0 lg:col-span-5 lg:col-start-2'
+							)}
+						>
+							{t.headlineLead}{' '}
+							{/* Última palavra + ícones num nowrap: o slot
+							   nunca cai sozinho na linha de baixo. */}
+							<span className="whitespace-nowrap">
+								{t.headlineTail}{' '}
+								<HeroToolIcons
+									label={t.toolsLabel}
+									className="ml-[0.05em]"
+								/>
+							</span>
+						</h1>
 
-				<p
-					data-hero-item
-					className="text-body-lg text-foreground/70 mt-6 max-w-xl text-balance opacity-0"
-				>
-					{t.sub}
-				</p>
+						<div className="lg:col-span-4 lg:col-start-8">
+							<p
+								data-hero-item
+								className="text-body-lg text-foreground/70 max-w-xl text-pretty opacity-0"
+							>
+								{t.sub}
+							</p>
 
-				<div
-					data-hero-item
-					className="mt-8 flex items-center gap-3 opacity-0"
-				>
-					<AiGradientButton asChild>
-						<Link href="#cta">
-							<SplitHoverText as="span">
-								{t.bookDemo}
-							</SplitHoverText>
-						</Link>
-					</AiGradientButton>
+							<div
+								data-hero-item
+								className="mt-8 flex items-center gap-3 opacity-0"
+							>
+								<AiGradientButton asChild>
+									<Link href="#cta">
+										<SplitHoverText as="span">
+											{t.bookDemo}
+										</SplitHoverText>
+									</Link>
+								</AiGradientButton>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</section>

@@ -278,6 +278,14 @@
 	/* `max-w-section` — shared content width of every landing section. */
 	--container-section: 115rem;
 
+	/* `max-w-page` — teto da interface (1920px). Acima disso o conteúdo
+	   para de esticar e centraliza; só os fundos das seções seguem
+	   sangrando até as bordas da tela. O padrão é o wrapper interno da
+	   seção: `mx-auto w-full max-w-page px-7` — a medida inclui a
+	   goteira, então a largura útil trava em 1864px de 1920px pra cima
+	   (nada de o conteúdo alargar de novo em telas maiores). */
+	--container-page: 120rem;
+
 	/* Giro da fita de IA como utilitário (`animate-ai-sweep`), para o botão
 	   de CTA: reaproveita as keyframes `ai-sweep` da identidade de IA (0 →
 	   200% de background-position). `--speed` afina a volta por instância. */
@@ -331,6 +339,68 @@
 		58% {
 			transform: translateY(-12px);
 		}
+	}
+}
+
+/* Grade das seções — 12 colunas com as laterais (1 e 12) vazias, então o
+   miolo mede 10 colunas + 9 goteiras. `--grid-10` resolve essa medida a
+   partir do canvas, e não de um pai: o hero (que a monta com `grid-cols-12`
+   + `col-start`) e a demo (que vive noutra camada, sticky) pousam na mesma
+   largura sem depender um do outro. A conta fecha porque toda seção mede
+   `min(100vw, --container-page)` menos as duas goteiras (`--gutter`).
+   `--grid-gap` é o afinador: mexer nele move os dois juntos. */
+:root {
+	/* Goteira lateral do canvas: o `px` de toda seção da landing e a
+	   margem que a nav e o rodapé respeitam. Mexer aqui move todos. */
+	--gutter: 2.5rem;
+	--grid-gap: 2rem;
+	--section-w: calc(min(100vw, var(--container-page)) - var(--gutter) * 2);
+	/* 10 colunas + 9 gaps de uma grade de 12 = (5·W − gap) / 6. */
+	--grid-10: calc((var(--section-w) * 5 - var(--grid-gap)) / 6);
+
+	/* Respiro entre o hero e a demo. É o `pb` do bloco de copy do hero E o
+	   recuo de repouso da demo (ver `.demo-box`): mexer aqui move os dois
+	   juntos, que é o ponto — a demo pousa a partir do hero, não do centro
+	   da própria camada. */
+	--hero-gap: 5rem;
+}
+
+/* Os dois tamanhos da demo do fluxo de features e a interpolação entre
+   eles. Em repouso ela abre na medida da grade do hero; ao tocar a diagonal
+   volta à largura pinada de sempre (52rem). `--demo-w` é o fator que o
+   flow tweena (1 = repouso, 0 = pinada) — o CSS resolve as duas medidas,
+   então resize não descalibra nada. A altura acompanha a largura pela
+   proporção de repouso de hoje (59,8rem × 36rem ≈ 1,6611): a demo cresce,
+   não estica. `max-height` é o teto do painel: em viewport baixa ela para
+   de crescer e volta a achatar, como já fazia. */
+@media (min-width: 64rem) {
+	.demo-box {
+		--demo-pin-w: min(52rem, 52vw);
+		--demo-pin-h: 36rem;
+		--demo-rest-w: var(--grid-10);
+		--demo-rest-h: calc(var(--grid-10) / 1.6611);
+		width: calc(
+			var(--demo-pin-w) + (var(--demo-rest-w) - var(--demo-pin-w)) *
+				var(--demo-w)
+		);
+		height: calc(
+			var(--demo-pin-h) + (var(--demo-rest-h) - var(--demo-pin-h)) *
+				var(--demo-w)
+		);
+		max-height: 100%;
+		/* Posição de repouso: a demo pousa exatamente `--hero-gap` abaixo
+		   do topo da camada — que começa onde a margem do hero acaba —, em
+		   vez de centrada nela. A conta leva o box do centro para lá: −50svh
+		   é meio painel, +50% é meia altura do próprio box; os dois se
+		   cancelam com o centro e sobra só o respiro, igual em qualquer
+		   altura de tela. O fator --demo-w derrete o recuo junto com a
+		   diagonal, então a posição pinada continua a de sempre — e como é
+		   o mesmo fator da largura, os dois andam em sincronia sem nenhuma
+		   linha de JS. Sem trava para viewport baixa: o respiro é fixo, e
+		   se a demo passar da borda do painel ela passa (nada corta). */
+		transform: translateY(
+			calc((var(--hero-gap) - 50svh + 50%) * var(--demo-w))
+		);
 	}
 }
 
