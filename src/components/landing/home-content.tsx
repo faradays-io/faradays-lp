@@ -38,9 +38,14 @@ const COPY = {
 } satisfies Localized<Record<string, string>>
 
 /* A estilização é a mesma do resto do site (Aspekta/Fixel, rota em mono
-   como dispositivo estrutural, fundo `.light-home`). `row-ai-hover` põe a
-   varredura de IA no hover de toda linha do índice — nas linhas "(em breve)"
-   ela fica inerte, que elas não recebem ponteiro. */
+   como dispositivo estrutural, fundo `.light-home`). `row-ai-hover` arma o
+   gradiente da identidade no título da linha do índice — nas linhas
+   "(em breve)" ele nem entra: o texto delas é semitransparente
+   (`text-foreground/50`) e deixaria a fita vazar pelo alfa em repouso. O
+   tinte de fundo do hover mora nos Links pelo mesmo motivo — linha inerte
+   não recebe ponteiro. O `justify-self-start` do título é o que faz a fita
+   aparecer como gradiente: ela mede a caixa, e esticada na coluna `1fr` o
+   texto veria só uma fatia, quase chapada. */
 const NAV_ROW =
 	'row-ai-hover border-border grid gap-1 border-b px-2 py-4 sm:grid-cols-[8rem_1fr_auto] sm:items-baseline sm:gap-6'
 
@@ -98,9 +103,10 @@ export function HomeContent() {
 								</span>
 								<span
 									className={cn(
-										'font-heading text-h5',
-										!solution.available &&
-											'text-foreground/50'
+										'font-heading text-h5 justify-self-start',
+										solution.available
+											? 'row-ai-hover-title'
+											: 'text-foreground/50'
 									)}
 								>
 									{solution.name[lang]}
@@ -123,7 +129,8 @@ export function HomeContent() {
 										href={solution.slug}
 										className={cn(
 											NAV_ROW,
-											index === 0 && 'border-t'
+											index === 0 && 'border-t',
+											'hover:bg-foreground/[0.03] transition-colors'
 										)}
 									>
 										{inner}
@@ -144,11 +151,19 @@ export function HomeContent() {
 						)
 					})}
 					<Reveal y={16} delay={0.15 + SOLUTIONS.length * 0.05}>
-						<Link href="/blog" className={NAV_ROW}>
+						<Link
+							href="/blog"
+							className={cn(
+								NAV_ROW,
+								'hover:bg-foreground/[0.03] transition-colors'
+							)}
+						>
 							<span className="text-brand font-mono text-sm">
 								/blog
 							</span>
-							<span className="font-heading text-h5">Blog</span>
+							<span className="row-ai-hover-title font-heading text-h5 justify-self-start">
+								Blog
+							</span>
 						</Link>
 					</Reveal>
 				</nav>

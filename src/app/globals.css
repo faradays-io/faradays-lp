@@ -430,34 +430,28 @@
 	animation: ai-sweep 2.2s linear infinite;
 }
 
-/* Mesma varredura armada no hover: é o realce das linhas do índice da home
-   (soluções e blog) quando o ponteiro passa. A fita mora numa camada
-   própria porque background-image não interpola — o que entra em fade é a
-   opacidade dela. `z-index: -1` mantém a camada atrás do texto da linha
-   (elemento posicionado pinta depois de irmão estático). Só onde há hover
-   de verdade: no toque o :hover fica preso depois do tap. */
+/* Realce das linhas do índice da home (soluções e blog): o fundo fica com o
+   tinte neutro do resto do site e quem acende é o título, que assume a fita
+   da identidade. A fita já está pintada e recortada no glifo em repouso —
+   invisível sob a cor sólida do texto —, então o que entra em fade é o
+   `color`: transparent revela o gradiente, e isso interpola (background-image
+   não interpolaria). Só onde há hover de verdade: no toque o :hover fica
+   preso depois do tap. */
 @media (hover: hover) {
-	.row-ai-hover {
-		position: relative;
+	.row-ai-hover .row-ai-hover-title {
+		background: var(--ai-ribbon);
+		background-size: 200% 100%;
+		-webkit-background-clip: text;
+		background-clip: text;
+		transition: color 0.25s;
 	}
-	.row-ai-hover::before {
-		content: '';
-		position: absolute;
-		z-index: -1;
-		inset: 0;
-		background: var(--ai-row-sweep);
-		background-size: 280% 100%;
-		opacity: 0;
-		transition: opacity 0.2s;
-		pointer-events: none;
-	}
-	.row-ai-hover:hover::before {
-		opacity: 1;
-		animation: ai-sweep 2.2s linear infinite;
+	.row-ai-hover:hover .row-ai-hover-title {
+		color: transparent;
+		animation: ai-sweep 1.8s linear infinite;
 	}
 }
 @media (prefers-reduced-motion: reduce) {
-	.row-ai-hover:hover::before {
+	.row-ai-hover:hover .row-ai-hover-title {
 		animation: none;
 	}
 }
