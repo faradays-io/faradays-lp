@@ -15,8 +15,8 @@ export const HOME_FEATURES = [
 			en: 'Your rep runs everything through chat'
 		},
 		description: {
-			pt: 'Texto, áudio ou foto: o rep pede, a IA junta o que falta numa pergunta só e devolve a cotação formalizada em PDF no próprio chat — além de preço, estoque, pedidos e boletos. Na dúvida, ela pergunta; número não sai de palpite.',
-			en: 'Text, voice or photo: the rep asks, the AI gathers what is missing in a single question and returns the formalized quote as a PDF right in the chat — plus prices, stock, orders and invoices. When in doubt, it asks; numbers never come from guesswork.'
+			pt: 'Texto, áudio ou foto: o rep pede, a IA junta o que falta numa pergunta só e devolve a cotação formalizada em PDF no próprio chat — além de preço, estoque, pedidos e boletos.',
+			en: 'Text, voice or photo: the rep asks, the AI gathers what is missing in a single question and returns the formalized quote as a PDF right in the chat — plus prices, stock, orders and invoices.'
 		},
 		graphic: 2
 	},
@@ -68,9 +68,12 @@ export const HOME_FEATURES = [
 }[]
 
 /* Grade "e mais" — as demais frentes do produto, em uma linha cada
-   (decisão 3.1: nada fica de fora; o que não é destaque vira resumo). */
+   (decisão 3.1: nada fica de fora; o que não é destaque vira resumo).
+   `id` é a chave estável de cada item: a v2 puxa 'portal' daqui para a
+   lista do FeatureIndex, sem duplicar a copy. */
 export const MORE_FEATURES = [
 	{
+		id: 'pedidos',
 		title: {
 			pt: 'Pedidos, faturamento e crédito',
 			en: 'Orders, invoicing and credit'
@@ -81,6 +84,7 @@ export const MORE_FEATURES = [
 		}
 	},
 	{
+		id: 'catalogo',
 		title: {
 			pt: 'Catálogo e tabela mensal',
 			en: 'Catalog and monthly price list'
@@ -91,6 +95,7 @@ export const MORE_FEATURES = [
 		}
 	},
 	{
+		id: 'clientes',
 		title: {
 			pt: 'Clientes e carteira',
 			en: 'Clients and portfolio'
@@ -101,6 +106,7 @@ export const MORE_FEATURES = [
 		}
 	},
 	{
+		id: 'estoque',
 		title: {
 			pt: 'Estoque por lote',
 			en: 'Stock by batch'
@@ -111,6 +117,7 @@ export const MORE_FEATURES = [
 		}
 	},
 	{
+		id: 'sharepoint',
 		title: {
 			pt: 'Espelho do SharePoint',
 			en: 'SharePoint mirror'
@@ -121,6 +128,7 @@ export const MORE_FEATURES = [
 		}
 	},
 	{
+		id: 'email',
 		title: {
 			pt: 'E-mail Microsoft 365',
 			en: 'Microsoft 365 e-mail'
@@ -131,6 +139,7 @@ export const MORE_FEATURES = [
 		}
 	},
 	{
+		id: 'portal',
 		title: {
 			pt: 'Portal ao vivo',
 			en: 'Live portal'
@@ -141,6 +150,7 @@ export const MORE_FEATURES = [
 		}
 	},
 	{
+		id: 'auditoria',
 		title: {
 			pt: 'Operação e auditoria',
 			en: 'Operations and audit'
@@ -151,6 +161,7 @@ export const MORE_FEATURES = [
 		}
 	}
 ] as const satisfies readonly {
+	id: string
 	title: Localized<string>
 	description: Localized<string>
 }[]

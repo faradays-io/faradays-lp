@@ -291,6 +291,21 @@
 	   200% de background-position). `--speed` afina a volta por instância. */
 	--animate-ai-sweep: ai-sweep var(--speed, 2s) infinite linear;
 
+	/* Entrada de um balão no painel de chat da v2 (`animate-bubble-in`):
+	   aparece crescendo a partir do canto de baixo (o origin fica no
+	   elemento). `both` segura o estado final. */
+	--animate-bubble-in: bubble-in 0.3s ease-out both;
+	@keyframes bubble-in {
+		from {
+			opacity: 0;
+			transform: scale(0.75);
+		}
+		to {
+			opacity: 1;
+			transform: scale(1);
+		}
+	}
+
 	/* Slow ken-burns pan for ambient/mock media blocks. */
 	--animate-slow-pan: slow-pan 24s ease-in-out infinite alternate;
 	@keyframes slow-pan {
@@ -467,6 +482,14 @@
 	-webkit-background-clip: text;
 	background-clip: text;
 	color: transparent;
+	animation: ai-sweep 1.8s linear infinite;
+}
+
+/* Fita de IA como superfície (o anel da borda do painel de chat da v2
+   enquanto a IA "digita"): a mesma fita do shimmer, girando. */
+.ai-ribbon-fill {
+	background: var(--ai-ribbon);
+	background-size: 200% 100%;
 	animation: ai-sweep 1.8s linear infinite;
 }
 
