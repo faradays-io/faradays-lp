@@ -33,6 +33,18 @@ export const LEGAL_PAGES = [
 		}
 	},
 	{
+		slug: '/exclusao-de-dados',
+		label: { pt: 'Exclusão de dados', en: 'Data deletion' },
+		title: {
+			pt: 'Como pedir a exclusão dos seus dados',
+			en: 'How to request deletion of your data'
+		},
+		description: {
+			pt: 'O passo a passo para pedir a eliminação de dados pessoais tratados pela Faradays, inclusive os obtidos pelo WhatsApp, o prazo de atendimento e o que a lei nos obriga a manter.',
+			en: 'The step-by-step to request deletion of personal data processed by Faradays, including data obtained through WhatsApp, the response time and what the law requires us to keep.'
+		}
+	},
+	{
 		slug: '/subprocessadores',
 		label: { pt: 'Subprocessadores', en: 'Subprocessors' },
 		title: {

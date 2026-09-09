@@ -47,7 +47,37 @@ const CONTENT: Localized<LegalContent> = {
 			{
 				heading: 'Cookies da Plataforma',
 				body: [
-					'A Plataforma contratada pelos nossos clientes usa cookies de **sessão** para manter o Usuário autenticado depois do login. São estritamente necessários: sem eles não há como saber quem está acessando. Expiram ao fim da sessão ou do prazo configurado pelo provedor de identidade.'
+					'A Plataforma contratada pelos nossos clientes, servida em subdomínios de faradays.io, usa cookies de **sessão** para manter o Usuário autenticado depois do login. Todos são estritamente necessários: sem eles não há como saber quem está acessando.',
+					{
+						type: 'table',
+						head: [
+							'Cookie',
+							'Finalidade',
+							'Duração',
+							'Quem define'
+						],
+						rows: [
+							[
+								'_oauth2_proxy',
+								'Sessão autenticada do portal — prova, a cada requisição, que o login foi feito',
+								'7 dias',
+								'Faradays (proxy de autenticação)'
+							],
+							[
+								'_oauth2_proxy_csrf_*',
+								'Proteger o fluxo de login contra falsificação de requisição; um por tentativa de login',
+								'5 minutos',
+								'Faradays (proxy de autenticação)'
+							],
+							[
+								'AUTH_SESSION_ID, KEYCLOAK_SESSION, KEYCLOAK_IDENTITY, KC_RESTART',
+								'Sessão no provedor de identidade durante a autenticação e o login único',
+								'Sessão ou até o fim do prazo de login',
+								'Faradays (provedor de identidade Keycloak)'
+							]
+						]
+					},
+					'O painel de conversas também guarda no **armazenamento local do navegador** (localStorage) o estado da interface — quais conversas já foram lidas. Não contém dados de terceiros, não é enviado a servidor algum e é apagado pelas configurações do navegador.'
 				]
 			},
 			{
@@ -104,7 +134,32 @@ const CONTENT: Localized<LegalContent> = {
 			{
 				heading: 'Platform cookies',
 				body: [
-					'The Platform contracted by our customers uses **session** cookies to keep the User signed in after login. They are strictly necessary: without them there is no way to know who is accessing. They expire at the end of the session or of the period configured by the identity provider.'
+					'The Platform contracted by our customers, served on subdomains of faradays.io, uses **session** cookies to keep the User signed in after login. All are strictly necessary: without them there is no way to know who is accessing.',
+					{
+						type: 'table',
+						head: ['Cookie', 'Purpose', 'Duration', 'Set by'],
+						rows: [
+							[
+								'_oauth2_proxy',
+								'Authenticated portal session — proves, on each request, that login was completed',
+								'7 days',
+								'Faradays (authentication proxy)'
+							],
+							[
+								'_oauth2_proxy_csrf_*',
+								'Protect the login flow against request forgery; one per login attempt',
+								'5 minutes',
+								'Faradays (authentication proxy)'
+							],
+							[
+								'AUTH_SESSION_ID, KEYCLOAK_SESSION, KEYCLOAK_IDENTITY, KC_RESTART',
+								'Session at the identity provider during authentication and single sign-on',
+								'Session or until the login period ends',
+								'Faradays (Keycloak identity provider)'
+							]
+						]
+					},
+					"The conversations panel also keeps interface state — which conversations have been read — in the browser's **local storage** (localStorage). It contains no third-party data, is never sent to any server and is cleared through the browser settings."
 				]
 			},
 			{

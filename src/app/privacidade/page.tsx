@@ -115,6 +115,24 @@ const CONTENT: Localized<LegalContent> = {
 					},
 					{
 						type: 'sub',
+						heading:
+							'Dados recebidos da Meta e da WhatsApp Business Platform',
+						body: [
+							'O assistente funciona sobre a WhatsApp Business Platform, da Meta. Por meio da API oficial (Cloud API), a Plataforma recebe e trata, a cada conversa de um Representante:',
+							{
+								type: 'list',
+								items: [
+									'Número de WhatsApp e nome de perfil do Representante, como entregues pela Meta;',
+									'Conteúdo das mensagens recebidas e enviadas, identificadores de mensagem, horários e status de entrega;',
+									'Identificadores temporários das mídias, usados só para baixar o áudio ou a imagem e convertê-los em texto — o arquivo não é guardado;',
+									'Identificadores técnicos da conta WhatsApp Business (número, conta e aplicativo) e credenciais de acesso à API, guardadas como segredo.'
+								]
+							},
+							'Usamos esses dados exclusivamente para prestar o serviço ao Cliente — entender o pedido, responder e registrar a conversa no painel —, em conformidade com os Termos da Plataforma da Meta e com as políticas da WhatsApp Business Platform. Não os vendemos, não os usamos para publicidade nem para treinar modelos, e não os compartilhamos além do descrito no capítulo Com quem compartilhamos. A retenção segue o capítulo Por quanto tempo guardamos, e a eliminação pode ser pedida pelos passos em [/exclusao-de-dados](/exclusao-de-dados).'
+						]
+					},
+					{
+						type: 'sub',
 						heading: 'Dados coletados automaticamente no Site',
 						body: [
 							'O Site registra dados técnicos mínimos da navegação — endereço IP, data e hora, páginas acessadas, tipo de navegador e dispositivo — nos registros do servidor de hospedagem, para segurança e para cumprir o art. 15 do Marco Civil da Internet. O único cookie que o Site grava hoje guarda a sua preferência de idioma. Detalhes na [Política de Cookies](/cookies).'
@@ -344,7 +362,7 @@ const CONTENT: Localized<LegalContent> = {
 							'Petição à ANPD.'
 						]
 					},
-					'Podemos pedir comprovação de identidade antes de atender, para proteger os seus próprios dados. Respondemos aos pedidos nos prazos da LGPD; em casos complexos, informamos o andamento. Quando a Faradays atuar como Operadora, encaminharemos o pedido ao Cliente Controlador e o apoiaremos no atendimento.',
+					'O passo a passo para pedir eliminação está em [/exclusao-de-dados](/exclusao-de-dados). Podemos pedir comprovação de identidade antes de atender, para proteger os seus próprios dados. Respondemos aos pedidos nos prazos da LGPD; em casos complexos, informamos o andamento. Quando a Faradays atuar como Operadora, encaminharemos o pedido ao Cliente Controlador e o apoiaremos no atendimento.',
 					'Sobre decisões automatizadas: a inteligência artificial da Plataforma interpreta pedidos e redige respostas, mas preços, quantidades, tributos e permissões são decididos por regras determinísticas do sistema e os documentos emitidos são revisáveis por pessoas do Cliente. Nenhuma decisão com efeito jurídico sobre um Titular é tomada pela Plataforma sem intervenção humana do Cliente.'
 				]
 			},
@@ -488,6 +506,24 @@ const CONTENT: Localized<LegalContent> = {
 									'**SharePoint and OneDrive files.** When the administrator links a folder, the Platform mirrors file names, paths and metadata, and imports the content of documents within the linked scope.'
 								]
 							}
+						]
+					},
+					{
+						type: 'sub',
+						heading:
+							'Data received from Meta and the WhatsApp Business Platform',
+						body: [
+							"The assistant runs on Meta's WhatsApp Business Platform. Through the official API (Cloud API), the Platform receives and processes, in each conversation with a Representative:",
+							{
+								type: 'list',
+								items: [
+									"The Representative's WhatsApp number and profile name, as delivered by Meta;",
+									'Content of received and sent messages, message identifiers, timestamps and delivery status;',
+									'Temporary media identifiers, used only to download the audio or image and convert it to text — the file is not stored;',
+									'Technical identifiers of the WhatsApp Business account (number, account and app) and API access credentials, kept as secrets.'
+								]
+							},
+							"We use this data exclusively to provide the service to the Customer — understanding the request, replying and recording the conversation on the panel —, in compliance with Meta's Platform Terms and the WhatsApp Business Platform policies. We do not sell it, use it for advertising or to train models, or share it beyond what is described in the chapter Who we share your data with. Retention follows the chapter How long we keep your data, and deletion can be requested through the steps at [/exclusao-de-dados](/exclusao-de-dados)."
 						]
 					},
 					{
@@ -721,7 +757,7 @@ const CONTENT: Localized<LegalContent> = {
 							'Petition to the ANPD.'
 						]
 					},
-					'We may ask for proof of identity before responding, to protect your own data. We respond within the LGPD deadlines; in complex cases, we keep you informed of progress. Where Faradays acts as Processor, we will forward the request to the Customer as Controller and support them in responding.',
+					'The step-by-step to request deletion is at [/exclusao-de-dados](/exclusao-de-dados). We may ask for proof of identity before responding, to protect your own data. We respond within the LGPD deadlines; in complex cases, we keep you informed of progress. Where Faradays acts as Processor, we will forward the request to the Customer as Controller and support them in responding.',
 					"On automated decisions: the Platform's artificial intelligence interprets requests and drafts replies, but prices, quantities, taxes and permissions are decided by deterministic system rules, and issued documents can be reviewed by people at the Customer. No decision with legal effect on a Data Subject is made by the Platform without human intervention by the Customer."
 				]
 			},

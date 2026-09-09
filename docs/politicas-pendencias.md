@@ -72,12 +72,29 @@ Promessas feitas nas páginas que **ainda não existem no código** do
 | 3.12 | Aviso §4: "não usamos Dados do Cliente para treinar modelos"                        | Verdade (não há treino)                                                                                                           | —                                                                                                                     |
 | 3.13 | Repositório                                                                         | DANFE real e planilha reidentificável no histórico git (M31)                                                                      | Reescrever histórico ou aceitar e registrar como incidente interno                                                    |
 
+## 3b. Feito em 09/09 para a verificação da Meta
+
+- `/exclusao-de-dados` criada — é a URL para o campo **Data Deletion
+  Instructions** do app na Meta (Configurações → Básico). Junto com a URL da
+  política (`/privacidade`) e dos termos (`/termos`), preencher os três campos.
+- Aviso §3.4 nova: "Dados recebidos da Meta e da WhatsApp Business Platform".
+- `layout.tsx`: título e descrição placeholder substituídos.
+- `/new` e `/teste/*` saíram do ar (pastas privadas `_new` e `_teste`).
+  `/distribuicao/v2` (staging da v2) continua público — decidir.
+- Cookies do produto nomeados em `/cookies` (oauth2-proxy, Keycloak,
+  localStorage do painel). **Pendente no produto:** linkar `/cookies`,
+  `/privacidade` e `/termos` no rodapé do portal e na tela de login do
+  Keycloak — hoje quem entra em monfiza.faradays.io não vê aviso nenhum.
+- Os prazos da página de exclusão (confirmação em 5 dias úteis, conclusão em
+  15 dias) são assumidos — confirmar com o advogado; a LGPD fixa 15 dias só
+  para a resposta de acesso (art. 19).
+
 ## 4. Como os textos se ligam
 
 - `/politicas` é o índice (`LegalIndex`), no molde da central "Diretrizes e
   Políticas" que serviu de referência (ajuda.zdg.com.br).
 - Termos ⇄ Aviso remetem um ao outro; ambos remetem a `/subprocessadores` e
-  `/suporte`; Cookies remete ao Aviso. Trocar um slug exige atualizar os
+  `/suporte`; o Aviso remete a `/exclusao-de-dados`; Cookies remete ao Aviso. Trocar um slug exige atualizar os
   links inline `[texto](/rota)` nos conteúdos.
 - Rodapés da home e das páginas de produto mostram `FOOTER_LEGAL_LINKS`
   (Políticas · Termos · Privacidade · Cookies); o rodapé das páginas legais
