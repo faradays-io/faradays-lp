@@ -7,7 +7,7 @@ import type { Localized } from '@/lib/i18n'
 export const metadata: Metadata = {
 	title: 'Exclusão de dados — Faradays',
 	description:
-		'Como pedir a eliminação de dados pessoais tratados pela Faradays, inclusive os obtidos pelo WhatsApp, o prazo de atendimento e o que a lei nos obriga a manter.'
+		'Como pedir a eliminação de dados pessoais tratados pela Faradays, o prazo de atendimento e o que a lei nos obriga a manter.'
 }
 
 /* Página de instruções de exclusão — é a URL que vai no campo "Data Deletion
@@ -19,7 +19,7 @@ const CONTENT: Localized<LegalContent> = {
 		originalAt: '9 de setembro de 2026',
 		updatedAt: '9 de setembro de 2026',
 		intro: [
-			'Esta página explica, passo a passo, como pedir a eliminação de dados pessoais que a Faradays trata — no site, na Plataforma ou por meio do assistente no WhatsApp —, em quanto tempo atendemos e o que a lei nos obriga a manter. Ela detalha o direito de eliminação descrito no [Aviso de Privacidade](/privacidade).'
+			'Esta página explica, passo a passo, como pedir a eliminação de dados pessoais que a Faradays trata — no site ou na Plataforma —, em quanto tempo atendemos e o que a lei nos obriga a manter. Ela detalha o direito de eliminação descrito no [Aviso de Privacidade](/privacidade).'
 		],
 		sections: [
 			{
@@ -83,14 +83,6 @@ const CONTENT: Localized<LegalContent> = {
 				]
 			},
 			{
-				heading: 'Dados obtidos pelo WhatsApp',
-				body: [
-					'Se você é Representante e conversou com o assistente, os dados que temos por meio da WhatsApp Business Platform são o seu número, o texto das mensagens nas duas direções, transcrições de áudios e texto extraído de fotos, e identificadores técnicos das mensagens. Os arquivos de áudio e imagem em si não são guardados pela Plataforma.',
-					'Você pode pedir a eliminação desse histórico pelos passos acima. Como o conteúdo das conversas pertence à operação do Cliente que você representa, a Faradays confirma o pedido com o administrador desse Cliente antes de apagar; cotações e documentos já emitidos a partir das conversas seguem as regras de retenção do Cliente.',
-					'Para apagar o que está no seu próprio aparelho ou na conta do WhatsApp, use as ferramentas do aplicativo — isso é gerido pela Meta, não pela Faradays.'
-				]
-			},
-			{
 				heading: 'O que a lei nos obriga a manter',
 				body: [
 					'Alguns dados não podem ser eliminados de imediato, e nesses casos dizemos exatamente o quê e até quando:',
@@ -119,7 +111,7 @@ const CONTENT: Localized<LegalContent> = {
 		originalAt: 'September 9, 2026',
 		updatedAt: 'September 9, 2026',
 		intro: [
-			'This page explains, step by step, how to request deletion of personal data that Faradays processes — on the website, on the Platform or through the WhatsApp assistant —, how long we take and what the law requires us to keep. It details the right to deletion described in the [Privacy Notice](/privacidade).'
+			'This page explains, step by step, how to request deletion of personal data that Faradays processes — on the website or on the Platform —, how long we take and what the law requires us to keep. It details the right to deletion described in the [Privacy Notice](/privacidade).'
 		],
 		sections: [
 			{
@@ -180,14 +172,6 @@ const CONTENT: Localized<LegalContent> = {
 							'**Backups:** data deleted from active systems disappears from backups in the normal rotation cycle of 14 days.'
 						]
 					}
-				]
-			},
-			{
-				heading: 'Data obtained through WhatsApp',
-				body: [
-					'If you are a Representative and talked to the assistant, the data we hold through the WhatsApp Business Platform is your number, the message text in both directions, transcripts of voice notes and text extracted from photos, and technical message identifiers. The audio and image files themselves are not stored by the Platform.',
-					"You can request deletion of that history through the steps above. Since the content of the conversations belongs to the operation of the Customer you represent, Faradays confirms the request with that Customer's administrator before deleting; quotes and documents already issued from the conversations follow the Customer's retention rules.",
-					'To delete what is on your own device or in your WhatsApp account, use the tools in the app — that is managed by Meta, not by Faradays.'
 				]
 			},
 			{

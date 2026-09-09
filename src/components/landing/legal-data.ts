@@ -40,8 +40,8 @@ export const LEGAL_PAGES = [
 			en: 'How to request deletion of your data'
 		},
 		description: {
-			pt: 'O passo a passo para pedir a eliminação de dados pessoais tratados pela Faradays, inclusive os obtidos pelo WhatsApp, o prazo de atendimento e o que a lei nos obriga a manter.',
-			en: 'The step-by-step to request deletion of personal data processed by Faradays, including data obtained through WhatsApp, the response time and what the law requires us to keep.'
+			pt: 'O passo a passo para pedir a eliminação de dados pessoais tratados pela Faradays, o prazo de atendimento e o que a lei nos obriga a manter.',
+			en: 'The step-by-step to request deletion of personal data processed by Faradays, the response time and what the law requires us to keep.'
 		}
 	},
 	{
