@@ -8,6 +8,19 @@ escritos a partir do que a plataforma de fato faz (auditoria em
 o que não existe. Nada aqui é jurídico: **os quatro textos precisam de revisão
 por advogado antes de valerem como oficiais.**
 
+## 0. Dependência estrutural: os planos ainda são placeholder
+
+Os Termos (§1 "Plano", §6 inteira, §12) e a Política de Suporte (§2, §5)
+foram escritos sobre a estrutura Basic / Pro / Enterprise da página
+`/distribuicao/precos` (`src/components/pricing/pricing-data.ts`, commit
+`e3774e4`, 27/08/2026). Essa página se declara **"PREÇOS FICTÍCIOS
+(placeholder até a tabela comercial existir)"**: os nomes e a divisão de
+funcionalidades seguem `docs/features.md`, mas nada foi decidido
+comercialmente. Se o modelo final for outro (plano único por representante,
+venda só por contrato, sem planos públicos), reescrever junto a §6 dos
+Termos e a tabela de prazos da página de suporte. Até lá, tratar tudo na
+tabela 1 abaixo como derivado desse placeholder.
+
 ## 1. Decisões comerciais assumidas (confirmar ou alterar)
 
 | #    | Onde                 | Assumido                                                                                | Alternativas                                                     |
