@@ -160,7 +160,7 @@ const CONTENT: Localized<LegalContent> = {
 						],
 						rows: [
 							[
-								'Provedor de hospedagem do Site',
+								'Vercel Inc. ([política](https://vercel.com/legal/privacy-policy))',
 								'Hospedagem e entrega das páginas de faradays.io',
 								'Registros de acesso: endereço IP, data e hora, páginas, navegador',
 								'Estados Unidos (rede global)'
@@ -172,10 +172,10 @@ const CONTENT: Localized<LegalContent> = {
 								'Estados Unidos'
 							],
 							[
-								'Provedor de e-mail corporativo',
-								'Caixa contato@faradays.io',
+								'Microsoft Corporation — Microsoft 365 / Outlook ([política](https://privacy.microsoft.com/privacystatement))',
+								'Caixa contato@faradays.io e demais caixas da equipe',
 								'Mensagens trocadas com quem nos escreve',
-								'Estados Unidos'
+								'Estados Unidos (dados guardados na região do tenant Microsoft 365 da Faradays)'
 							]
 						]
 					},
@@ -321,7 +321,7 @@ const CONTENT: Localized<LegalContent> = {
 						head: ['Vendor', 'Role', 'Data processed', 'Country'],
 						rows: [
 							[
-								'Website hosting provider',
+								'Vercel Inc. ([policy](https://vercel.com/legal/privacy-policy))',
 								'Hosting and delivery of the faradays.io pages',
 								'Access logs: IP address, date and time, pages, browser',
 								'United States (global network)'
@@ -333,10 +333,10 @@ const CONTENT: Localized<LegalContent> = {
 								'United States'
 							],
 							[
-								'Corporate e-mail provider',
-								'The contato@faradays.io mailbox',
+								'Microsoft Corporation — Microsoft 365 / Outlook ([policy](https://privacy.microsoft.com/privacystatement))',
+								'The contato@faradays.io mailbox and the other team mailboxes',
 								'Messages exchanged with people who write to us',
-								'United States'
+								"United States (data stored in the region of Faradays' Microsoft 365 tenant)"
 							]
 						]
 					},
