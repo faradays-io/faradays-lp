@@ -40,7 +40,7 @@ const CONTENT: Localized<LegalContent> = {
 								'Vultr Holdings, LLC ([política](https://www.vultr.com/legal/privacy/))',
 								'Hospedagem dos servidores da Plataforma e do banco de dados',
 								'Todos os dados armazenados pela Plataforma, em repouso',
-								'Estados Unidos (empresa); datacenter na região contratada para cada cliente'
+								'Estados Unidos (empresa); datacenters em São Paulo, Brasil, e nos Estados Unidos — a região de cada Cliente consta do contrato'
 							],
 							[
 								'Cloudflare, Inc. ([política](https://www.cloudflare.com/privacypolicy/))',
@@ -185,7 +185,7 @@ const CONTENT: Localized<LegalContent> = {
 			{
 				heading: 'Transferência internacional',
 				body: [
-					'Os fornecedores acima com sede nos Estados Unidos recebem dados a partir do Brasil. Essas transferências se fundamentam no art. 33 da LGPD e na regulamentação da ANPD: cláusulas contratuais padrão incorporadas aos contratos ou termos de cada fornecedor, ou outra salvaguarda reconhecida. Os dados de e-mail e drive do Cliente permanecem na região do próprio tenant Microsoft 365 do Cliente; a Plataforma os acessa de onde está hospedada.',
+					'Os fornecedores acima com sede nos Estados Unidos recebem dados a partir do Brasil. Essas transferências se fundamentam no art. 33 da LGPD e na regulamentação da ANPD: cláusulas contratuais padrão incorporadas aos contratos ou termos de cada fornecedor, ou outra salvaguarda reconhecida. A Plataforma é hospedada em São Paulo ou nos Estados Unidos, conforme a região definida no contrato de cada Cliente; quando a região for os Estados Unidos, os Dados do Cliente em repouso ficam fora do Brasil e a transferência se apoia nas mesmas salvaguardas. Os dados de e-mail e drive do Cliente permanecem na região do próprio tenant Microsoft 365 do Cliente; a Plataforma os acessa de onde está hospedada.',
 					'Dúvidas sobre um fornecedor específico, ou pedido de cópia das salvaguardas aplicáveis, podem ser dirigidos ao Encarregado pelos canais do [Aviso de Privacidade](/privacidade).'
 				]
 			}
@@ -211,7 +211,7 @@ const CONTENT: Localized<LegalContent> = {
 								'Vultr Holdings, LLC ([policy](https://www.vultr.com/legal/privacy/))',
 								'Hosting of the Platform servers and database',
 								'All data stored by the Platform, at rest',
-								'United States (company); data center in the region contracted for each customer'
+								"United States (company); data centers in São Paulo, Brazil, and in the United States — each Customer's region is set in the contract"
 							],
 							[
 								'Cloudflare, Inc. ([policy](https://www.cloudflare.com/privacypolicy/))',
@@ -346,7 +346,7 @@ const CONTENT: Localized<LegalContent> = {
 			{
 				heading: 'International transfers',
 				body: [
-					"The vendors above headquartered in the United States receive data from Brazil. These transfers rely on art. 33 of the LGPD and ANPD regulations: standard contractual clauses incorporated into each vendor's contracts or terms, or another recognized safeguard. The Customer's e-mail and drive data remain in the region of the Customer's own Microsoft 365 tenant; the Platform accesses them from where it is hosted.",
+					"The vendors above headquartered in the United States receive data from Brazil. These transfers rely on art. 33 of the LGPD and ANPD regulations: standard contractual clauses incorporated into each vendor's contracts or terms, or another recognized safeguard. The Platform is hosted in São Paulo or in the United States, according to the region set in each Customer's contract; when the region is the United States, Customer Data at rest sits outside Brazil and the transfer relies on the same safeguards. The Customer's e-mail and drive data remain in the region of the Customer's own Microsoft 365 tenant; the Platform accesses them from where it is hosted.",
 					'Questions about a specific vendor, or a request for a copy of the applicable safeguards, may be addressed to the Data Protection Officer through the channels in the [Privacy Notice](/privacidade).'
 				]
 			}

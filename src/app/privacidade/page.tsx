@@ -382,7 +382,7 @@ const CONTENT: Localized<LegalContent> = {
 						items: [
 							'**Estados Unidos** — Meta (WhatsApp Cloud API), provedores de modelos de inteligência artificial e o roteador que os acessa, repositório de código e automação de implantação, rede de distribuição e proteção de tráfego;',
 							'**Região do tenant Microsoft 365 do Cliente** — os dados de e-mail e drive permanecem onde o Cliente já os mantém; a Plataforma os acessa de onde está hospedada;',
-							'**Local de hospedagem da Plataforma** — indicado, por fornecedor, em [/subprocessadores](/subprocessadores).'
+							'**Local de hospedagem da Plataforma** — São Paulo, Brasil, ou Estados Unidos, conforme a região contratada por cada Cliente. Quando for os Estados Unidos, os Dados do Cliente em repouso ficam fora do Brasil. Detalhes em [/subprocessadores](/subprocessadores).'
 						]
 					},
 					'Essas transferências observam o art. 33 da LGPD e a regulamentação da ANPD sobre transferências internacionais: fundamentam-se em cláusulas contratuais padrão, em decisões de adequação ou nas demais salvaguardas previstas em lei, e são limitadas ao necessário à prestação do serviço.'
@@ -777,7 +777,7 @@ const CONTENT: Localized<LegalContent> = {
 						items: [
 							'**United States** — Meta (WhatsApp Cloud API), artificial intelligence model providers and the router that accesses them, code repository and deployment automation, content delivery and traffic protection network;',
 							"**The region of the Customer's Microsoft 365 tenant** — e-mail and drive data remain where the Customer already keeps them; the Platform accesses them from where it is hosted;",
-							'**The hosting location of the Platform** — listed, per vendor, at [/subprocessadores](/subprocessadores).'
+							'**The hosting location of the Platform** — São Paulo, Brazil, or the United States, according to the region contracted by each Customer. When it is the United States, Customer Data at rest sits outside Brazil. Details at [/subprocessadores](/subprocessadores).'
 						]
 					},
 					'These transfers comply with art. 33 of the LGPD and ANPD regulations on international transfers: they rely on standard contractual clauses, adequacy decisions or the other safeguards provided by law, and are limited to what is necessary to provide the service.'
