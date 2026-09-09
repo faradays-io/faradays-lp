@@ -8,7 +8,7 @@ import { SplitHoverText } from '@/components/custom-ui/split-hover-text'
 import { AsciiMarkGl } from '@/components/landing/ascii-mark-gl'
 import { CopyEmail } from '@/components/landing/copy-email'
 import { FaradaysWordmark } from '@/components/landing/faradays-wordmark'
-import { LEGAL_PAGES } from '@/components/landing/legal-data'
+import { FOOTER_LEGAL_LINKS } from '@/components/landing/legal-data'
 import { SOLUTIONS } from '@/components/landing/solutions-data'
 import { useCopy, useLang } from '@/components/language-provider'
 import { AiGradientButton } from '@/components/ui/ai-gradient-button'
@@ -264,7 +264,7 @@ export function HomeFooter() {
 
 			<div className="max-w-page mx-auto flex w-full flex-col items-center gap-3 px-[var(--gutter)] font-mono text-sm tracking-widest uppercase lg:flex-row lg:justify-between">
 				<ul className="flex items-center gap-4">
-					{LEGAL_PAGES.map((page) => (
+					{FOOTER_LEGAL_LINKS.map((page) => (
 						<li key={page.slug}>
 							<a
 								href={page.slug}
