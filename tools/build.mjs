@@ -50,10 +50,17 @@ const sharepointSvg = (size) =>
 const waGreenSvg = (size) =>
 	`<svg viewBox="0 0 720 720" width="${size}" height="${size}" style="flex-shrink:0" aria-hidden="true"><path fill="#25d366" d="M360,0C161.18,0,0,161.18,0,360c0,65.41,17.45,126.75,47.94,179.61L0,720l187.02-44.21c51.34,28.18,110.28,44.21,172.98,44.21,198.82,0,360-161.18,360-360S558.82,0,360,0ZM360,655.52c-60.17,0-116.13-17.98-162.82-48.87l-110.49,28.14,30.99-105.61c-33.53-47.93-53.2-106.26-53.2-169.19,0-163.21,132.31-295.52,295.52-295.52s295.52,132.31,295.52,295.52-132.31,295.52-295.52,295.52Z"></path><path fill="#25d366" d="M444.35,407.52l87.1,41.06c4,1.88,6.56,5.94,6.2,10.34-.94,11.46-5.54,34.43-26.13,55.02-58.12,58.12-162.49-7.64-166.74-10.18-25.67-13.79-50.06-32.24-73.19-55.36-23.12-23.12-41.58-47.52-55.37-73.19-2.55-4.24-68.31-108.61-10.18-166.74,20.59-20.59,43.56-25.19,55.02-26.13,4.41-.36,8.46,2.2,10.34,6.2l41.07,87.1c1.94,4.12,1.09,9.02-2.13,12.24l-30.61,30.61c-6.62,6.62-8.56,16.93-4,25.11,11.17,20.03,26.19,39.32,43.59,57.07,17.75,17.4,37.04,32.43,57.07,43.59,8.18,4.56,18.48,2.62,25.11-4l30.61-30.61c3.22-3.22,8.12-4.08,12.24-2.13Z"></path></svg>`
 
+// Paleta fria de IA (mesma do .ai-shimmer no CSS).
+const AI_STOPS = ['#1d6ae5', '#38bdf8', '#7c8cf8', '#38bdf8', '#1d6ae5']
 // Wordmark Faradays — cópia do faradays-logo.tsx (currentColor).
-const wordmark = (width, color = T.fg) => {
+// flagGrad: id de um gradiente de IA animado (SMIL) só na bandeira — os dois primeiros paths; as letras ficam na cor.
+const wordmark = (width, color = T.fg, flagGrad = '') => {
 	const h = (width * 124) / 715.5
-	return `<svg viewBox="0 0 715.50 124.00" width="${width}" height="${h.toFixed(1)}" fill="${color}" aria-hidden="true"><path d="M138.995 34.5807V1.14441e-05L39.7128 0H0V6.17513L46.1661 6.17512C46.1661 6.17512 47.2762 6.16503 47.9036 6.42212C48.5374 6.68183 49.1446 7.41015 49.1446 7.41015L74.9579 33.0986C74.9579 33.0986 75.9317 34.0297 76.6954 34.3336C77.4154 34.6202 78.4328 34.5806 78.4328 34.5806L138.995 34.5807Z" transform="translate(6.000 12.098)"></path><path d="M0.00195312 24.5825V59.165H84.3448C84.3448 59.165 85.6114 59.3702 86.3305 59.6591C87.0898 59.964 87.8064 60.6471 87.8064 60.6471L112.404 85.3475C112.404 85.3475 112.996 86.0952 113.634 86.3355C114.178 86.5403 115.123 86.5825 115.123 86.5825H139.002V52.9899H77.8912C77.8912 52.9899 76.7812 53 76.1537 52.7429C75.5199 52.4832 74.9127 51.7549 74.9127 51.7549L49.0984 26.0665C49.0984 26.0665 48.1246 25.1354 47.3609 24.8314C46.6409 24.5448 45.6234 24.5844 45.6234 24.5844L0.00195312 24.5825Z" transform="translate(6.000 12.098)"></path><path d="M168.002 108.32H152.002V69.5L168.002 69.408V57.12H152.002V20H214.21V32.8H168.002V57.12H203.842V69.408H168.002V108.32Z" transform="translate(6.000 -8.320)"></path><path d="M22.016 90.912C15.1893 90.912 9.81334 89.2054 5.888 85.792C1.96267 82.2934 0 77.5147 0 71.456C0 65.312 2.09067 60.4907 6.272 56.992C10.5387 53.4934 16.6827 51.36 24.704 50.592L43.648 48.672V58.784L29.312 60.192C24.6187 60.6187 21.2053 61.5574 19.072 63.008C17.024 64.4587 16 66.592 16 69.408V70.432C16 73.1627 17.1093 75.296 19.328 76.832C21.5467 78.368 24.6613 79.136 28.672 79.136C38.656 79.136 43.648 74.9974 43.648 66.72V57.12V55.328V46.368C43.648 41.4187 42.5813 37.8347 40.448 35.616C38.4 33.312 35.1147 32.16 30.592 32.16C27.6053 32.16 25.1733 32.5867 23.296 33.44C21.4187 34.2934 20.0533 35.3174 19.2 36.512C18.3467 37.7067 17.92 38.8587 17.92 39.968V40.352H2.048C5.20534 26.784 14.848 20 30.976 20C40.192 20 47.1893 22.2187 51.968 26.656C56.7467 31.008 59.136 37.4507 59.136 45.984V89.632H44.928V78.496H42.752C41.0453 82.5067 38.4853 85.5787 35.072 87.712C31.744 89.8454 27.392 90.912 22.016 90.912Z" transform="translate(230.500 9.000)"></path><path d="M0 89.12V20.768H14.208V32.672H16.3841C18.1761 28.4907 20.608 25.3333 23.68 23.2C26.8373 21.0667 30.848 20 35.712 20H46.848V32.928H29.184C24.4906 32.928 21.0346 34.1653 18.816 36.64C16.5973 39.1147 15.488 43.1253 15.488 48.672V89.12H0Z" transform="translate(300.000 9.000)"></path><path d="M22.016 90.912C15.1893 90.912 9.81334 89.2054 5.888 85.792C1.96267 82.2934 0 77.5147 0 71.456C0 65.312 2.09067 60.4907 6.272 56.992C10.5387 53.4934 16.6827 51.36 24.704 50.592L43.648 48.672V58.784L29.312 60.192C24.6187 60.6187 21.2053 61.5574 19.072 63.008C17.024 64.4587 16 66.592 16 69.408V70.432C16 73.1627 17.1093 75.296 19.328 76.832C21.5467 78.368 24.6613 79.136 28.672 79.136C38.656 79.136 43.648 74.9974 43.648 66.72V57.12V55.328V46.368C43.648 41.4187 42.5813 37.8347 40.448 35.616C38.4 33.312 35.1147 32.16 30.592 32.16C27.6053 32.16 25.1733 32.5867 23.296 33.44C21.4187 34.2934 20.0533 35.3174 19.2 36.512C18.3467 37.7067 17.92 38.8587 17.92 39.968V40.352H2.048C5.20534 26.784 14.848 20 30.976 20C40.192 20 47.1893 22.2187 51.968 26.656C56.7467 31.008 59.136 37.4507 59.136 45.984V89.632H44.928V78.496H42.752C41.0453 82.5067 38.4853 85.5787 35.072 87.712C31.744 89.8454 27.392 90.912 22.016 90.912Z" transform="translate(357.000 9.000)"></path><path d="M27.136 93.696C21.6747 93.696 16.896 92.288 12.8 89.472C8.704 86.5707 5.54667 82.4747 3.328 77.184C1.10934 71.8933 0 65.5787 0 58.24C0 47.1467 2.432 38.4853 7.296 32.256C12.16 25.9413 18.7733 22.784 27.136 22.784C32.0853 22.784 36.2667 23.8507 39.68 25.984C43.0933 28.1173 45.6107 31.1893 47.232 35.2H49.536C49.3653 31.7867 49.2373 28.9707 49.152 26.752C49.0667 24.448 49.024 22.3147 49.024 20.352V0H64.64V92.416H50.432V80.256H48.256C46.3787 84.4373 43.648 87.7227 40.064 90.112C36.5653 92.5013 32.256 93.696 27.136 93.696ZM32.768 81.536C38.3147 81.536 42.4107 79.9573 45.056 76.8C47.7013 73.5573 49.024 68.5227 49.024 61.696V54.784C49.024 47.9573 47.7013 42.9653 45.056 39.808C42.4107 36.5653 38.3147 34.944 32.768 34.944C27.136 34.944 22.9973 36.5653 20.352 39.808C17.7067 42.9653 16.384 47.9573 16.384 54.784V61.696C16.384 68.5227 17.7067 73.5573 20.352 76.8C22.9973 79.9573 27.136 81.536 32.768 81.536Z" transform="translate(426.500 6.000)"></path><path d="M22.016 90.912C15.1893 90.912 9.81334 89.2054 5.888 85.792C1.96267 82.2934 0 77.5147 0 71.456C0 65.312 2.09067 60.4907 6.272 56.992C10.5387 53.4934 16.6827 51.36 24.704 50.592L43.648 48.672V58.784L29.312 60.192C24.6187 60.6187 21.2053 61.5574 19.072 63.008C17.024 64.4587 16 66.592 16 69.408V70.432C16 73.1627 17.1093 75.296 19.328 76.832C21.5467 78.368 24.6613 79.136 28.672 79.136C38.656 79.136 43.648 74.9974 43.648 66.72V57.12V55.328V46.368C43.648 41.4187 42.5813 37.8347 40.448 35.616C38.4 33.312 35.1147 32.16 30.592 32.16C27.6053 32.16 25.1733 32.5867 23.296 33.44C21.4187 34.2934 20.0533 35.3174 19.2 36.512C18.3467 37.7067 17.92 38.8587 17.92 39.968V40.352H2.048C5.20534 26.784 14.848 20 30.976 20C40.192 20 47.1893 22.2187 51.968 26.656C56.7467 31.008 59.136 37.4507 59.136 45.984V89.632H44.928V78.496H42.752C41.0453 82.5067 38.4853 85.5787 35.072 87.712C31.744 89.8454 27.392 90.912 22.016 90.912Z" transform="translate(501.500 9.000)"></path><path d="M16.512 90.3441L27.136 65.1281L27.648 70.1201L0 1H15.872L33.28 47.5921H35.584L53.12 1H68.352L32.384 90.3441H16.512Z" transform="translate(571.000 28.000)"></path><path d="M30.08 90.912C21.376 90.912 14.592 89.2907 9.728 86.048C4.864 82.8054 1.62133 77.6427 0 70.56H15.616V70.944C15.616 72.0534 16.0427 73.248 16.896 74.528C17.7494 75.7227 19.2 76.7894 21.248 77.728C23.3814 78.6667 26.3254 79.136 30.08 79.136C34.6027 79.136 38.1014 78.4534 40.5761 77.088C43.1361 75.6374 44.4161 73.504 44.4161 70.688C44.4161 68.64 43.6481 67.0614 42.112 65.952C40.6614 64.8427 38.144 63.904 34.56 63.136L19.84 60.192C13.0134 58.7414 8.02133 56.5654 4.864 53.664C1.70666 50.6774 0.128 46.624 0.128 41.504C0.128 34.592 2.688 29.3013 7.808 25.632C12.928 21.8773 20.224 20 29.696 20C38.3147 20 45.0134 21.6213 49.792 24.864C54.6561 28.1067 57.8987 33.2694 59.5201 40.352H43.776V39.968C43.776 38.8587 43.3494 37.7067 42.496 36.512C41.728 35.232 40.32 34.1227 38.272 33.184C36.224 32.2454 33.3654 31.776 29.696 31.776C25.2587 31.776 21.8027 32.5014 19.328 33.952C16.9387 35.3174 15.744 37.408 15.744 40.224C15.744 42.272 16.4694 43.8507 17.92 44.96C19.456 46.0694 21.9734 47.008 25.472 47.776L40.192 50.72C47.0187 52.0854 52.0107 54.2614 55.168 57.248C58.4107 60.1494 60.0321 64.2027 60.0321 69.408C60.0321 76.2347 57.4294 81.5254 52.224 85.28C47.104 89.0347 39.7227 90.912 30.08 90.912Z" transform="translate(649.500 9.000)"></path></svg>`
+	const ff = flagGrad ? ` fill="url(#${flagGrad})"` : ''
+	const defs = flagGrad
+		? `<defs><linearGradient id="${flagGrad}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="139" y2="0" spreadMethod="repeat">${AI_STOPS.map((c, k) => `<stop offset="${k / (AI_STOPS.length - 1)}" stop-color="${c}"></stop>`).join('')}<animateTransform attributeName="gradientTransform" type="translate" from="0 0" to="139 0" dur="1.8s" repeatCount="indefinite"></animateTransform></linearGradient></defs>`
+		: ''
+	return `<svg viewBox="0 0 715.50 124.00" width="${width}" height="${h.toFixed(1)}" fill="${color}" aria-hidden="true">${defs}<path d="M138.995 34.5807V1.14441e-05L39.7128 0H0V6.17513L46.1661 6.17512C46.1661 6.17512 47.2762 6.16503 47.9036 6.42212C48.5374 6.68183 49.1446 7.41015 49.1446 7.41015L74.9579 33.0986C74.9579 33.0986 75.9317 34.0297 76.6954 34.3336C77.4154 34.6202 78.4328 34.5806 78.4328 34.5806L138.995 34.5807Z"${ff} transform="translate(6.000 12.098)"></path><path d="M0.00195312 24.5825V59.165H84.3448C84.3448 59.165 85.6114 59.3702 86.3305 59.6591C87.0898 59.964 87.8064 60.6471 87.8064 60.6471L112.404 85.3475C112.404 85.3475 112.996 86.0952 113.634 86.3355C114.178 86.5403 115.123 86.5825 115.123 86.5825H139.002V52.9899H77.8912C77.8912 52.9899 76.7812 53 76.1537 52.7429C75.5199 52.4832 74.9127 51.7549 74.9127 51.7549L49.0984 26.0665C49.0984 26.0665 48.1246 25.1354 47.3609 24.8314C46.6409 24.5448 45.6234 24.5844 45.6234 24.5844L0.00195312 24.5825Z"${ff} transform="translate(6.000 12.098)"></path><path d="M168.002 108.32H152.002V69.5L168.002 69.408V57.12H152.002V20H214.21V32.8H168.002V57.12H203.842V69.408H168.002V108.32Z" transform="translate(6.000 -8.320)"></path><path d="M22.016 90.912C15.1893 90.912 9.81334 89.2054 5.888 85.792C1.96267 82.2934 0 77.5147 0 71.456C0 65.312 2.09067 60.4907 6.272 56.992C10.5387 53.4934 16.6827 51.36 24.704 50.592L43.648 48.672V58.784L29.312 60.192C24.6187 60.6187 21.2053 61.5574 19.072 63.008C17.024 64.4587 16 66.592 16 69.408V70.432C16 73.1627 17.1093 75.296 19.328 76.832C21.5467 78.368 24.6613 79.136 28.672 79.136C38.656 79.136 43.648 74.9974 43.648 66.72V57.12V55.328V46.368C43.648 41.4187 42.5813 37.8347 40.448 35.616C38.4 33.312 35.1147 32.16 30.592 32.16C27.6053 32.16 25.1733 32.5867 23.296 33.44C21.4187 34.2934 20.0533 35.3174 19.2 36.512C18.3467 37.7067 17.92 38.8587 17.92 39.968V40.352H2.048C5.20534 26.784 14.848 20 30.976 20C40.192 20 47.1893 22.2187 51.968 26.656C56.7467 31.008 59.136 37.4507 59.136 45.984V89.632H44.928V78.496H42.752C41.0453 82.5067 38.4853 85.5787 35.072 87.712C31.744 89.8454 27.392 90.912 22.016 90.912Z" transform="translate(230.500 9.000)"></path><path d="M0 89.12V20.768H14.208V32.672H16.3841C18.1761 28.4907 20.608 25.3333 23.68 23.2C26.8373 21.0667 30.848 20 35.712 20H46.848V32.928H29.184C24.4906 32.928 21.0346 34.1653 18.816 36.64C16.5973 39.1147 15.488 43.1253 15.488 48.672V89.12H0Z" transform="translate(300.000 9.000)"></path><path d="M22.016 90.912C15.1893 90.912 9.81334 89.2054 5.888 85.792C1.96267 82.2934 0 77.5147 0 71.456C0 65.312 2.09067 60.4907 6.272 56.992C10.5387 53.4934 16.6827 51.36 24.704 50.592L43.648 48.672V58.784L29.312 60.192C24.6187 60.6187 21.2053 61.5574 19.072 63.008C17.024 64.4587 16 66.592 16 69.408V70.432C16 73.1627 17.1093 75.296 19.328 76.832C21.5467 78.368 24.6613 79.136 28.672 79.136C38.656 79.136 43.648 74.9974 43.648 66.72V57.12V55.328V46.368C43.648 41.4187 42.5813 37.8347 40.448 35.616C38.4 33.312 35.1147 32.16 30.592 32.16C27.6053 32.16 25.1733 32.5867 23.296 33.44C21.4187 34.2934 20.0533 35.3174 19.2 36.512C18.3467 37.7067 17.92 38.8587 17.92 39.968V40.352H2.048C5.20534 26.784 14.848 20 30.976 20C40.192 20 47.1893 22.2187 51.968 26.656C56.7467 31.008 59.136 37.4507 59.136 45.984V89.632H44.928V78.496H42.752C41.0453 82.5067 38.4853 85.5787 35.072 87.712C31.744 89.8454 27.392 90.912 22.016 90.912Z" transform="translate(357.000 9.000)"></path><path d="M27.136 93.696C21.6747 93.696 16.896 92.288 12.8 89.472C8.704 86.5707 5.54667 82.4747 3.328 77.184C1.10934 71.8933 0 65.5787 0 58.24C0 47.1467 2.432 38.4853 7.296 32.256C12.16 25.9413 18.7733 22.784 27.136 22.784C32.0853 22.784 36.2667 23.8507 39.68 25.984C43.0933 28.1173 45.6107 31.1893 47.232 35.2H49.536C49.3653 31.7867 49.2373 28.9707 49.152 26.752C49.0667 24.448 49.024 22.3147 49.024 20.352V0H64.64V92.416H50.432V80.256H48.256C46.3787 84.4373 43.648 87.7227 40.064 90.112C36.5653 92.5013 32.256 93.696 27.136 93.696ZM32.768 81.536C38.3147 81.536 42.4107 79.9573 45.056 76.8C47.7013 73.5573 49.024 68.5227 49.024 61.696V54.784C49.024 47.9573 47.7013 42.9653 45.056 39.808C42.4107 36.5653 38.3147 34.944 32.768 34.944C27.136 34.944 22.9973 36.5653 20.352 39.808C17.7067 42.9653 16.384 47.9573 16.384 54.784V61.696C16.384 68.5227 17.7067 73.5573 20.352 76.8C22.9973 79.9573 27.136 81.536 32.768 81.536Z" transform="translate(426.500 6.000)"></path><path d="M22.016 90.912C15.1893 90.912 9.81334 89.2054 5.888 85.792C1.96267 82.2934 0 77.5147 0 71.456C0 65.312 2.09067 60.4907 6.272 56.992C10.5387 53.4934 16.6827 51.36 24.704 50.592L43.648 48.672V58.784L29.312 60.192C24.6187 60.6187 21.2053 61.5574 19.072 63.008C17.024 64.4587 16 66.592 16 69.408V70.432C16 73.1627 17.1093 75.296 19.328 76.832C21.5467 78.368 24.6613 79.136 28.672 79.136C38.656 79.136 43.648 74.9974 43.648 66.72V57.12V55.328V46.368C43.648 41.4187 42.5813 37.8347 40.448 35.616C38.4 33.312 35.1147 32.16 30.592 32.16C27.6053 32.16 25.1733 32.5867 23.296 33.44C21.4187 34.2934 20.0533 35.3174 19.2 36.512C18.3467 37.7067 17.92 38.8587 17.92 39.968V40.352H2.048C5.20534 26.784 14.848 20 30.976 20C40.192 20 47.1893 22.2187 51.968 26.656C56.7467 31.008 59.136 37.4507 59.136 45.984V89.632H44.928V78.496H42.752C41.0453 82.5067 38.4853 85.5787 35.072 87.712C31.744 89.8454 27.392 90.912 22.016 90.912Z" transform="translate(501.500 9.000)"></path><path d="M16.512 90.3441L27.136 65.1281L27.648 70.1201L0 1H15.872L33.28 47.5921H35.584L53.12 1H68.352L32.384 90.3441H16.512Z" transform="translate(571.000 28.000)"></path><path d="M30.08 90.912C21.376 90.912 14.592 89.2907 9.728 86.048C4.864 82.8054 1.62133 77.6427 0 70.56H15.616V70.944C15.616 72.0534 16.0427 73.248 16.896 74.528C17.7494 75.7227 19.2 76.7894 21.248 77.728C23.3814 78.6667 26.3254 79.136 30.08 79.136C34.6027 79.136 38.1014 78.4534 40.5761 77.088C43.1361 75.6374 44.4161 73.504 44.4161 70.688C44.4161 68.64 43.6481 67.0614 42.112 65.952C40.6614 64.8427 38.144 63.904 34.56 63.136L19.84 60.192C13.0134 58.7414 8.02133 56.5654 4.864 53.664C1.70666 50.6774 0.128 46.624 0.128 41.504C0.128 34.592 2.688 29.3013 7.808 25.632C12.928 21.8773 20.224 20 29.696 20C38.3147 20 45.0134 21.6213 49.792 24.864C54.6561 28.1067 57.8987 33.2694 59.5201 40.352H43.776V39.968C43.776 38.8587 43.3494 37.7067 42.496 36.512C41.728 35.232 40.32 34.1227 38.272 33.184C36.224 32.2454 33.3654 31.776 29.696 31.776C25.2587 31.776 21.8027 32.5014 19.328 33.952C16.9387 35.3174 15.744 37.408 15.744 40.224C15.744 42.272 16.4694 43.8507 17.92 44.96C19.456 46.0694 21.9734 47.008 25.472 47.776L40.192 50.72C47.0187 52.0854 52.0107 54.2614 55.168 57.248C58.4107 60.1494 60.0321 64.2027 60.0321 69.408C60.0321 76.2347 57.4294 81.5254 52.224 85.28C47.104 89.0347 39.7227 90.912 30.08 90.912Z" transform="translate(649.500 9.000)"></path></svg>`
 }
 
 /* ---------------- átomos do app ----------------------------------------- */
@@ -420,14 +427,47 @@ const echoCard = (cls, icon, title, meta, label) =>
 </div>`
 
 /* ---------------- cartelas: título só, e as escuras com a espiral ------- */
-// icons: { palavra: svg } — a palavra ganha o ícone à esquerda (mesma linha, sobe junto).
-const titleCard = (cls, title, icons = {}) =>
-	`<div class="vf tc ${cls}" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 160px">
-	<h1 style="margin:0;font-family:${HEAD};font-size:104px;line-height:.95;letter-spacing:-.03em;font-weight:600;color:${T.fg};max-width:1400px">${title
-		.split(' ')
-		.map((w) => (icons[w] ? `<span class="w" style="display:inline-flex;align-items:center;gap:22px;vertical-align:bottom"><span style="display:flex;transform:translateY(-4px)">${icons[w]}</span>${w}</span>` : `<span class="w">${w}</span>`))
-		.join(' ')}</h1>
+// Os três produtos, na ordem dos capítulos. A timeline das bolhas usa esta lista na
+// abertura (todas acesas) e em cada cartela de capítulo (só a do capítulo acesa).
+const FEATURES = ['Cotação de compra em um clique', 'Agente de documentos com IA', 'Cotação de venda direto no WhatsApp']
+// Bolhas em linha, soltas (sem conectores, nem na transição). active: índice do capítulo aceso (ou 'all').
+// base: segundo em que a 1ª bolha sobe; as seguintes 0,15 s depois; cada uma acende 0,5 s após subir.
+const stepsRow = (active, base) =>
+	`<div class="steps" style="display:flex;align-items:center;gap:36px">${FEATURES.map((t, k) => {
+		const on = active === 'all' || k === active
+		const d = base + k * 0.15
+		const cls = on ? (active === 'all' ? '' : ' on') : ' off'
+		return `<div class="qfb${cls}" style="animation-delay:${d.toFixed(2)}s;transition-delay:${(d + 0.5).toFixed(2)}s">${ico('Sparkle', 18, 'fill', 'position:relative', 'ai-spark')}<span style="position:relative">${t}</span></div>`
+	}).join('')}</div>`
+// Bolha estacionada (selo do capítulo): cópia da bolha acesa que, na saída da cartela, voa do lugar
+// dela (DOCK_FROM, na lógica) até o canto superior esquerdo da prancha e fica lá durante a demo.
+// Some nos zooms que cobrem o canto e sai quando a cartela seguinte entra.
+const dockPill = (k) => `<div class="dock {{c.dock${k}}}" style="position:absolute;left:0;top:0;transform-origin:0 0;transform:{{st.dock${k}}}"><div class="qfb">${ico('Sparkle', 18, 'fill', 'position:relative', 'ai-spark')}<span style="position:relative">${FEATURES[k]}</span></div></div>`
+const docks = [0, 1, 2].map(dockPill).join('')
+// Palavra que acende do cinza para o gradiente de IA (duas camadas — ver .acende no CSS).
+const acende = (t) => `<span class="acende"><span class="frio">${t}</span><span class="quente ai-shimmer" aria-hidden="true">${t}</span></span>`
+// Título de capítulo — um só estilo para as três cartelas (o do BID): 80px, entrelinha 1,05,
+// tracking -0,025em e TITLE_GAP px entre as linhas; a timeline fica 56px abaixo (36 + 20 no BID).
+const TITLE_H1 = `margin:0;font-family:${HEAD};font-size:80px;line-height:1.05;letter-spacing:-.025em;font-weight:600;white-space:nowrap`
+const TITLE_GAP = 36
+// lines: string ou array (uma entrada por linha; cada linha é um bloco). opts.step: capítulo aceso na
+// timeline sob o título (sem step, não há timeline). icons: { palavra: svg } — a palavra ganha o ícone
+// à esquerda. As palavras sobem em cascata (0,07 s cada, contando pelas linhas).
+const titleCard = (cls, lines, opts = {}) => {
+	const icons = opts.icons ?? {}
+	let n = 0
+	const word = (w) => {
+		const d = `animation-delay:${(n++ * 0.07).toFixed(2)}s`
+		return icons[w]
+			? `<span class="w" style="display:inline-flex;align-items:center;gap:22px;vertical-align:bottom;${d}"><span style="display:flex;transform:translateY(-4px)">${icons[w]}</span>${w}</span>`
+			: `<span class="w" style="${d}">${w}</span>`
+	}
+	const html = [lines].flat().map((l) => `<span style="display:block">${l.split(' ').map(word).join(' ')}</span>`).join('')
+	return `<div class="vf tc ${cls}" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:56px;text-align:center;padding:0 160px">
+	<h1 style="${TITLE_H1};color:${T.fg};display:flex;flex-direction:column;gap:${TITLE_GAP}px">${html}</h1>
+	${opts.step == null ? '' : stepsRow(opts.step, 0.55)}
 </div>`
+}
 
 // Espiral de Fibonacci — mesma construção do fibonacci-spiral.tsx da LP
 // (12 termos, traço 120px non-scaling, olho tapado, branco a 2,5%).
@@ -462,159 +502,32 @@ const rotateHint = `<div class="w" style="position:relative;width:240px;height:2
 	<span class="rh-phone" style="position:relative;width:64px;height:112px;border:4px solid ${HINT_INK};border-radius:14px;background:${STAGE}"><span style="position:absolute;left:50%;bottom:7px;width:18px;height:3px;margin-left:-9px;border-radius:2px;background:${HINT_INK}"></span></span>
 </div>`
 const hintCard = darkCard('{{c.hint}}', rotateHint)
-// Cartela-pergunta: "Ainda gerenciando manualmente / documentos, cotações e conversas?"
-// A câmera abre em "Ainda" bem grande, "gerenciando" é digitada e estoura a borda da
-// tela, o zoom out revela o resto da linha com mocks (mensagens, e-mail, documentos)
-// animados ao fundo, e a linha 2 sobe. Na saída, dolly 3D para dentro do texto: o
-// layer dos mocks escala mais que o do texto, jogando os elementos para os cantos.
-const qEl = (x, y, rot, inner, w, cls = '') =>
-	`<div class="qel${cls ? ' ' + cls : ''}" style="position:absolute;left:${x}px;top:${y}px;${w ? `width:${w}px;` : ''}"><div style="transform:rotate(${rot}deg)">${inner}</div></div>`
-const QSHADOW = 'box-shadow:0 16px 40px -18px rgba(0,0,0,.35)'
-const qBubbleSent = `<div style="border-radius:12px;padding:10px 14px;background:#d1f4d0;color:#111111;font-size:15px;line-height:1.45;${QSHADOW}">Consegue me mandar o COA do lote 2408?<span style="display:flex;justify-content:flex-end;align-items:center;gap:4px;margin-top:2px;font-size:10.5px;color:#6b6b6b">09:41 ${ico('Checks', 12, 'regular', 'color:#3b8eff')}</span></div>`
-const qBubbleIA = `<div style="border-radius:12px;padding:10px 14px;background:#ffffff;color:#111111;font-size:15px;line-height:1.45;${QSHADOW}"><span style="display:flex;align-items:center;gap:4px;font-family:${MONO};font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px">${ico('Sparkle', 10, 'fill', 'color:#4aa8ff', 'ai-spark')}<span class="ai-shimmer">Agente IA · resposta automática</span></span>Segue o COA do lote 2408:</div>`
-const qMail = `<div style="display:inline-flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;background:#ffffff;font-size:14px;${QSHADOW}"><span style="display:grid;place-items:center;width:34px;height:34px;border-radius:9999px;background:${T.brand};color:#ffffff;font-size:13px;font-weight:600">F</span><span style="display:flex;flex-direction:column"><span style="font-weight:600">Faradays</span><span style="color:#555555;white-space:nowrap">BID CC-2026-012 — 3 items</span></span><span style="margin-left:10px;font-family:${MONO};font-size:11px;color:#7a7a7a">09:12</span></div>`
-const qDoc = (nome, bdg) =>
-	`<div style="display:inline-flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;background:#ffffff;${QSHADOW}">${ico('FilePdf', 26, 'fill', 'color:#d93025')}<span style="display:flex;flex-direction:column;font-size:13.5px"><span style="font-weight:500;white-space:nowrap">${nome}</span><span style="font-family:${MONO};font-size:10.5px;color:${T.mutedFg}">PDF · SharePoint</span></span><span style="margin-left:8px">${bdg}</span></div>`
-const qTyping = `<div style="display:inline-flex;gap:5px;align-items:center;height:38px;padding:0 16px;border-radius:12px;background:#ffffff;${QSHADOW}"><span class="dot dk"></span><span class="dot dk"></span><span class="dot dk"></span></div>`
-// Documento A4 mockado (COA em miniatura, com tabela e carimbo).
-const qLine = (w, o = 0.18) => `<span style="display:block;height:6px;border-radius:3px;background:${T.fg};opacity:${o};width:${w}"></span>`
-const qPage = `<div style="width:252px;background:#ffffff;border-radius:6px;padding:18px 18px 16px;display:flex;flex-direction:column;gap:8px;${QSHADOW}">
-	<div style="display:flex;align-items:center;justify-content:space-between">${wordmark(64, T.fg)}<span style="font-family:${MONO};font-size:8.5px;color:${T.mutedFg}">lote 2408</span></div>
-	<span style="font-size:12.5px;font-weight:600;letter-spacing:.01em">Certificate of Analysis</span>
-	<span style="font-family:${MONO};font-size:9px;color:${T.mutedFg}">CREATINA 200 MESH · Creapure®</span>
-	${qLine('100%')}${qLine('92%')}${qLine('96%')}${qLine('64%')}
-	<table style="width:100%;border-collapse:collapse;font-size:8.5px;letter-spacing:.02em;margin-top:2px">
-		${[['Aparência', 'Pó branco', 'Conforme'], ['Pureza (HPLC)', '≥ 99,5%', '99,8%'], ['Umidade', '≤ 0,12%', '0,09%']]
-			.map((r) => `<tr>${r.map((c, i) => `<td style="border:1px solid ${T.border};padding:3px 6px;${i === 2 ? `color:${T.green700};font-weight:600` : ''}">${c}</td>`).join('')}</tr>`)
-			.join('')}
-	</table>
-	<div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px">
-		${qLine('44%', 0.28)}
-		<span style="display:grid;place-items:center;width:54px;height:54px;border-radius:9999px;border:2.5px solid ${T.green600};color:${T.green700};font-family:${MONO};font-size:7px;font-weight:700;letter-spacing:.1em;transform:rotate(-14deg);text-align:center">QC<br>APROVADO</span>
-	</div>
-</div>`
-// Planilha de cotações em miniatura.
-const qSheet = `<div style="width:250px;background:#ffffff;border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;${QSHADOW}">
-	<span style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500">${ico('FileXls', 20, 'fill', 'color:#1d6f42')}Cotações — setembro.xlsx</span>
-	<table style="width:100%;border-collapse:collapse;font-family:${MONO};font-size:9px">
-		${[['CREATINA', '4,85', 'FOB'], ['SUCRALOSE', '38,40', 'FOB'], ['ACESSULFAME', '5,90', 'CFR']]
-			.map((r) => `<tr>${r.map((c) => `<td style="border:1px solid ${T.border};padding:3px 6px;white-space:nowrap">${c}</td>`).join('')}</tr>`)
-			.join('')}
-	</table>
-</div>`
-const qEnvelope = `<div style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:9999px;background:#ffffff;font-size:13.5px;${QSHADOW}">${ico('PaperPlaneRight', 16, 'fill', `color:${T.brand}`)}BID enviado a 4 exportadores</div>`
-// Certificado menor (meio para fora da borda esquerda) e pasta de certificados.
-const qPageMini = `<div style="width:200px;background:#ffffff;border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:7px;${QSHADOW}">
-	<div style="display:flex;align-items:center;justify-content:space-between">${wordmark(52, T.fg)}<span style="font-family:${MONO};font-size:7.5px;color:${T.mutedFg}">VAL 30/09/2027</span></div>
-	<span style="font-size:11px;font-weight:600">Halal Certificate</span>
-	${qLine('100%')}${qLine('88%')}${qLine('94%')}${qLine('72%')}${qLine('90%')}${qLine('55%')}
-	<div style="display:flex;justify-content:flex-end;margin-top:2px"><span style="display:grid;place-items:center;width:44px;height:44px;border-radius:9999px;border:2px solid ${T.brand};color:${T.brand};font-family:${MONO};font-size:6.5px;font-weight:700;letter-spacing:.08em;transform:rotate(10deg)">HALAL</span></div>
-</div>`
-const qFolder = `<div style="display:inline-flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;background:#ffffff;${QSHADOW}">${ico('FolderOpen', 22, 'fill', `color:${T.primary}`)}<span style="display:flex;flex-direction:column;font-size:13.5px"><span style="font-weight:500">Certificados</span><span style="font-family:${MONO};font-size:10.5px;color:${T.mutedFg}">46 arquivos</span></span></div>`
-// Mão perdida: vagueia entre pontos, com pausas, sem achar onde clicar.
-const qHand = `<span class="qhand" style="display:flex;color:${T.fg};filter:drop-shadow(0 0 1.5px rgba(255,255,255,.95)) drop-shadow(0 3px 5px rgba(0,0,0,.35))">${ico('HandPointing', 46, 'fill')}</span>`
-const qCard = `<div class="vf q {{c.q}}" style="position:absolute;inset:0;overflow:hidden">
-	<div class="qbg" style="position:absolute;inset:0;transform:{{st.qbg}}">
-		${qEl(90, 85, -5, qBubbleSent, 330)}
-		${qEl(1520, 70, 4, qBubbleIA, 360)}
-		${qEl(330, 800, 3, qMail)}
-		${qEl(1650, 700, 3, qPage)}
-		${qEl(1230, 885, -4, qDoc('COA CREATINA 200 MESH.pdf', badge('success', 'Vigente')))}
-		${qEl(930, 55, 2, qDoc('HALAL ÁCIDO ASCÓRBICO.pdf', badge('warning', 'A vencer')))}
-		${qEl(110, 255, -3, qSheet)}
-		${qEl(1050, 990, -2, qEnvelope)}
-		${qEl(950, 835, -3, qTyping)}
-		${qEl(500, 70, 3, qDoc('KOSHER CREATINA 200 MESH.pdf', badge('error', 'Vencido')))}
-		${qEl(1345, 200, -2, qFolder)}
-		${qEl(1560, 285, 4, qDoc('FDA REGISTRATION — ENSIGN.pdf', badge('success', 'Vigente')))}
-		${qEl(700, 950, 2, qDoc('MSDS INOSITOL — TJCY.pdf', badge('warning', 'SEM DATA')))}
-		${qEl(60, 730, -6, qPageMini)}
-		${qEl(1555, 205, 2, qDoc('CERT. ORIGEM — INOSITOL.pdf', badge('success', 'Vigente')))}
-		${qEl(1100, 700, 0, qHand, null, 'nofloat')}
-	</div>
-	<div class="qtx" style="position:absolute;inset:0;transform:{{st.qtx}}">
-		<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:36px;text-align:center;color:${T.fg}">
-			<h1 style="margin:0;font-family:${HEAD};font-size:94px;line-height:1.05;letter-spacing:-.025em;font-weight:600;white-space:nowrap"><span class="w qw1">Ainda</span> <span>${'gerenciando'.split('').map((ch, k) => `<span class="ql" style="animation-delay:${(k * 0.045).toFixed(3)}s">${ch}</span>`).join('')}</span> <span>manualmente</span></h1>
-			<h1 style="margin:0;font-family:${HEAD};font-size:94px;line-height:1.05;letter-spacing:-.025em;font-weight:600;white-space:nowrap">${'documentos, cotações e conversas?'.split(' ').map((w, k) => `<span class="l2w" style="animation-delay:${(k * 0.05).toFixed(2)}s">${w}</span>`).join(' ')}</h1>
-		</div>
-	</div>
-</div>`
-// Cartela-pergunta do cap. BID: mesma coreografia da abertura ("Cotação" grande,
-// zoom out revela o resto sobre e-mails de resposta e planilhas), mais rápida.
-const qMailRe = (nome, texto, hora) =>
-	`<div style="display:inline-flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;background:#ffffff;font-size:14px;${QSHADOW}"><span style="display:grid;place-items:center;width:34px;height:34px;border-radius:9999px;background:#0f6cbd;color:#ffffff;font-size:13px;font-weight:600">${nome[0]}</span><span style="display:flex;flex-direction:column"><span style="font-weight:600">${nome}</span><span style="color:#555555;white-space:nowrap">${texto}</span></span><span style="margin-left:10px;font-family:${MONO};font-size:11px;color:#7a7a7a">${hora}</span></div>`
-const qCell = (t, extra = '') => `<td style="border:1px solid ${T.border};padding:4px 8px;white-space:nowrap;${extra}">${t}</td>`
-const qNum = `text-align:center;background:rgba(235,235,235,.5);color:${T.mutedFg}`
-const qSheetBig = `<div style="width:480px;background:#ffffff;border-radius:10px;overflow:hidden;${QSHADOW}">
-	<div style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid ${T.border60};font-size:13px;font-weight:500">${ico('FileXls', 20, 'fill', 'color:#1d6f42')}comparativo_v3_FINAL.xlsx<span style="margin-left:auto;font-family:${MONO};font-size:10px;color:${T.mutedFg}">editada por 3 pessoas</span></div>
-	<table style="width:100%;border-collapse:collapse;font-family:${MONO};font-size:10px">
-		<tr>${['', 'A', 'B', 'C', 'D'].map((c) => qCell(c, qNum + ';font-weight:600')).join('')}</tr>
-		<tr>${qCell('1', qNum)}${qCell('EXPORTADOR', 'font-weight:600')}${qCell('USD/KG', 'font-weight:600')}${qCell('INCO', 'font-weight:600')}${qCell('PRAZO', 'font-weight:600')}</tr>
-		<tr>${qCell('2', qNum)}${qCell('ANHUI JINHE')}${qCell('4,85')}${qCell('FOB')}${qCell('T/T 90')}</tr>
-		<tr>${qCell('3', qNum)}${qCell('VITASWEET')}${qCell('5,02', 'background:#fff3bf')}${qCell('CFR')}${qCell('T/T 30')}</tr>
-		<tr>${qCell('4', qNum)}${qCell('CHENGXIN')}${qCell('??', `color:${T.destructive};font-weight:700`)}${qCell('FOB')}${qCell('30% adiant.')}</tr>
-	</table>
-</div>`
-const qSheetBig2 = `<div style="width:440px;background:#ffffff;border-radius:10px;overflow:hidden;${QSHADOW}">
-	<div style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid ${T.border60};font-size:13px;font-weight:500">${ico('FileXls', 20, 'fill', 'color:#1d6f42')}cotações_agosto_v7.xlsx<span style="margin-left:auto;font-family:${MONO};font-size:10px;color:${T.mutedFg}">v7 · ontem</span></div>
-	<table style="width:100%;border-collapse:collapse;font-family:${MONO};font-size:10px">
-		<tr>${qCell('PRODUTO', 'font-weight:600')}${qCell('MELHOR USD', 'font-weight:600')}${qCell('FONTE', 'font-weight:600')}</tr>
-		<tr>${qCell('CREATINA 200 MESH')}${qCell('4,85')}${qCell('e-mail 14:02')}</tr>
-		<tr>${qCell('SUCRALOSE')}${qCell('38,40', 'background:#fff3bf')}${qCell('planilha v3')}</tr>
-		<tr>${qCell('ACESSULFAME K')}${qCell('#REF!', `color:${T.destructive};font-weight:700`)}${qCell('—')}</tr>
-	</table>
-</div>`
-const qMailBody = `<div style="width:430px;background:#ffffff;border-radius:12px;overflow:hidden;${QSHADOW}">
-	<div style="padding:12px 16px;border-bottom:1px solid ${T.border60};display:flex;align-items:center;gap:10px"><span style="display:grid;place-items:center;width:32px;height:32px;border-radius:9999px;background:#0f6cbd;color:#ffffff;font-size:12px;font-weight:600">A</span><span style="display:flex;flex-direction:column;min-width:0"><span style="font-size:13px;font-weight:600;white-space:nowrap">ANHUI JINHE FOOD</span><span style="font-size:11px;color:#7a7a7a;white-space:nowrap">RE: BID CC-2026-012 · para: compras@… · 14:02</span></span></div>
-	<div style="padding:12px 16px;display:flex;flex-direction:column;gap:6px;font-size:12.5px;line-height:1.5;color:#222222">
-		<span>Dear team, please find our offer below:</span>
-		<span style="font-family:${MONO};font-size:11.5px;color:#555555">CREATINE 200 MESH — USD 4.85/KG FOB Qingdao<br>SUCRALOSE — USD 38.40/KG FOB Qingdao</span>
-		<span>Payment T/T 90 days · price validity 15 days.</span>
-	</div>
-</div>`
-const qNotif = (icon, titulo, meta) =>
-	`<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:#ffffff;${QSHADOW}"><span style="display:grid;place-items:center;width:30px;height:30px;border-radius:8px;background:rgba(15,108,189,.1);color:#0f6cbd">${ico(icon, 16, 'fill')}</span><span style="display:flex;flex-direction:column;min-width:0"><span style="font-size:12.5px;font-weight:600;white-space:nowrap">${titulo}</span><span style="font-size:11px;color:#7a7a7a;white-space:nowrap">${meta}</span></span><span style="margin-left:auto;width:8px;height:8px;border-radius:9999px;background:#0f6cbd"></span></div>`
-const qNotifs = `<div style="display:flex;flex-direction:column;gap:8px;width:310px">
-	${qNotif('Envelope', 'Nova resposta de BID', 'ANHUI JINHE FOOD · agora')}
-	${qNotif('Envelope', 'Nova resposta de BID', 'VITASWEET CO. · há 2 min')}
-	${qNotif('FileXls', 'Planilha atualizada', 'comparativo_v3_FINAL.xlsx · há 5 min')}
-</div>`
-const qUnread = `<div style="display:inline-flex;align-items:center;gap:14px;padding:12px 16px;border-radius:12px;background:#ffffff;font-size:13.5px;${QSHADOW}"><span style="position:relative;display:flex;color:#0f6cbd">${ico('Envelope', 24, 'fill')}<span style="position:absolute;right:-10px;top:-8px;display:grid;place-items:center;min-width:20px;height:20px;padding:0 5px;border-radius:9999px;background:${T.destructive};color:#ffffff;font-size:11px;font-weight:700">27</span></span>não lidas</div>`
-const qRe = `<div style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:9999px;background:#ffffff;font-size:13.5px;${QSHADOW}">${ico('Envelope', 16, 'fill', 'color:#0f6cbd')}RE: RE: RE: BID CC-2026-012 — 3 items</div>`
+// Cartela do cap. BID: a câmera abre em "Peça cotações" bem grande, o zoom out revela o
+// resto da linha, a linha 2 sobe e a timeline das bolhas entra com a 1ª acesa. Sem
+// elementos flutuando ao fundo (saíram em 2026-09-10) — só o layer do texto, .qtx.
 const bidQCard = `<div class="vf q qb {{c.ch2}}" style="position:absolute;inset:0;overflow:hidden">
-	<div class="qbg" style="position:absolute;inset:0;transform:{{st.qbBg}}">
-		${qEl(70, 110, -4, qMailBody)}
-		${qEl(1390, 75, 3, qSheetBig)}
-		${qEl(620, 50, 2, qRe)}
-		${qEl(90, 430, -2, qNotifs)}
-		${qEl(100, 700, -3, qSheet)}
-		${qEl(1440, 700, -3, qSheetBig2)}
-		${qEl(430, 935, 2, qMailRe('VITASWEET CO.', 'RE: BID CC-2026-012 — quotation attached', '15:47'))}
-		${qEl(1120, 960, -2, qEnvelope)}
-		${qEl(1690, 465, 3, qUnread)}
-		${qEl(700, 90, -2, qMail)}
-	</div>
 	<div class="qtx" style="position:absolute;inset:0;transform:{{st.qbTx}}">
-		<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:36px;text-align:center;color:${T.fg}">
-			<h1 style="margin:0;font-family:${HEAD};font-size:94px;line-height:1.05;letter-spacing:-.025em;font-weight:600;white-space:nowrap"><span class="w">Cotação</span> <span class="qw2">por</span> <span class="qw2" style="animation-delay:.12s">e-mail,</span></h1>
-			<h1 style="margin:0;font-family:${HEAD};font-size:94px;line-height:1.05;letter-spacing:-.025em;font-weight:600;white-space:nowrap">${'comparação na planilha?'.split(' ').map((w, k) => `<span class="l2w" style="animation-delay:${(k * 0.04).toFixed(2)}s">${w}</span>`).join(' ')}</h1>
+		<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:${TITLE_GAP}px;text-align:center;color:${T.fg}">
+			<h1 style="${TITLE_H1}"><span class="w">Peça</span> <span class="w" style="animation-delay:.08s">cotações</span> <span class="qw2">em</span> <span class="qw2" style="animation-delay:.12s">um</span> <span class="qw2" style="animation-delay:.19s">clique.</span></h1>
+			<h1 style="${TITLE_H1}">${'Compare as respostas com IA.'.split(' ').map((w, k) => `<span class="l2w" style="animation-delay:${(k * 0.04).toFixed(2)}s">${w}</span>`).join(' ')}</h1>
+			<div style="margin-top:20px">${stepsRow(0, 0.3)}</div>
 		</div>
 	</div>
 </div>`
-const meetCard = titleCard('pull {{c.meet}}', 'Conheça')
+// Abertura: logo, slogan ("IA" e "muito bem" acendem juntos) e a timeline com as três bolhas acesas.
 const openCard = darkCard(
 	'{{c.open}}',
 	`<div style="display:flex;flex-direction:column;align-items:center;gap:34px">
 		<div class="w" style="position:relative;display:flex">${wordmark(680, T.fg)}</div>
-		<div class="w" style="font-family:${MONO};font-size:29px;font-weight:500;letter-spacing:.26em;padding-left:.26em;text-transform:uppercase;color:${T.mutedFg}">para indústrias que compram e vendem <span class="acende"><span class="frio">muito bem</span><span class="quente ai-shimmer" aria-hidden="true">muito bem</span></span></div>
-		<div style="display:flex;gap:20px;margin-top:14px">
-			${['Gerenciamento de documentos com IA', 'Cotação de venda automática', 'Cotação de compra em um clique'].map((t, k) => `<div class="qfb" style="transition-delay:${(0.85 + k * 0.15).toFixed(2)}s;animation-delay:${(0.35 + k * 0.15).toFixed(2)}s">${ico('Sparkle', 18, 'fill', 'position:relative;color:#ffffff', 'ai-spark')}<span style="position:relative">${t}</span></div>`).join('')}
-		</div>
+		<div class="w" style="font-family:${MONO};font-size:29px;font-weight:500;letter-spacing:.26em;padding-left:.26em;text-transform:uppercase;color:${T.mutedFg}">${acende('IA')} para indústrias que compram e vendem ${acende('muito bem')}</div>
+		<div style="margin-top:14px">${stepsRow('all', 0.35)}</div>
 	</div>`
 )
+// Fechamento: só a bandeira do logo ganha o gradiente de IA. Na barra, a lupa fica à esquerda
+// e URL + cursor formam um grupo centralizado no meio geométrico, durante e após a digitação.
 const closeCard = darkCard(
 	'{{c.close}}',
-	`<div class="w" style="position:relative;display:flex">${wordmark(460, T.fg)}</div><div class="w" style="display:flex;align-items:center;gap:14px;width:560px;height:60px;padding:0 24px;border-radius:9999px;background:#ffffff;border:1px solid ${T.border};box-shadow:0 12px 32px -14px rgba(0,0,0,.2)">${ico('MagnifyingGlass', 22, 'bold', `color:${T.mutedFg}`)}<span class="url" style="font-family:${MONO};font-size:22px;color:${T.fg}">www.faradays.io</span><span class="caret" style="width:2px;height:28px;background:${T.fg}"></span></div>`
+	`<div class="w" style="position:relative;display:flex">${wordmark(460, T.fg, 'flagGrad')}</div><div class="w" style="position:relative;display:flex;align-items:center;justify-content:center;width:560px;height:60px;border-radius:9999px;background:#ffffff;border:1px solid ${T.border};box-shadow:0 12px 32px -14px rgba(0,0,0,.2)"><span style="position:absolute;left:22px;top:50%;transform:translateY(-50%);display:flex">${ico('MagnifyingGlass', 22, 'bold', `color:${T.mutedFg}`)}</span><span style="display:inline-flex;align-items:center;gap:6px"><span class="url" style="font-family:${MONO};font-size:22px;letter-spacing:0;color:${T.fg}">www.faradays.io</span><span class="caret" style="width:2px;height:28px;background:${T.fg}"></span></span></div>`
 )
 
 
@@ -770,54 +683,51 @@ a{color:${T.brand}}a:hover{color:${T.blue700}}
 /* entrada dos textos das cartelas */
 @keyframes rise{0%{opacity:0;transform:translateY(40px)}100%{opacity:1;transform:translateY(0)}}
 .tc .w{display:inline-block;opacity:0}
-/* camera pull-back: a cartela chega grande (câmera colada) e recua até o lugar */
-.tc.pull.show{transition:none;animation:pullback .7s cubic-bezier(.16,.84,.44,1) both}
-@keyframes pullback{from{transform:scale(2.1)}to{transform:scale(1)}}
-.tc.pull.show .w{animation:fadeOnly .45s var(--ease) both}
-@keyframes fadeOnly{from{opacity:0}to{opacity:1}}
 /* abertura: anel de setas gira devagar; celular vai para a horizontal e volta */
 .tc.show .rh-ring{animation:spinslow 9s linear infinite}
 @keyframes spinslow{to{transform:rotate(360deg)}}
 .tc.show .rh-phone{animation:rhRot 2.2s var(--ease) .5s forwards}
-/* cartela-pergunta: câmera própria (texto e fundo em layers separados p/ o dolly 3D) */
-.qtx,.qbg{transform-origin:0 0;transition:transform 1.15s var(--ease);will-change:transform}
-.q.ex3 .qtx,.q.ex3 .qbg{transition:transform .85s var(--ease)}
-.q.cut{opacity:0;transition:none}
-.q.ex3 .qel,.q.ex3 .qel *{animation-play-state:paused}
+/* cartela do BID: câmera própria no layer do texto (zoom out de "Peça cotações") */
+.qtx{transform-origin:0 0;transition:transform 1.15s var(--ease);will-change:transform}
 .q .w{display:inline-block;opacity:0}
 .q.show .w{animation:rise .55s var(--ease) both}
-.ql{display:inline-block;opacity:0}
-.q.type .ql{animation:qOn .01s linear both}
-@keyframes qOn{to{opacity:1}}
 .l2w{display:inline-block;opacity:0}
 .q.l2 .l2w{animation:rise .55s var(--ease) both}
-.qel{opacity:0}
-${Array.from({ length: 16 }, (_, i) => `.q.bgin .qel:nth-child(${i + 1}){animation:qelIn .5s var(--ease) ${(0.08 + i * 0.04).toFixed(2)}s both,qFloat ${(3.2 + ((i * 7) % 14) / 10).toFixed(1)}s ease-in-out ${(0.6 + i * 0.04).toFixed(2)}s infinite alternate}`).join('\n')}
-.q.bgin .qel.nofloat{animation:qelIn .5s var(--ease) .7s both}
 /* cartela-pergunta do BID (.qb): mesma coreografia, tudo mais rápido */
-.q.qb .qtx,.q.qb .qbg{transition-duration:.9s}
+.q.qb .qtx{transition-duration:.9s}
 .q.qb.exit{transition-duration:.5s}
-.q.qb.exit .qtx,.q.qb.exit .qbg{transition-duration:.6s}
-.q.qb.exit .qel,.q.qb.exit .qel *{animation-play-state:paused}
+.q.qb.exit .qtx{transition-duration:.6s}
 .q.qb.show .w{animation-duration:.45s}
 .q.qb.l2 .l2w{animation-duration:.45s}
 .q .qw2{display:inline-block;opacity:0}
 .q.bgin .qw2{animation:rise .45s var(--ease) .05s both}
-/* badges de features (cena do logo): entram apagados e acendem para o gradiente de IA */
+/* bolhas dos produtos (timeline): entram apagadas (#262626) e acendem para o gradiente de IA.
+   .off = capítulo que não é o atual (contorno, sem gradiente, sem pulso). As regras valem na
+   cena do logo e nas cartelas de capítulo (.tc.show) e na cartela-pergunta do BID (.q.l2). */
 .qfb{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:10px;padding:13px 22px;border-radius:9999px;font-size:18px;font-weight:500;color:#ffffff;background:linear-gradient(100deg,#1d6ae5,#38bdf8,#7c8cf8,#38bdf8,#1d6ae5);background-size:220% 100%;box-shadow:0 12px 30px -12px rgba(0,0,0,.4);opacity:0}
 .qfb::before{content:"";position:absolute;inset:0;background:#262626;transition:opacity .5s var(--ease);transition-delay:inherit}
-.tc.show .qfb{animation:rise .4s var(--ease) both,aiSweep 3.5s linear infinite}
-.tc.show .qfb::before{opacity:0}
-${Array.from({ length: 10 }, (_, i) => `.q.qb.bgin .qel:nth-child(${i + 1}){animation:qelIn .4s var(--ease) ${(0.05 + i * 0.035).toFixed(2)}s both,qFloat ${(3 + ((i * 7) % 12) / 10).toFixed(1)}s ease-in-out ${(0.45 + i * 0.035).toFixed(2)}s infinite alternate}`).join('\n')}
-.qhand{animation:qWander 5.5s ease-in-out infinite}
-@keyframes qWander{0%{transform:translate(0,0) rotate(0)}13%{transform:translate(-90px,50px) rotate(-10deg)}24%{transform:translate(-90px,50px) rotate(-10deg)}40%{transform:translate(50px,130px) rotate(7deg)}52%{transform:translate(50px,130px) rotate(7deg)}68%{transform:translate(170px,-40px) rotate(12deg)}78%{transform:translate(170px,-40px) rotate(12deg)}100%{transform:translate(0,0) rotate(0)}}
-@keyframes qelIn{from{opacity:0;transform:translateY(26px) scale(.92)}to{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes qFloat{from{transform:translateY(0)}to{transform:translateY(-9px)}}
+.tc.show .qfb,.q.l2 .qfb{animation:rise .4s var(--ease) both,aiSweep 3.5s linear infinite}
+.tc.show .qfb::before,.q.l2 .qfb::before{opacity:0}
+.qfb.off{color:${T.mutedFg};background:none;box-shadow:inset 0 0 0 1px rgba(10,10,10,.16)}
+.qfb.off::before{content:none}
+.qfb.off .ai-spark{animation:none}
+.tc.show .qfb.off,.q.l2 .qfb.off{animation:rise .4s var(--ease) both}
+/* bolha estacionada: aparece na hora no lugar da bolha da cartela e voa ao canto (só o transform
+   transiciona); .hide = zoom cobrindo o canto; .exit = cartela seguinte entrando */
+.dock{opacity:0;pointer-events:none;will-change:transform}
+.dock .qfb{opacity:1;animation:aiSweep 3.5s linear infinite}
+.dock .qfb::before{content:none}
+.dock.pre{transition:none}
+.dock.on{opacity:1;transition:transform .9s var(--ease)}
+.dock.hide{opacity:0;transition:opacity .2s var(--ease)}
+.dock.exit{opacity:0;transition:opacity .5s var(--ease)}
+/* na saída da cartela a bolha do capítulo some na hora — a estacionada assume no mesmo lugar */
+.tc.exit .qfb.on,.q.qb.exit .qfb.on{visibility:hidden}
 @keyframes rhRot{0%,30%{transform:rotate(0)}100%{transform:rotate(90deg)}}
-/* fechamento: a URL é digitada (mono → largura exata em ch) com cursor piscando */
+/* fechamento: a URL é digitada (mono sem tracking → 15ch exatos, +2px de folga) com cursor piscando */
 .url{display:inline-block;width:0;overflow:hidden;white-space:nowrap}
 .tc.show .url{animation:typeUrl 1.05s steps(15,end) 1s forwards}
-@keyframes typeUrl{to{width:calc(15ch + 4px)}}
+@keyframes typeUrl{to{width:calc(15ch + 2px)}}
 .caret{display:inline-block;animation:blink .8s step-end infinite}
 @keyframes blink{50%{opacity:0}}
 .tc.show .w{animation:rise .85s var(--ease) both}
@@ -866,7 +776,7 @@ ${Array.from({ length: 11 }, (_, i) => `.tc.show .w:nth-child(${i + 2}){animatio
 /* IA em ação: shimmer de gradiente no texto (estilo Gemini) */
 .ai-shimmer{background:linear-gradient(90deg,#1d6ae5,#38bdf8,#7c8cf8,#38bdf8,#1d6ae5);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:aiSweep 1.8s linear infinite}
 @keyframes aiSweep{from{background-position:0% 0}to{background-position:200% 0}}
-/* "muito bem" acendendo: duas camadas empilhadas — a cinza some, a colorida entra.
+/* "IA" e "muito bem" acendendo juntos: duas camadas empilhadas — a cinza some, a colorida entra.
    Cross-fade em vez de animar o gradiente porque background-clip:text não interpola
    entre uma cor sólida e um gradiente. O sweep é o mesmo aiSweep dos badges. */
 .acende{position:relative;display:inline-block}
@@ -896,8 +806,8 @@ ${Array.from({ length: 11 }, (_, i) => `.tc.show .w:nth-child(${i + 2}){animatio
 
 /* ---------------- stage ---------------------------------------------- */
 const stage = `<div class="stage" style="position:relative;width:1920px;height:1080px;overflow:hidden;background:${STAGE};color:${T.fg};font-family:${BODY};font-size:16px;line-height:1.5;letter-spacing:.02em">
-	${titleCard('{{c.ch1}}', 'E os documentos dos seus fornecedores, em dia?')}
-	${titleCard('{{c.ch3}}', 'Seu representante ainda depende do administrativo?')}
+	${titleCard('{{c.ch1}}', ['Documentos dos seus produtos vencendo?', 'Ainda precisa cobrar os fornecedores?'], { step: 1 })}
+	${titleCard('{{c.ch3}}', ['Seu time de vendas inteiro', 'no WhatsApp'], { step: 2 })}
 
 	<div class="cam {{c.cam}}" style="position:absolute;inset:0;transform-origin:0 0;transform:{{st.cam}}">
 	<div class="vf {{c.win}}" style="position:absolute;left:160px;top:90px;width:1600px;height:900px">
@@ -926,41 +836,41 @@ const stage = `<div class="stage" style="position:relative;width:1920px;height:1
 	</div>
 
 	${caps}
+	${docks}
 	${hintCard}
-	${qCard}
 	${bidQCard}
-	${meetCard}
 	${openCard}
 	${closeCard}
 </div>`
 
 /* ---------------- lógica (timeline) ------------------------------------ */
-// Cabeça do vídeo: LEAD ms de tela em branco antes do primeiro cue (o 'boot', em 0).
+// Cabeça do vídeo: LEAD ms de tela em branco antes do conteúdo — o cue 'boot' (em 0) é o branco.
 // Os tempos da tabela abaixo são relativos ao conteúdo; o offset entra no .map().
 const LEAD = 2000
 const CUES = [
 	// dica de girar o celular — desligada para caber em ~1min (descomente para voltar):
 	// ['hint', 350], ['hintOut', 4900],
-	['boot', 0], ['q1', 500], ['qType', 1100], ['qZoom', 1150], ['qLine2', 2000], ['qExit', 2900],
-	['meet', 3200], ['meetOut', 4000], ['open', 4200], ['openOut', 7200], ['bZoom', 7600], ['bLine2', 8300],
-	// cap. 1 — Cotação de compra (BID)
-	['ch2Out', 9100], ['cRow', 10300], ['kRow', 10900], ['cDisp', 11400], ['kDisp', 12000], ['env', 13100],
-	['split', 13700], ['capMail', 14700], ['mailIn', 14400], ['mailOpen', 14800], ['replyOpen', 15200], ['t1', 15500],
-	['t2', 15700], ['t3', 15900], ['t4', 16100], ['cSend', 16500], ['kSend', 17100], ['flyGone', 18200],
-	['unsplit', 18400], ['cutA2', 19500], ['cut2', 19700], ['read2', 21000], ['sug', 22000], ['cVenc', 22100],
-	['kVenc', 22900], ['zoomOut2', 23900], ['cFechar', 24800], ['kFechar', 25400], ['bidOut', 26300], ['rst1', 27200],
-	// cap. 2 — Documentos (SharePoint)
-	['ch1Out', 29400], ['spIn', 30300], ['zoomSp', 30550], ['sync1', 31100], ['sync2', 31400], ['sync3', 31700],
-	['done1', 32200], ['done2', 32500], ['done3', 32800], ['lift', 33000], ['drop', 33300], ['cutSp', 33650],
-	['r1', 33750], ['r2', 33900], ['r3', 34050], ['spOut', 34500], ['zoomStatus', 34800], ['read', 35900],
-	['zoomOut1', 37600], ['cPastas', 38400], ['cutA1', 39000], ['cut1', 39200], ['docsOut', 40500], ['rst2', 41400],
-	// cap. 3 — Conversas com IA (WhatsApp)
-	['ch3Out', 42000], ['phoneIn', 42100], ['p1', 42600], ['cap1', 42700], ['ptyp1', 43400], ['p2', 44400],
-	['cap2', 44600], ['p3', 45500], ['ptyp2', 46100], ['p4', 47200], ['cap3', 47300], ['p5', 48100],
-	['ptyp3', 48600], ['p6', 49800], ['cap4', 49900], ['toSys', 52100], ['cap5', 52600], ['zoomConv', 54500],
-	['zoomOut3', 57200], ['waOut', 58700], ['rst3', 59600], ['end', 61300]
+	// abertura — logo, slogan e timeline das bolhas (4,2 s)
+	['boot', 0], ['open', 0], ['openOut', 4200],
+	// cap. 1 — Cotação de compra (BID); cartela de 3,1 s a partir de openOut (as três cartelas têm a mesma duração)
+	['bZoom', 4600], ['bLine2', 5300], ['ch2Out', 7300], ['cRow', 8500], ['kRow', 9100], ['cDisp', 9600],
+	['kDisp', 10200], ['env', 11300], ['split', 11900], ['capMail', 12900], ['mailIn', 12600], ['mailOpen', 13000],
+	['replyOpen', 13400], ['t1', 13700], ['t2', 13900], ['t3', 14100], ['t4', 14300], ['cSend', 14700],
+	['kSend', 15300], ['flyGone', 16400], ['unsplit', 16600], ['cutA2', 17700], ['cut2', 17900], ['read2', 19200],
+	['sug', 20200], ['cVenc', 20300], ['kVenc', 21100], ['zoomOut2', 22100], ['cFechar', 23000], ['kFechar', 23600],
+	['bidOut', 24500], ['rst1', 25400],
+	// cap. 2 — Documentos (SharePoint); cartela de 3,1 s a partir de bidOut
+	['ch1Out', 27600], ['spIn', 28500], ['zoomSp', 28750], ['sync1', 29300], ['sync2', 29600], ['sync3', 29900],
+	['done1', 30400], ['done2', 30700], ['done3', 31000], ['lift', 31200], ['drop', 31500], ['cutSp', 31850],
+	['r1', 31950], ['r2', 32100], ['r3', 32250], ['spOut', 32700], ['zoomStatus', 33000], ['read', 34100],
+	['zoomOut1', 35800], ['cPastas', 36600], ['cutA1', 37200], ['cut1', 37400], ['docsOut', 38700], ['rst2', 39600],
+	// cap. 3 — Cotação de venda (WhatsApp); cartela de 3,1 s a partir de docsOut
+	['ch3Out', 41800], ['phoneIn', 41900], ['p1', 42400], ['cap1', 42500], ['ptyp1', 43200], ['p2', 44200],
+	['cap2', 44400], ['p3', 45300], ['ptyp2', 45900], ['p4', 47000], ['cap3', 47100], ['p5', 47900],
+	['ptyp3', 48400], ['p6', 49600], ['cap4', 49700], ['toSys', 51900], ['cap5', 52400], ['zoomConv', 54300],
+	['zoomOut3', 57000], ['waOut', 58500], ['rst3', 59400], ['end', 61100],
 ]
-	.map(([n, t]) => [n, t === 0 ? 0 : t + LEAD])
+	.map(([n, t]) => [n, n === 'boot' ? 0 : t + LEAD])
 	.sort((a, b) => a[1] - b[1])
 
 const logic = `
@@ -986,6 +896,12 @@ const trs = (p, s) => 'translate(' + p[0] + 'px,' + p[1] + 'px) scale(' + s + ')
 // Câmera da prancha inteira (origem 0,0): centraliza (cx,cy) na escala s.
 const CAM0 = 'translate(0px,0px) scale(1)';
 const camFocus = (cx, cy, s) => 'translate(' + (960 - s * cx) + 'px,' + (540 - s * cy) + 'px) scale(' + s + ')';
+// Cartela do BID: a câmera abre centrada em "Peça cotações" (centro do trecho, em px da prancha, e escala).
+const QB_FOCUS = [701, 426, 2.4];
+// Bolha estacionada: canto superior esquerdo (acima da janela, que começa em y=90) e ponto de partida
+// de cada capítulo = canto superior esquerdo da bolha acesa na cartela (px da prancha, medidos).
+const DOCK_TO = 'translate(64px,24px) scale(.8)';
+const DOCK_FROM = [[377.5, 643.5], [770.3, 643.5], [1141.6, 643.5]]; // BID · Documentos · WhatsApp (mesma altura: títulos iguais)
 // Celular (390×780 em 1310,150) centralizado na prancha, ampliado.
 const PH_S = 1.28;
 const phCenter = (dy) => trs([960 - 195 * PH_S - 1310, 540 - 390 * PH_S - 150 + dy], PH_S);
@@ -1031,16 +947,19 @@ class Component extends DCLogic {
 		// Cartelas (fade) e janela do app (fade)
 		c.hint = seq('pre', ['hint', 'show'], ['hintOut', 'exit']);
 		c.open = seq('pre', ['open', 'show'], ['openOut', 'exit']);
-		c.q = seq('pre', ['q1', 'show'], ['qType', 'show type'], ['qZoom', 'show type bgin'], ['qLine2', 'show type bgin l2'], ['qExit', 'show type bgin l2 ex3'], ['meet', 'cut ex3']);
-		st.qtx = seq(camFocus(390, 500, 3.1), ['qZoom', CAM0], ['qExit', camFocus(960, 540, 0.45)]);
-		st.qbg = seq(CAM0, ['qExit', camFocus(960, 540, 0.26)]);
-		c.meet = seq('pre', ['meet', 'show'], ['meetOut', 'exit']);
 		c.ch2 = seq('pre', ['openOut', 'show'], ['bZoom', 'show bgin'], ['bLine2', 'show bgin l2'], ['ch2Out', 'show bgin l2 exit']);
-		st.qbTx = seq(camFocus(760, 476, 2.6), ['bZoom', CAM0], ['ch2Out', camFocus(960, 540, 0.62)]);
-		st.qbBg = seq(CAM0, ['ch2Out', camFocus(960, 540, 0.45)]);
+		st.qbTx = seq(camFocus(QB_FOCUS[0], QB_FOCUS[1], QB_FOCUS[2]), ['bZoom', CAM0], ['ch2Out', camFocus(960, 540, 0.62)]);
 		c.ch1 = seq('pre', ['bidOut', 'show'], ['ch1Out', 'exit']);
 		c.ch3 = seq('pre', ['docsOut', 'show'], ['ch3Out', 'exit']);
 		c.close = seq('pre', ['waOut', 'show']);
+		// Bolha estacionada de cada capítulo: voa na saída da cartela, some nos zooms que cobrem o canto
+		// (volta só depois de a câmera recuar), sai quando a cartela seguinte entra.
+		c.dock0 = seq('pre', ['ch2Out', 'on'], ['cut2', 'hide'], ['cFechar', 'on'], ['bidOut', 'exit']);
+		c.dock1 = seq('pre', ['ch1Out', 'on'], ['zoomSp', 'hide'], ['cutSp', 'on'], ['zoomStatus', 'hide'], ['cPastas', 'on'], ['docsOut', 'exit']);
+		c.dock2 = seq('pre', ['ch3Out', 'on'], ['zoomConv', 'hide'], ['waOut', 'exit']);
+		st.dock0 = seq(tr(...DOCK_FROM[0]), ['ch2Out', DOCK_TO]);
+		st.dock1 = seq(tr(...DOCK_FROM[1]), ['ch1Out', DOCK_TO]);
+		st.dock2 = seq(tr(...DOCK_FROM[2]), ['ch3Out', DOCK_TO]);
 		c.win = seq('pre', ['ch2Out', 'show'], ['bidOut', 'exit'], ['rst1', 'pre'], ['ch1Out', 'show'], ['docsOut', 'exit'], ['rst2', 'pre'], ['toSys', 'show'], ['waOut', 'exit']);
 		// Páginas dentro da janela trocam enquanto ela está invisível.
 		c.pgBid = seq('show', ['rst1', 'pre']);
@@ -1176,7 +1095,7 @@ fs.writeFileSync(
 					y: 0,
 					w: 380,
 					text:
-						'Roteiro (63s · 2 s de tela em branco na cabeça)\n\n0:00 Tela em branco — cabeça de 2 s para gravação (só o ground da LP com o film grain)\n0:02 Abertura — cartela-pergunta ("Ainda gerenciando manualmente / documentos, cotações e conversas?") com mocks animados, digitação e zoom out acelerados; MATCH CUT para o Conheça já em zoom out; logo Faradays + "para indústrias que compram e vendem muito bem" e três badges de features (documentos com IA · venda automática · compra em um clique) acendendo do cinza para o gradiente de IA. Dica de girar o celular desligada (cues comentados)\n0:09 Cotação por e-mail, comparação na planilha? — cartela com a coreografia da abertura ("Cotação" grande → zoom out sobre corpo de e-mail, planilhas grandes e notificações; a cartela sai recuando em zoom out) → lista → modal → Disparar BID (4) → envelopes → vista dividida: a caixa de e-mail do exportador recebe o BID e responde com preço → o e-mail voa de volta → corte seco para o Comparativo JÁ EM ZOOM, com a linha da ANHUI chegando "lendo e-mail…" → IA sugere (ponto piscante) → clique na linha → Fechar cotação\n0:28 E os documentos dos seus fornecedores, em dia? — a câmera fecha no painel do drive enquanto ele entra; os 3 arquivos novos sincronizam sozinhos (sem clique); com a pilha já voando, corte seco para a vista inteira; IA lê validade (zoom nos status), corte seco para a aba Pastas\n0:42 Seu representante ainda depende do administrativo? — só o celular do representante, centralizado: ele pede o COA → "digitando…" (glow colorido estilo Siri) → a IA responde sozinha (rótulo Agente IA nos balões) → pergunta a marca → emite a cotação; no fim o celular vai para a direita, o sistema entra ao lado com a conversa inteira e a câmera fecha nela\n1:00 Fechamento — logo + barra de busca digitando www.faradays.io (loop)\n\nTransições: cartela ↔ demo em fade; match cut seco (sem fade, corta no meio do movimento) na pergunta→Conheça, no disparo→comparativo e em tabela→Pastas.\n\nChips: Início pula ao capítulo; Tempo vai a um instante; Pausar congela; Loop repete.'
+						'Roteiro (~63s · 2 s de tela em branco na cabeça)\n\n0:00 Tela em branco — cabeça de 2 s para gravação (só o ground da LP com o film grain)\n0:02 Abertura — logo Faradays + "IA para indústrias que compram e vendem muito bem" ("IA" e "muito bem" acendem juntos do cinza para o gradiente de IA) e a timeline das três bolhas (compra em um clique · documentos com IA · venda no WhatsApp) subindo e acendendo uma a uma. Dica de girar o celular desligada (cues comentados)\n0:06 Peça cotações em um clique. / Compare as respostas com IA. — cartela com a coreografia de zoom ("Peça cotações" grande → zoom out revela a frase, sem elementos ao fundo; a timeline entra com a 1ª bolha acesa; a cartela sai recuando e a bolha acesa voa para o canto superior esquerdo, onde fica como selo do capítulo durante a demo — some nos zooms que cobrem o canto e sai quando a cartela seguinte entra; o mesmo vale nos outros dois capítulos) → lista → modal → Disparar BID (4) → envelopes → vista dividida: a caixa de e-mail do exportador recebe o BID e responde com preço → o e-mail voa de volta → corte seco para o Comparativo JÁ EM ZOOM, com a linha da ANHUI chegando "lendo e-mail…" → IA sugere (ponto piscante) → clique na linha → Fechar cotação\n0:26 Documentos dos seus produtos vencendo? / Ainda precisa cobrar os fornecedores? — timeline com a 2ª bolha acesa; a câmera fecha no painel do drive enquanto ele entra; os 3 arquivos novos sincronizam sozinhos (sem clique); com a pilha já voando, corte seco para a vista inteira; IA lê validade (zoom nos status), corte seco para a aba Pastas\n0:41 Seu time de vendas inteiro no WhatsApp — timeline com a 3ª bolha acesa; só o celular do representante, centralizado: ele pede o COA → "digitando…" (glow colorido estilo Siri) → a IA responde sozinha (rótulo Agente IA nos balões) → pergunta a marca → emite a cotação; no fim o celular vai para a direita, o sistema entra ao lado com a conversa inteira e a câmera fecha nela\n1:00 Fechamento — logo com a bandeira em gradiente de IA + barra de busca digitando www.faradays.io centralizado (loop)\n\nTransições: cartela ↔ demo em fade; match cut seco (sem fade, corta no meio do movimento) no disparo→comparativo e em tabela→Pastas.\n\nChips: Início pula ao capítulo; Tempo vai a um instante; Pausar congela; Loop repete.'
 				}
 			],
 			launch: { view: 'focused', file: 'Main.dc.html' }
