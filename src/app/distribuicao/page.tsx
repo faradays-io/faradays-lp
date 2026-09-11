@@ -1,14 +1,23 @@
 import type { Metadata } from 'next'
 
-import { FeaturesSection } from '@/components/landing/features-section'
-import { HeroFeatureFlow } from '@/components/landing/hero-feature-flow'
+import { FeatureIndex } from '@/components/landing/feature-index'
 import { HomeFooter } from '@/components/landing/home-footer'
-import { HomeHero } from '@/components/landing/home-hero'
 import { NavBar } from '@/components/landing/nav-bar'
 import { PageTransition } from '@/components/landing/page-transition'
-import { PartnersSection } from '@/components/landing/partners-section'
-import { TestimonialsSection } from '@/components/landing/testimonials-section'
+import { SplitHero } from '@/components/landing/split-hero'
 
+/* /distribuicao — layout simples (referência: ollama.com): hero em duas
+   colunas com o vídeo ao lado do CTA e as features em índice sticky, no
+   lugar da coreografia pinada da versão anterior (preservada em `_v1/`,
+   pasta privada fora do roteamento). A grade "e mais" (FeaturesSection) não
+   entra: as quatro de destaque são a lista.
+
+   PartnersSection e TestimonialsSection estão ocultas por enquanto — os
+   componentes continuam no repositório; para voltar, basta renderizá-las
+   entre o FeatureIndex e o HomeFooter e reabrir os links "Parceiros" e
+   "Relatos" no rodapé. A página de preços também está fora do ar
+   (`_precos/`, pasta privada): para voltar, renomear a pasta, devolver o
+   `pricing` da NavBar e o link "Preços" do rodapé. */
 export const metadata: Metadata = {
 	title: 'Distribuição — Faradays',
 	description:
@@ -19,13 +28,10 @@ export default function DistribuicaoPage() {
 	return (
 		<div className="light light-home bg-background text-foreground min-h-svh">
 			<PageTransition />
-			<NavBar pricing />
+			<NavBar />
 			<main className="pt-23">
-				<HomeHero />
-				<HeroFeatureFlow />
-				<FeaturesSection />
-				<PartnersSection />
-				<TestimonialsSection />
+				<SplitHero />
+				<FeatureIndex />
 			</main>
 			<HomeFooter />
 		</div>

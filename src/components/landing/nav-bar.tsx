@@ -92,7 +92,9 @@ function SolutionsMenu() {
 export const PRICING_HREF = '/distribuicao/precos'
 
 /* Link "Preços" ao lado da logo — opt-in por página (`pricing`), porque a
-   nav também serve blog e rotas de teste, onde ele não faz sentido. Fica
+   nav também serve blog e rotas de teste, onde ele não faz sentido. Por
+   enquanto nenhuma página liga: a rota vive em `_precos/` (pasta privada,
+   fora do roteamento) até voltar ao ar. Fica
    marcado quando é a própria rota. Só em md+ (como o SolutionsMenu): em
    390px ele empurra o botão de demo para fora da tela; no mobile o link
    fica no rodapé. */

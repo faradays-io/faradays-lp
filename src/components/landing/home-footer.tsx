@@ -27,8 +27,8 @@ const ARC = 1.5
 
 const COPY = {
 	pt: {
-		ctaHeading: 'Veja a Faradays operando com os seus dados',
-		ctaSub: 'Uma demo de 30 minutos, sem compromisso: você traz um fluxo real da operação e a gente mostra o que muda.',
+		ctaHeading: 'Veja a IA da Faradays trabalhando pelo seu time',
+		ctaSub: 'Uma demo de 30 minutos, sem compromisso: você traz um fluxo real do dia a dia e a gente mostra o que a IA resolve.',
 		browse: 'Navegue',
 		product: 'Produto',
 		partners: 'Parceiros',
@@ -40,8 +40,8 @@ const COPY = {
 		email: 'E-mail'
 	},
 	en: {
-		ctaHeading: 'See Faradays running on your data',
-		ctaSub: 'A 30-minute demo, no strings attached: you bring a real workflow from your operation and we show what changes.',
+		ctaHeading: 'See Faradays AI working for your team',
+		ctaSub: 'A 30-minute demo, no strings attached: you bring a real everyday workflow and we show what the AI takes care of.',
 		browse: 'Browse',
 		product: 'Product',
 		partners: 'Partners',
@@ -62,12 +62,13 @@ const footerColumns = (lang: Lang) => {
 		{
 			title: t.browse,
 			/* Absolutos: o rodapé aparece em mais de uma rota, e âncora
-			   relativa só funcionaria na página que tem as seções. */
+			   relativa só funcionaria na página que tem as seções.
+			   "Parceiros" e "Relatos" saem da lista enquanto as seções estão
+			   ocultas em /distribuicao (as âncoras não existiriam), e "Preços"
+			   enquanto a rota está privada (`_precos/`); as labels ficam em
+			   COPY para o retorno. */
 			links: [
 				{ label: t.product, href: '/distribuicao#features' },
-				{ label: t.partners, href: '/distribuicao#partners' },
-				{ label: t.testimonials, href: '/distribuicao#testimonials' },
-				{ label: t.pricing, href: '/distribuicao/precos' },
 				{ label: 'Blog', href: '/blog' }
 			]
 		},
@@ -187,7 +188,7 @@ export function HomeFooter() {
 					<h2
 						className={cn(
 							ptSerif.className,
-							'max-w-3xl text-[5rem]/[1.02] font-normal text-balance'
+							'max-w-3xl text-[4rem]/[1.05] font-normal text-balance'
 						)}
 					>
 						{t.ctaHeading}
