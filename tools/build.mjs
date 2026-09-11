@@ -436,14 +436,17 @@ const stepsRow = (active, base) =>
 	`<div class="steps" style="display:flex;align-items:center;gap:36px">${FEATURES.map((t, k) => {
 		const on = active === 'all' || k === active
 		const d = base + k * 0.15
-		const cls = on ? (active === 'all' ? '' : ' on') : ' off'
+		const cls = on ? '' : ' off'
 		return `<div class="qfb${cls}" style="animation-delay:${d.toFixed(2)}s;transition-delay:${(d + 0.5).toFixed(2)}s">${ico('Sparkle', 18, 'fill', 'position:relative', 'ai-spark')}<span style="position:relative">${t}</span></div>`
 	}).join('')}</div>`
-// Bolha estacionada (selo do capítulo): cópia da bolha acesa que, na saída da cartela, voa do lugar
-// dela (DOCK_FROM, na lógica) até o canto superior esquerdo da prancha e fica lá durante a demo.
-// Some nos zooms que cobrem o canto e sai quando a cartela seguinte entra.
-const dockPill = (k) => `<div class="dock {{c.dock${k}}}" style="position:absolute;left:0;top:0;transform-origin:0 0;transform:{{st.dock${k}}}"><div class="qfb">${ico('Sparkle', 18, 'fill', 'position:relative', 'ai-spark')}<span style="position:relative">${FEATURES[k]}</span></div></div>`
-const docks = [0, 1, 2].map(dockPill).join('')
+// Marcador de capítulo — anel com numeral (canto superior esquerdo, durante as demos): círculo de
+// 48px com o número do capítulo dentro; o arco se fecha em gradiente de IA conforme a demo avança
+// (stroke-dashoffset pintado pelo runtime do standalone a partir do relógio do vídeo — exato em
+// pausa e busca; sem runtime, no editor, fica vazio); nome da bolha ao lado, em mono. Some nos
+// zooms que cobrem o canto e sai quando a cartela seguinte entra.
+const RING_C = (2 * Math.PI * 21).toFixed(2)
+const hudPill = (k) => `<div class="hud {{c.hud${k}}}" style="position:absolute;left:64px;top:22px;display:flex;align-items:center;gap:14px"><span style="position:relative;width:48px;height:48px;display:grid;place-items:center"><svg viewBox="0 0 48 48" width="48" height="48" style="position:absolute;inset:0;transform:rotate(-90deg)" aria-hidden="true"><defs><linearGradient id="ringGrad${k}" x1="0" y1="0" x2="1" y2="1">${AI_STOPS.slice(0, 3).map((c, j) => `<stop offset="${j / 2}" stop-color="${c}"></stop>`).join('')}</linearGradient></defs><circle cx="24" cy="24" r="21" fill="none" stroke="rgba(10,10,10,.12)" stroke-width="3"></circle><circle class="hud-arc" cx="24" cy="24" r="21" fill="none" stroke="url(#ringGrad${k})" stroke-width="3" stroke-linecap="round" stroke-dasharray="${RING_C}" stroke-dashoffset="${RING_C}"></circle></svg><span style="font-family:${HEAD};font-size:18px;font-weight:600;letter-spacing:-.02em;color:${T.fg}">${k + 1}</span></span><span style="font-family:${MONO};font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:${T.fg};white-space:nowrap">${FEATURES[k]}</span></div>`
+const huds = [0, 1, 2].map(hudPill).join('')
 // Palavra que acende do cinza para o gradiente de IA (duas camadas — ver .acende no CSS).
 const acende = (t) => `<span class="acende"><span class="frio">${t}</span><span class="quente ai-shimmer" aria-hidden="true">${t}</span></span>`
 // Título de capítulo — um só estilo para as três cartelas (o do BID): 80px, entrelinha 1,05,
@@ -712,17 +715,13 @@ a{color:${T.brand}}a:hover{color:${T.blue700}}
 .qfb.off::before{content:none}
 .qfb.off .ai-spark{animation:none}
 .tc.show .qfb.off,.q.l2 .qfb.off{animation:rise .4s var(--ease) both}
-/* bolha estacionada: aparece na hora no lugar da bolha da cartela e voa ao canto (só o transform
-   transiciona); .hide = zoom cobrindo o canto; .exit = cartela seguinte entrando */
-.dock{opacity:0;pointer-events:none;will-change:transform}
-.dock .qfb{opacity:1;animation:aiSweep 3.5s linear infinite}
-.dock .qfb::before{content:none}
-.dock.pre{transition:none}
-.dock.on{opacity:1;transition:transform .9s var(--ease)}
-.dock.hide{opacity:0;transition:opacity .2s var(--ease)}
-.dock.exit{opacity:0;transition:opacity .5s var(--ease)}
-/* na saída da cartela a bolha do capítulo some na hora — a estacionada assume no mesmo lugar */
-.tc.exit .qfb.on,.q.qb.exit .qfb.on{visibility:hidden}
+/* marcador de capítulo — anel com numeral (o arco é pintado pelo runtime; sem runtime fica vazio) */
+.hud{opacity:0;pointer-events:none;transition:opacity .5s var(--ease)}
+.hud.pre{transition:none}
+.hud.on{opacity:1}
+.hud.hide{opacity:0;transition-duration:.2s}
+.hud.exit{opacity:0}
+.hud-arc{transition:stroke-dashoffset .12s linear}
 @keyframes rhRot{0%,30%{transform:rotate(0)}100%{transform:rotate(90deg)}}
 /* fechamento: a URL é digitada (mono sem tracking → 15ch exatos, +2px de folga) com cursor piscando */
 .url{display:inline-block;width:0;overflow:hidden;white-space:nowrap}
@@ -836,7 +835,7 @@ const stage = `<div class="stage" style="position:relative;width:1920px;height:1
 	</div>
 
 	${caps}
-	${docks}
+	${huds}
 	${hintCard}
 	${bidQCard}
 	${openCard}
@@ -898,10 +897,6 @@ const CAM0 = 'translate(0px,0px) scale(1)';
 const camFocus = (cx, cy, s) => 'translate(' + (960 - s * cx) + 'px,' + (540 - s * cy) + 'px) scale(' + s + ')';
 // Cartela do BID: a câmera abre centrada em "Peça cotações" (centro do trecho, em px da prancha, e escala).
 const QB_FOCUS = [701, 426, 2.4];
-// Bolha estacionada: canto superior esquerdo (acima da janela, que começa em y=90) e ponto de partida
-// de cada capítulo = canto superior esquerdo da bolha acesa na cartela (px da prancha, medidos).
-const DOCK_TO = 'translate(64px,24px) scale(.8)';
-const DOCK_FROM = [[377.5, 643.5], [770.3, 643.5], [1141.6, 643.5]]; // BID · Documentos · WhatsApp (mesma altura: títulos iguais)
 // Celular (390×780 em 1310,150) centralizado na prancha, ampliado.
 const PH_S = 1.28;
 const phCenter = (dy) => trs([960 - 195 * PH_S - 1310, 540 - 390 * PH_S - 150 + dy], PH_S);
@@ -952,14 +947,11 @@ class Component extends DCLogic {
 		c.ch1 = seq('pre', ['bidOut', 'show'], ['ch1Out', 'exit']);
 		c.ch3 = seq('pre', ['docsOut', 'show'], ['ch3Out', 'exit']);
 		c.close = seq('pre', ['waOut', 'show']);
-		// Bolha estacionada de cada capítulo: voa na saída da cartela, some nos zooms que cobrem o canto
-		// (volta só depois de a câmera recuar), sai quando a cartela seguinte entra.
-		c.dock0 = seq('pre', ['ch2Out', 'on'], ['cut2', 'hide'], ['cFechar', 'on'], ['bidOut', 'exit']);
-		c.dock1 = seq('pre', ['ch1Out', 'on'], ['zoomSp', 'hide'], ['cutSp', 'on'], ['zoomStatus', 'hide'], ['cPastas', 'on'], ['docsOut', 'exit']);
-		c.dock2 = seq('pre', ['ch3Out', 'on'], ['zoomConv', 'hide'], ['waOut', 'exit']);
-		st.dock0 = seq(tr(...DOCK_FROM[0]), ['ch2Out', DOCK_TO]);
-		st.dock1 = seq(tr(...DOCK_FROM[1]), ['ch1Out', DOCK_TO]);
-		st.dock2 = seq(tr(...DOCK_FROM[2]), ['ch3Out', DOCK_TO]);
+		// Marcador de capítulo (anel com numeral): aparece com a demo, some nos zooms que cobrem o
+		// canto (volta depois de a câmera recuar), sai quando a cartela seguinte entra.
+		c.hud0 = seq('pre', ['ch2Out', 'on'], ['cut2', 'hide'], ['cFechar', 'on'], ['bidOut', 'exit']);
+		c.hud1 = seq('pre', ['ch1Out', 'on'], ['zoomSp', 'hide'], ['cutSp', 'on'], ['zoomStatus', 'hide'], ['cPastas', 'on'], ['docsOut', 'exit']);
+		c.hud2 = seq('pre', ['ch3Out', 'on'], ['zoomConv', 'hide'], ['waOut', 'exit']);
 		c.win = seq('pre', ['ch2Out', 'show'], ['bidOut', 'exit'], ['rst1', 'pre'], ['ch1Out', 'show'], ['docsOut', 'exit'], ['rst2', 'pre'], ['toSys', 'show'], ['waOut', 'exit']);
 		// Páginas dentro da janela trocam enquanto ela está invisível.
 		c.pgBid = seq('show', ['rst1', 'pre']);
@@ -1095,7 +1087,7 @@ fs.writeFileSync(
 					y: 0,
 					w: 380,
 					text:
-						'Roteiro (~63s · 2 s de tela em branco na cabeça)\n\n0:00 Tela em branco — cabeça de 2 s para gravação (só o ground da LP com o film grain)\n0:02 Abertura — logo Faradays + "IA para indústrias que compram e vendem muito bem" ("IA" e "muito bem" acendem juntos do cinza para o gradiente de IA) e a timeline das três bolhas (compra em um clique · documentos com IA · venda no WhatsApp) subindo e acendendo uma a uma. Dica de girar o celular desligada (cues comentados)\n0:06 Peça cotações em um clique. / Compare as respostas com IA. — cartela com a coreografia de zoom ("Peça cotações" grande → zoom out revela a frase, sem elementos ao fundo; a timeline entra com a 1ª bolha acesa; a cartela sai recuando e a bolha acesa voa para o canto superior esquerdo, onde fica como selo do capítulo durante a demo — some nos zooms que cobrem o canto e sai quando a cartela seguinte entra; o mesmo vale nos outros dois capítulos) → lista → modal → Disparar BID (4) → envelopes → vista dividida: a caixa de e-mail do exportador recebe o BID e responde com preço → o e-mail voa de volta → corte seco para o Comparativo JÁ EM ZOOM, com a linha da ANHUI chegando "lendo e-mail…" → IA sugere (ponto piscante) → clique na linha → Fechar cotação\n0:26 Documentos dos seus produtos vencendo? / Ainda precisa cobrar os fornecedores? — timeline com a 2ª bolha acesa; a câmera fecha no painel do drive enquanto ele entra; os 3 arquivos novos sincronizam sozinhos (sem clique); com a pilha já voando, corte seco para a vista inteira; IA lê validade (zoom nos status), corte seco para a aba Pastas\n0:41 Seu time de vendas inteiro no WhatsApp — timeline com a 3ª bolha acesa; só o celular do representante, centralizado: ele pede o COA → "digitando…" (glow colorido estilo Siri) → a IA responde sozinha (rótulo Agente IA nos balões) → pergunta a marca → emite a cotação; no fim o celular vai para a direita, o sistema entra ao lado com a conversa inteira e a câmera fecha nela\n1:00 Fechamento — logo com a bandeira em gradiente de IA + barra de busca digitando www.faradays.io centralizado (loop)\n\nTransições: cartela ↔ demo em fade; match cut seco (sem fade, corta no meio do movimento) no disparo→comparativo e em tabela→Pastas.\n\nChips: Início pula ao capítulo; Tempo vai a um instante; Pausar congela; Loop repete.'
+						'Roteiro (~63s · 2 s de tela em branco na cabeça)\n\n0:00 Tela em branco — cabeça de 2 s para gravação (só o ground da LP com o film grain)\n0:02 Abertura — logo Faradays + "IA para indústrias que compram e vendem muito bem" ("IA" e "muito bem" acendem juntos do cinza para o gradiente de IA) e a timeline das três bolhas (compra em um clique · documentos com IA · venda no WhatsApp) subindo e acendendo uma a uma. Dica de girar o celular desligada (cues comentados)\n0:06 Peça cotações em um clique. / Compare as respostas com IA. — cartela com a coreografia de zoom ("Peça cotações" grande → zoom out revela a frase, sem elementos ao fundo; a timeline entra com a 1ª bolha acesa; a cartela sai recuando; durante a demo, um anel no canto superior esquerdo com o numeral do capítulo fecha em gradiente de IA conforme a demo avança, com o nome da bolha ao lado — some nos zooms que cobrem o canto; o mesmo vale nos outros dois capítulos, com 2 e 3) → lista → modal → Disparar BID (4) → envelopes → vista dividida: a caixa de e-mail do exportador recebe o BID e responde com preço → o e-mail voa de volta → corte seco para o Comparativo JÁ EM ZOOM, com a linha da ANHUI chegando "lendo e-mail…" → IA sugere (ponto piscante) → clique na linha → Fechar cotação\n0:26 Documentos dos seus produtos vencendo? / Ainda precisa cobrar os fornecedores? — timeline com a 2ª bolha acesa; a câmera fecha no painel do drive enquanto ele entra; os 3 arquivos novos sincronizam sozinhos (sem clique); com a pilha já voando, corte seco para a vista inteira; IA lê validade (zoom nos status), corte seco para a aba Pastas\n0:41 Seu time de vendas inteiro no WhatsApp — timeline com a 3ª bolha acesa; só o celular do representante, centralizado: ele pede o COA → "digitando…" (glow colorido estilo Siri) → a IA responde sozinha (rótulo Agente IA nos balões) → pergunta a marca → emite a cotação; no fim o celular vai para a direita, o sistema entra ao lado com a conversa inteira e a câmera fecha nela\n1:00 Fechamento — logo com a bandeira em gradiente de IA + barra de busca digitando www.faradays.io centralizado (loop)\n\nTransições: cartela ↔ demo em fade; match cut seco (sem fade, corta no meio do movimento) no disparo→comparativo e em tabela→Pastas.\n\nChips: Início pula ao capítulo; Tempo vai a um instante; Pausar congela; Loop repete.'
 				}
 			],
 			launch: { view: 'focused', file: 'Main.dc.html' }
@@ -1206,6 +1198,10 @@ const segs = CH.map((c, k) => {
 // Rótulo que não cabe no trecho (Abertura/Fechamento no celular) fica escondido.
 function fitLabels() { for (const sg of segs) { const lb = sg.el.querySelector('.lb'); lb.style.visibility = ''; if (lb.offsetWidth > sg.el.offsetWidth - 6) lb.style.visibility = 'hidden' } }
 addEventListener('resize', fitLabels); fitLabels()
+// Anel de cada capítulo: o arco fecha da saída da cartela (chXOut) ao fim do capítulo.
+const HUD_WIN = [['ch2Out', 'bidOut'], ['ch1Out', 'docsOut'], ['ch3Out', 'waOut']].map(([a, b]) => [CUES[I[a]][1], CUES[I[b]][1]])
+const hudArcs = [...document.querySelectorAll('.hud-arc')], RING_LEN = 2 * Math.PI * 21
+function updateHud(el) { hudArcs.forEach((arc, k) => { const [a, b] = HUD_WIN[k]; const f = el <= a ? 0 : el >= b ? 1 : (el - a) / (b - a); arc.style.strokeDashoffset = (RING_LEN * (1 - f)).toFixed(2) }) }
 const fmt = (ms) => { const t = Math.max(0, Math.round(ms / 1000)); return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0') }
 function updateTL() {
 	const el = Math.min(elapsed(), comp.total)
@@ -1215,6 +1211,7 @@ function updateTL() {
 		sg.el.classList.toggle('active', el >= sg.start && el < sg.end)
 	}
 	clock.textContent = fmt(el) + ' / ' + fmt(comp.total)
+	updateHud(el)
 	pp.classList.toggle('paused', comp.frozen != null)
 	if (comp.frozen != null) setControls(true)
 }
