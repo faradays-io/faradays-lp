@@ -42,22 +42,22 @@ gsap.registerPlugin(ScrollTrigger)
 
 const COPY = {
 	pt: {
-		// Chat (feature 0) — a cena da cotação da Nestlé.
+		// Chat (feature 0) — a cena da cotação do lauril.
 		contact: 'Rep. Sudeste · Carlos',
 		typing: 'Faradays digitando…',
 		channel: 'WhatsApp · carteira própria',
 		chatAction: 'Cotações',
-		ask: 'Faz uma cotação de 2 ton de creatina pra Nestlé, entrega SP',
+		ask: 'Faz uma cotação de 2 ton de lauril, entrega SP',
 		brandsBefore: 'Encontrei ',
 		brandsStrong: '2 marcas',
 		brandsAfter:
-			' de creatina na tabela vigente: Creapure® e Hansong. Qual delas?',
-		pick: 'Creapure',
+			' de lauril na tabela vigente: Texapon® e Stepanol®. Qual delas?',
+		pick: 'Texapon',
 		issued: 'Cotação COT-V-0187 emitida — ICMS SP e câmbio do dia já calculados.',
-		pdfMeta: '2.000 kg · Creapure® · 1 pág.',
+		pdfMeta: '2.000 kg · Texapon® · 1 pág.',
 		inputPlaceholder: 'Mensagem',
 		// Card de preview do PDF (estágio 2 do hold).
-		pdfName: 'COT-V-0187 · Nestlé SP.pdf',
+		pdfName: 'COT-V-0187 · Lauril SP.pdf',
 		preview: 'pré-visualização',
 		// Shell do app.
 		navHome: 'Início',
@@ -87,7 +87,7 @@ const COPY = {
 		cardRfqTitle: 'ANHUI JINHE — 4,8500',
 		cardRfqMeta: 'vencedora · T/T 90 days',
 		cardRfqLabel: 'melhor oferta',
-		cardDocsTitle: 'Kosher · CREATINA 200 MESH',
+		cardDocsTitle: 'Kosher · LAURIL SULFATO DE SÓDIO',
 		cardDocsMeta: 'venceu 30/06/2026 · cobrada',
 		cardDocsLabel: 'alerta de vencimento',
 		// Tela Cotação de Venda.
@@ -97,7 +97,7 @@ const COPY = {
 		colQtd: 'Qtd',
 		colPreco: 'Preço unit.',
 		colSubtotal: 'Subtotal',
-		vendaItem1: 'CREATINA 200 MESH — Creapure®',
+		vendaItem1: 'LAURIL SULFATO DE SÓDIO — Texapon®',
 		vendaItem2: 'ÁCIDO ASCÓRBICO (VIT. C) — LUWEI',
 		// Itens 3–6: só no quadro da v2 (seis linhas para o recorte).
 		vendaItem3: 'TAURINA — YONGAN',
@@ -156,7 +156,7 @@ const COPY = {
 		portalRep5: 'Rep. Norte · Júlia',
 		portalRep6: 'Rep. Minas · Paulo',
 		portalMsg4: 'Status do pedido 4471',
-		portalMsg5: 'Laudo Kosher da creatina',
+		portalMsg5: 'Laudo Kosher do lauril',
 		portalMsg6: 'Estoque de taurina, lote 22',
 		portalOk: 'em dia',
 		portalPend: '2 pendências',
@@ -171,16 +171,16 @@ const COPY = {
 		typing: 'Faradays typing…',
 		channel: 'WhatsApp · own portfolio',
 		chatAction: 'Quotes',
-		ask: 'Put together a quote for 2 tons of creatine for Nestlé, delivery in SP',
+		ask: 'Put together a quote for 2 tons of lauryl, delivery in SP',
 		brandsBefore: 'I found ',
 		brandsStrong: '2 brands',
 		brandsAfter:
-			' of creatine in the current price list: Creapure® and Hansong. Which one?',
-		pick: 'Creapure',
+			' of lauryl in the current price list: Texapon® and Stepanol®. Which one?',
+		pick: 'Texapon',
 		issued: "Quote COT-V-0187 issued — SP ICMS and today's exchange rate already computed.",
-		pdfMeta: '2,000 kg · Creapure® · 1 page',
+		pdfMeta: '2,000 kg · Texapon® · 1 page',
 		inputPlaceholder: 'Message',
-		pdfName: 'COT-V-0187 · Nestlé SP.pdf',
+		pdfName: 'COT-V-0187 · Lauril SP.pdf',
 		preview: 'preview',
 		navHome: 'Home',
 		navOverview: 'Overview',
@@ -208,7 +208,7 @@ const COPY = {
 		cardRfqTitle: 'ANHUI JINHE — 4.8500',
 		cardRfqMeta: 'winner · T/T 90 days',
 		cardRfqLabel: 'best offer',
-		cardDocsTitle: 'Kosher · CREATINE 200 MESH',
+		cardDocsTitle: 'Kosher · SODIUM LAURYL SULFATE',
 		cardDocsMeta: 'expired 06/30/2026 · chased',
 		cardDocsLabel: 'expiry alert',
 		vendaBadge: 'issued via WhatsApp',
@@ -217,7 +217,7 @@ const COPY = {
 		colQtd: 'Qty',
 		colPreco: 'Unit price',
 		colSubtotal: 'Subtotal',
-		vendaItem1: 'CREATINE 200 MESH — Creapure®',
+		vendaItem1: 'SODIUM LAURYL SULFATE — Texapon®',
 		vendaItem2: 'ASCORBIC ACID (VIT. C) — LUWEI',
 		vendaItem3: 'TAURINE — YONGAN',
 		vendaItem4: 'ANHYDROUS CAFFEINE — CSPC',
@@ -268,7 +268,7 @@ const COPY = {
 		portalRep5: 'Rep. North · Júlia',
 		portalRep6: 'Rep. Minas · Paulo',
 		portalMsg4: 'Order 4471 status',
-		portalMsg5: 'Creatine Kosher certificate',
+		portalMsg5: 'Lauryl Kosher certificate',
 		portalMsg6: 'Taurine stock, batch 22',
 		portalOk: 'up to date',
 		portalPend: '2 pending',
@@ -285,7 +285,7 @@ type Copy = (typeof COPY)['pt']
 /**
  * Demo da seção de features: réplica em miniatura do app Monfiza (o portal
  * que o gestor usa de verdade) — sidebar, header com breadcrumb e quatro
- * telas empilhadas, uma por feature: Conversas (com o chat da Nestlé em
+ * telas empilhadas, uma por feature: Conversas (com o chat do lauril em
  * autoplay), Cotação de Venda, BID/comparativo e Documentos.
  *
  * O componente é o palco; quem anima é o HeroFeatureFlow, via GSAP sobre os
@@ -531,7 +531,7 @@ function AppHeader({ t, active }: { t: Copy; active: DemoScreen }) {
 }
 
 /* ------------------------------------------------------------------ *
- * Tela 0 — Conversas (chat da Nestlé em autoplay, portado do antigo
+ * Tela 0 — Conversas (chat do lauril em autoplay, portado do antigo
  * WhatsAppHeroDemo)
  * ------------------------------------------------------------------ */
 
@@ -836,7 +836,7 @@ function VendaScreen({ t, active = false }: { t: Copy; active?: boolean }) {
 		>
 			<div className="flex items-center gap-2">
 				<p className="truncate font-mono text-[11px] font-semibold">
-					COT-V-0187 · Nestlé SP
+					COT-V-0187 · Lauril SP
 				</p>
 				{/* Cotação montada pela IA na conversa → badge de IA. */}
 				<Tag tone="ai" className="gap-1">
@@ -976,7 +976,7 @@ function RfqScreen({ t, active = false }: { t: Copy; active?: boolean }) {
 			<div className="min-h-0 flex-1 overflow-hidden rounded-lg border">
 				<div className="bg-muted/30 flex items-center gap-2 border-b px-2.5 py-1.5">
 					<span className="truncate text-[10px] font-medium">
-						CREATINA 200 MESH
+						LAURIL SULFATO DE SÓDIO
 					</span>
 					<span className="flex-1" />
 					<span className="text-muted-foreground font-mono text-[9px] tabular-nums">
@@ -1179,7 +1179,7 @@ const BUBBLE_TIME =
 	'mt-[0.2em] flex items-center justify-end gap-[0.3em] font-mono text-[0.7em] opacity-70'
 
 /**
- * O chat da Nestlé num painel com proporção de celular: cabeçalho do
+ * O chat do lauril num painel com proporção de celular: cabeçalho do
  * contato, mensagens e barra de mensagem — o mesmo roteiro (`STEPS`) da
  * tela 0, em `em`. As mensagens ficam ancoradas embaixo numa altura fixa;
  * o que não cabe sai por cima e dissolve na máscara do topo, como o
@@ -1457,7 +1457,7 @@ function VendaBoard({ t }: { t: Copy }) {
 		<div data-screen="venda" className={BOARD_ROOT}>
 			<div className="flex items-center gap-[0.75em]">
 				<p className="font-mono text-[1.1em] font-semibold">
-					COT-V-0187 · Nestlé SP
+					COT-V-0187 · Lauril SP
 				</p>
 				<Tag tone="ai" className={cn(TAG_EM, 'gap-[0.35em]')}>
 					<Sparkle
@@ -1559,7 +1559,7 @@ function RfqBoard({ t }: { t: Copy }) {
 			<div className="flex flex-col">
 				<div className="flex items-center gap-[0.75em] border-b py-[0.75em] pl-[1em]">
 					<span className="text-[0.95em] font-medium">
-						CREATINA 200 MESH
+						LAURIL SULFATO DE SÓDIO
 					</span>
 					<span className="flex-1" />
 					<span className="text-muted-foreground font-mono text-[0.85em] tabular-nums">
@@ -1640,13 +1640,13 @@ const DOC_TONES = {
    de alerta — o equivalente aqui da linha sugerida do RFQ. */
 const DOCS_BOARD_ROWS = [
 	{
-		product: 'CREATINA 200 MESH',
+		product: 'LAURIL SULFATO DE SÓDIO',
 		type: 'docCoa',
 		date: '12/03/2027',
 		status: 'vigente'
 	},
 	{
-		product: 'CREATINA 200 MESH',
+		product: 'LAURIL SULFATO DE SÓDIO',
 		type: 'docKosher',
 		date: '30/06/2026',
 		status: 'vencido'
@@ -1896,7 +1896,7 @@ function DocsScreen({ t, active = false }: { t: Copy; active?: boolean }) {
 				</div>
 				<div className={cn(DOCS_GRID, 'border-b px-2.5 py-2')}>
 					<span className="truncate text-[10px] font-medium">
-						CREATINA 200 MESH
+						LAURIL SULFATO DE SÓDIO
 					</span>
 					<span className="font-mono text-[10px]">COA</span>
 					<span className="text-right font-mono text-[10px] tabular-nums">
@@ -1918,7 +1918,7 @@ function DocsScreen({ t, active = false }: { t: Copy; active?: boolean }) {
 				</div>
 				<div className={cn(DOCS_GRID, 'px-2.5 py-2')}>
 					<span className="truncate text-[10px] font-medium">
-						CREATINA 200 MESH
+						LAURIL SULFATO DE SÓDIO
 					</span>
 					<span className="font-mono text-[10px]">Kosher</span>
 					<span className="text-right font-mono text-[10px] tabular-nums">

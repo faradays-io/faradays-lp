@@ -1,18 +1,30 @@
 'use client'
 
 import gsap from 'gsap'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useRef } from 'react'
 
 import { SplitHoverText } from '@/components/custom-ui/split-hover-text'
-import { HeroToolIcons } from '@/components/landing/hero-tool-icons'
 import { HERO_COPY } from '@/components/landing/home-hero'
 import { MonfizaAppDemo } from '@/components/landing/monfiza-app-demo'
 import { useCopy } from '@/components/language-provider'
 import { AiGradientButton } from '@/components/ui/ai-gradient-button'
 import { ptSerif } from '@/lib/fonts'
+import type { Localized } from '@/lib/i18n'
 import { usePageReady } from '@/lib/page-ready'
 import { cn } from '@/lib/utils'
+
+const COPY = {
+	pt: {
+		headlineLead: 'Sua empresa na palma da mão, direto no',
+		sub: 'Cotações, pedidos, compras e documentos se resolvem numa conversa, e o gestor acompanha tudo no portal.'
+	},
+	en: {
+		headlineLead: 'Your company in the palm of your hand, right on',
+		sub: 'Quotes, orders, purchases and documents get done in a conversation, and the manager follows everything in the portal.'
+	}
+} satisfies Localized<Record<string, string>>
 
 /**
  * Hero da v2 (referência de postura: ollama.com) — duas colunas e ponto:
@@ -37,11 +49,14 @@ import { cn } from '@/lib/utils'
  * fundo da v1 (`bg.png`). Trocar por `<video>` é substituir o miolo do slot
  * — banda e proporção ficam de pé.
  *
- * Copy: a mesma `HERO_COPY` da v1, importada e não duplicada, para as duas
- * versões dizerem a mesma coisa enquanto convivem.
+ * Copy: headline e sub PRÓPRIAS desde 09/10: a página é a da distribuição,
+ * e o canal que ela vende é o WhatsApp, em destaque na última palavra, em
+ * azul e com o ícone. O CTA continua vindo da `HERO_COPY` da home, que segue
+ * com a headline das quatro ferramentas.
  */
 export function SplitHero() {
 	const t = useCopy(HERO_COPY)
+	const c = useCopy(COPY)
 	const rootRef = useRef<HTMLElement>(null)
 	const ready = usePageReady()
 
@@ -100,14 +115,17 @@ export function SplitHero() {
 								'text-[4rem]/[1.05] font-medium text-balance opacity-0'
 							)}
 						>
-							{t.headlineLead}{' '}
-							{/* Última palavra + ícones num nowrap: o slot
-							   nunca cai sozinho na linha de baixo. */}
+							{c.headlineLead}{' '}
+							{/* "WhatsApp" + ícone num nowrap: o ícone nunca
+							   cai sozinho na linha de baixo. */}
 							<span className="whitespace-nowrap">
-								{t.headlineTail}{' '}
-								<HeroToolIcons
-									label={t.toolsLabel}
-									className="ml-[0.05em]"
+								<span className="text-brand">WhatsApp</span>{' '}
+								<Image
+									src="/icons/whatsapp.svg"
+									alt=""
+									width={64}
+									height={64}
+									className="ml-[0.05em] inline-block size-[0.9em] align-[-0.1em]"
 								/>
 							</span>
 						</h1>
@@ -116,7 +134,7 @@ export function SplitHero() {
 							data-hero-item
 							className="text-body-lg text-foreground/70 mt-8 max-w-xl text-pretty opacity-0"
 						>
-							{t.sub}
+							{c.sub}
 						</p>
 
 						<div

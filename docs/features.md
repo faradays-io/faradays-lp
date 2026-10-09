@@ -10,13 +10,13 @@ Dashboard interno de operações da Monfiza (distribuição e importação de in
 
 O coração do produto: cada representante conversa com um bot no WhatsApp que entende linguagem natural (texto, **áudio e foto** — mídia vira texto antes de qualquer decisão) e opera o sistema por ele.
 
-- **Cotação por conversa**: o rep descreve o pedido ("2 ton de creatina pra Nestlé SP"), a IA coleta o que falta numa pergunta consolidada e gera a **cotação formalizada em PDF** direto na conversa.
+- **Cotação por conversa**: o rep descreve o pedido ("2 ton de lauril, entrega SP"), a IA coleta o que falta numa pergunta consolidada e gera a **cotação formalizada em PDF** direto na conversa.
 - **Menu de opções** (list message com 10 itens) como ferramenta sob demanda — consultas de preço, estoque, pedidos, notas fiscais, boletos, vendas e atendimento.
 - **Entender é da IA; decidir e validar é do código**: todo palpite da IA passa por validadores determinísticos. Preço em dólar só sai de ferramenta (nunca inventado), a IA nunca escolhe marca/variante sozinha (2+ candidatos viram pergunta), quantidade é convertida pelo sistema (unidade canônica: kg) e recusas sempre explicam o motivo.
 - **Fronteira de carteira**: rep comum só vê clientes, cotações, pedidos, NFs e boletos da própria carteira; gestor vê tudo. Escrita para cliente alheio é recusada com o motivo.
 - **Painel de conversas** na plataforma: histórico por representante, envio manual, indicador de digitação, deep-links para as cotações geradas e seletor do modelo de IA do bot.
 - **Motor de workflows** com canvas visual: fluxos guiados (agendado/manual) com sub-workflows, timers e portas de decisão; espera padrão de 10 min com aviso antes de expirar.
-- **Agentes especialistas de IA** *(em desenvolvimento)*: personas nomeadas (papel, prompt, modelo, recorte de ferramentas, blocos de conhecimento) acionáveis por nós do workflow — sem nunca afrouxar as guardas nem ampliar a permissão do representante.
+- **Agentes especialistas de IA** _(em desenvolvimento)_: personas nomeadas (papel, prompt, modelo, recorte de ferramentas, blocos de conhecimento) acionáveis por nós do workflow — sem nunca afrouxar as guardas nem ampliar a permissão do representante.
 
 ## 2. Cotação de Venda
 
@@ -87,7 +87,7 @@ O coração do produto: cada representante conversa com um bot no WhatsApp que e
 
 ## 11. Home ao vivo e notificações
 
-- A home é um **quadro vivo dos representantes**: uma linha por rep com a última mensagem, direção, badges (gestor, IA pendente, falha de envio) e tempo relativo — clique abre a conversa. *"Você vê na hora se o cara tá fazendo uma cagada."*
+- A home é um **quadro vivo dos representantes**: uma linha por rep com a última mensagem, direção, badges (gestor, IA pendente, falha de envio) e tempo relativo — clique abre a conversa. _"Você vê na hora se o cara tá fazendo uma cagada."_
 - **Notificações em tempo real por WebSocket** atualizam as páginas abertas (conversas, cotações, documentos) sem refresh manual.
 
 ## 12. Plataforma e operação
