@@ -9,6 +9,8 @@ const ICONS = JSON.parse(fs.readFileSync('icons.json', 'utf8'))
 // de 3 min, FRAGS_1MIN, separados por legendas cinéticas) → CTA. A barra de progresso dentro do vídeo saiu em 2026-09-30.
 // Fica de fora o que não existe no produto (resposta do fornecedor pelo WhatsApp, NF/boleto pelo bot).
 const CURTO = process.argv.includes('--1min')
+// Tema escuro com glow (nasceu no 1 min em 2026-09-30; o 3 min adotou em 2026-10-06 — backup do claro em backup/2026-10-06-antes-3min-dark)
+const ESCURO = true
 const ASPEKTA = fs.readFileSync('aspekta.b64', 'utf8').trim()
 // GSAP (cópia de node_modules/gsap/dist, 3.15) embutido só no corte de 1 min, para o arquivo seguir abrindo offline
 const GSAP = CURTO ? fs.readFileSync('gsap.min.js', 'utf8') : ''
@@ -38,11 +40,11 @@ const T_CLARO = {
 }
 // Corte de 1 min em tema ESCURO (2026-09-30, como a referência): neutros do shadcn dark e tons de status claros.
 // O que não vem dos tokens (cores fixas no HTML/CSS) é trocado no fim por ESCURO_1MIN.
-const T = CURTO
+const T = ESCURO
 	? { ...T_CLARO, bg: '#0a0a0a', fg: '#fafafa', card: '#171717', primary: '#e5e5e5', primaryFg: '#171717', muted: '#262626', mutedFg: '#a1a1a1', border: '#2a2a2a', border60: 'rgba(255,255,255,.08)', brand: '#3b82f6', sidebar: '#121212', destructive: '#ff6467', green600: '#00c950', green700: '#05df72', green500: '#00c950', amber700: '#ffb86a', amber800: '#ffd230', blue600: '#51a2ff', blue700: '#8ec5ff' }
 	: T_CLARO
 // Fundo da prancha = ground da LP (`.light-home`: #f8f8f8, que com o film grain a .12 lê como #f4f4f4).
-const STAGE = CURTO ? '#000000' : '#f8f8f8'
+const STAGE = ESCURO ? '#000000' : '#f8f8f8'
 // Film grain da LP (grain-overlay.tsx): tile feTurbulence 0.25 saltando em steps(6).
 const NOISE_URI = `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.25' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")`
 const R = { sm: '4.32px', md: '5.76px', lg: '7.2px', xl: '10.08px', '2xl': '12.96px' }
@@ -89,8 +91,8 @@ const TONES = {
 	neutral: [T.muted, T.mutedFg],
 	primary: ['rgba(77,77,77,.1)', T.primary],
 	success: ['rgba(0,166,62,.1)', T.green700],
-	warning: ['rgba(254,154,0,.1)', T.amber700],
-	error: ['rgba(231,0,11,.1)', T.destructive],
+	warning: ESCURO ? ['rgba(251,191,36,.16)', '#fcd34d'] : ['rgba(254,154,0,.1)', T.amber700],
+	error: ESCURO ? ['rgba(248,113,113,.16)', '#fca5a5'] : ['rgba(231,0,11,.1)', T.destructive],
 	info: ['rgba(21,93,252,.1)', T.blue700]
 }
 const badge = (tone, text, extra = '') => {
@@ -106,7 +108,7 @@ const btn = (label, { variant = 'default', icon, size = 'default', extra = '' } 
 			? `background:${T.bg};border:1px solid ${T.border};color:${T.fg};box-shadow:0 1px 2px rgba(0,0,0,.05)`
 			: variant === 'ghost'
 				? `background:transparent;border:1px solid transparent;color:${T.fg}`
-				: `background:${T.primary};border:1px solid transparent;color:${T.primaryFg}`
+				: `background:${CURTO ? T.primary : '#fafafa'};border:1px solid transparent;color:${T.primaryFg}` // 3 min: claro (o #e5e5e5 do token vira cinza-escuro no escurecer)
 	return `<span style="display:inline-flex;align-items:center;justify-content:center;gap:6px;height:${h}px;padding:${pad};border-radius:${R.md};font-family:${MONO};font-size:${fs}px;font-weight:500;letter-spacing:.025em;text-transform:uppercase;white-space:nowrap;${look};${extra}">${icon ? ico(icon, size === 'xs' ? 12 : 16) : ''}${label}</span>`
 }
 const pill = (label, active, count) =>
@@ -192,13 +194,13 @@ const docRow = (tipo, produto, marca, mand, validade, status, opts = {}) => {
 const docsTable = `<table style="width:100%;table-layout:fixed;border-collapse:separate;border-spacing:0;text-align:left">
 	<thead><tr>${th('Tipo de documento', 'left', DOC_COLS[0])}${th('Produto / Fornecedor', 'left', DOC_COLS[1])}${th('Marca', 'left', DOC_COLS[2])}${th('Mandatório', 'left', DOC_COLS[3])}${th('Validade', 'left', DOC_COLS[4])}${th('Status', 'left', DOC_COLS[5])}${th('Arquivo')}</tr></thead>
 	<tbody>
-		${docRow('ISO 9001', 'PRODUTO 4', 'MARCA C', true, '02/11/2027', 'vigente')}
+		${CURTO ? docRow('GMP', 'EXPORTADOR 4', '—', true, '11/12/2027', 'vigente') + docRow('Free-sale', 'PRODUTO 1', 'MARCA A', true, '19/04/2027', 'vigente') + docRow('COA', 'PRODUTO 2', 'MARCA A', true, '07/03/2027', 'vigente') : ''}${docRow('ISO 9001', 'PRODUTO 4', 'MARCA C', true, '02/11/2027', 'vigente')}
 		${docRow('Halal', 'PRODUTO 2', 'MARCA A', true, '15/09/2026', 'a_vencer', { cls: '{{c.w1}}', rx: ['15/09/2027', 'vigente'] })}
 		${docRow('Kosher', 'PRODUTO 1', 'MARCA A', true, '30/06/2026', 'vencido', { cls: '{{c.w2}}' })}
 		${docRow('FDA', 'EXPORTADOR 3', '—', true, '20/01/2027', 'vigente')}
-		${docRow('MSDS', 'PRODUTO 5', 'MARCA B', false, '—', 'na')}
-		${docRow('Free-sale', 'PRODUTO 3', 'MARCA B', true, '08/05/2027', 'vigente')}
-		${docRow('GMP', 'EXPORTADOR 1', '—', true, '14/02/2028', 'vigente')}
+		${CURTO ? '' : docRow('MSDS', 'PRODUTO 5', 'MARCA B', false, '—', 'na')}
+		${CURTO ? '' : docRow('Free-sale', 'PRODUTO 3', 'MARCA B', true, '08/05/2027', 'vigente')}
+		${CURTO ? '' : docRow('GMP', 'EXPORTADOR 1', '—', true, '14/02/2028', 'vigente')}
 		${docRow('ISO 9001', 'PRODUTO 1', 'MARCA A', true, '02/11/2027', 'vigente', { cls: '{{c.r1}}', lendo: true })}
 		${docRow('Licença de fabricação', 'EXPORTADOR 2', '—', true, '15/03/2028', 'vigente', { cls: '{{c.r2}}', lendo: true })}
 		${docRow('COA', 'PRODUTO 3', 'MARCA B', true, '05/08/2027', 'vigente', { cls: '{{c.r3}}', lendo: true })}
@@ -212,7 +214,7 @@ const docsPage = `<div class="vf {{c.pgDocs}}" style="position:absolute;inset:0;
 	<div style="display:flex;flex-direction:column;gap:16px;flex:1;min-height:0">
 		<div style="display:flex;align-items:center;gap:8px">${pill('Documentos', true)}${pill('Pendências', false, 2)}${pill('Por exportador', false)}${pill('Pastas', false)}</div>
 		<div style="display:flex;align-items:center;gap:12px">${search('Buscar por produto, tipo ou marca…')}${btn('Status: todos', { variant: 'outline', icon: 'Funnel' })}</div>
-		${docsTable}
+		${CURTO ? `<div class="dtab">${docsTable}</div>` : docsTable}
 	</div>
 </div>`
 
@@ -406,9 +408,15 @@ const comparativoBody = `<div class="mc {{c.cmp}}" style="position:absolute;inse
 		${cmpBox('PRODUTO 1', 'MARCA A', '15.000 KG', [
 			liveRow('EXPORTADOR 1', 'e-mail', preco('4,85', 'KG', 'FOB'), 'T/T 90 days', '+ 0,00', '4,85', { row: '{{c.rowWin}}', lendo: '{{c.aLendo}}', lido: '{{c.aLido}}', origem: 'E-mail · IA', sug: ['FOB', '{{c.sug1}}'], cb: true }),
 			liveRow('EXPORTADOR 2', CURTO ? 'e-mail' : 'WhatsApp', preco('5,02', 'KG', 'CIF'), 'T/T 30 days', '+ 0,02', '4,90', { row: '{{c.rowWa}}', lendo: '{{c.wLendo}}', lido: '{{c.wLido}}', origem: CURTO ? 'E-mail · IA' : 'WhatsApp · IA', sug: ['CIF', '{{c.sug2}}'] }),
-			cmpRow('EXPORTADOR 3', null, preco('5,11', 'KG', 'FOB'), 'L/C at sight', '+ 0,04', '5,15', ['info', 'E-mail · IA'])
+			cmpRow('EXPORTADOR 3', null, preco('5,11', 'KG', 'FOB'), 'L/C at sight', '+ 0,04', '5,15', ['info', 'E-mail · IA']),
+			// no 1 min, mais fornecedores na comparação (2026-10-01)
+			...(CURTO ? [
+				cmpRow('EXPORTADOR 4', null, preco('5,24', 'KG', 'FOB'), 'T/T 60 days', '+ 0,03', '5,27', ['info', 'E-mail · IA']),
+				cmpRow('EXPORTADOR 5', null, preco('5,36', 'KG', 'CIF'), 'T/T 30 days', '+ 0,02', '5,24', ['info', 'E-mail · IA']),
+				cmpRow('EXPORTADOR 6', null, preco('5,48', 'KG', 'FOB'), 'L/C 90 days', '+ 0,00', '5,48', ['info', 'E-mail · IA']),
+			] : [])
 		])}
-		${cmpBox('PRODUTO 2', 'MARCA B', '5.000 KG', [
+		${CURTO ? '' : cmpBox('PRODUTO 2', 'MARCA B', '5.000 KG', [
 			cmpRow('EXPORTADOR 1', sugTag('FOB', '{{c.sug3}}'), preco('38,90', 'KG', 'FOB'), 'T/T 90 days', '+ 0,00', '38,90', ['info', 'E-mail · IA'], '{{c.rowB2a}}'),
 			cmpRow('EXPORTADOR 2', sugTag('CIF', '{{c.sug4}}'), preco('39,10', 'KG', 'CIF'), 'T/T 30 days', '+ 0,19', '38,81', ['info', CURTO ? 'E-mail · IA' : 'WhatsApp · IA'], '{{c.rowB2b}}', true)
 		])}
@@ -866,7 +874,7 @@ const openCard = darkCard(
 			</div>
 		</div>
 		<div class="w" style="animation-delay:2.5s;font-family:${MONO};font-size:29px;font-weight:500;letter-spacing:.26em;padding-left:.26em;text-transform:uppercase;color:${T.mutedFg}">${acende('IA')} para indústrias que compram e vendem ${acende('muito bem')}</div>
-		<div style="margin-top:14px">${stepsRow('all', 2.7)}</div>
+		<div style="margin-top:14px">${stepsRow('all', 2.7, CURTO ? 0.8 : 0.15)}</div>
 		<div class="opP" style="margin-top:26px;display:flex;flex-direction:column;align-items:center;gap:16px">
 			<span style="font-family:${MONO};font-size:13.33px;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:rgba(138,138,138,.95)">Parceiros da</span>
 			<span style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;column-gap:30px">
@@ -882,7 +890,7 @@ const openCard = darkCard(
 // Embaixo, o botão "Get in touch" (2026-09-14) sobe com os outros elementos (3º .w, 0,14 s depois do logo).
 const closeCard = darkCard(
 	'{{c.close}}',
-	`<div class="w" style="position:relative;display:flex">${wordmark(460, T.fg, 'flagGrad')}</div><div class="w" style="position:relative;display:flex;align-items:center;justify-content:center;width:560px;height:60px;border-radius:9999px;background:#ffffff;border:1px solid ${T.border};box-shadow:0 12px 32px -14px rgba(0,0,0,.2)"><span style="position:absolute;left:22px;top:50%;transform:translateY(-50%);display:flex">${ico('MagnifyingGlass', 22, 'bold', `color:${T.mutedFg}`)}</span><span style="display:inline-flex;align-items:center;gap:6px"><span class="url" style="font-family:${MONO};font-size:22px;letter-spacing:0;color:${T.fg}">www.faradays.io</span><span class="caret" style="width:2px;height:28px;background:${T.fg}"></span></span></div><div class="w" style="position:relative;display:inline-flex;align-items:center;gap:12px;height:56px;padding:0 28px 0 32px;border-radius:9999px;background:${T.fg};color:#ffffff;font-family:${HEAD};font-size:21px;font-weight:600;letter-spacing:-.01em;box-shadow:0 16px 36px -16px rgba(0,0,0,.5)">Get in touch${ico('ArrowRight', 20, 'bold')}</div>`
+	`<div class="w" style="position:relative;display:flex">${wordmark(460, T.fg, 'flagGrad')}</div><div class="w" style="position:relative;display:flex;align-items:center;justify-content:center;width:560px;height:60px;border-radius:9999px;background:#ffffff;border:1px solid ${T.border};box-shadow:0 12px 32px -14px rgba(0,0,0,.2)"><span style="position:absolute;left:22px;top:50%;transform:translateY(-50%);display:flex">${ico('MagnifyingGlass', 22, 'bold', `color:${T.mutedFg}`)}</span><span style="display:inline-flex;align-items:center;gap:6px"><span class="url" style="font-family:${MONO};font-size:22px;letter-spacing:0;color:${T.fg}">www.faradays.io</span><span class="caret" style="width:2px;height:28px;background:${T.fg}"></span></span></div><div class="w" style="position:relative;display:inline-flex;align-items:center;gap:12px;height:56px;padding:0 28px 0 32px;border-radius:9999px;background:${T.fg};color:#000000;font-family:${HEAD};font-size:21px;font-weight:600;letter-spacing:-.01em;box-shadow:0 16px 36px -16px rgba(0,0,0,.5)">Get in touch${ico('ArrowRight', 20, 'bold')}</div>`
 )
 
 // Corte de 1 min no ritmo de um vídeo de apresentação SaaS (2026-09-30, referência que o usuário mandou):
@@ -894,9 +902,9 @@ const KIN_H = `margin:0;font-family:${HEAD};line-height:1.05;letter-spacing:-.03
 // Palavra entre *asteriscos* sai em vermelho (o custo do problema).
 const kinWords = (t, d0) =>
 	t.split(' ').map((w, k) => {
-		const red = /^\*.*\*[.,]?$/.test(w)
-		const txt = red ? w.replace(/\*/g, '') : w
-		return `<span class="kw" style="animation-delay:${(d0 + k * 0.07).toFixed(2)}s${red ? `;color:${T.destructive}` : ''}">${txt}</span>`
+		const red = /^\*.*\*[.,]?$/.test(w), ai = /^~.*~[.,]?$/.test(w)
+		const txt = red || ai ? w.replace(/[*~]/g, '') : w
+		return `<span class="kw" style="animation-delay:${(d0 + k * 0.07).toFixed(2)}s${red ? `;color:${T.destructive}` : ''}">${ai ? `<span class="ai-shimmer">${txt}</span>` : txt}</span>`
 	}).join(' ')
 // kin(buraco, texto, texto entre chaves, { size, bg, extra })
 const kin = (hole, a, b, opts = {}) => {
@@ -917,29 +925,76 @@ const kin = (hole, a, b, opts = {}) => {
 //   7,3  "é margem indo embora." como o "Money lit on fire" da referência: palavra a palavra, todas com a mesma
 //        entrada; a cada palavra o texto pisca e a linha encolhe e corre para a esquerda, bem rápido (na última, zoom out)
 // Os cartões ficam numa elipse, na ordem dos ângulos a partir das 2 h (30°), subindo no anti-horário.
+// MINI-TELAS da colagem (2026-10-01, teste no lugar dos cartões de texto; se não agradar, a alternativa são fotos):
+// recortes de interface no tema escuro que mostram o caos de cotar por e-mail e planilha. Mesma elipse e mesma
+// ordem (anti-horário a partir das 2 h); `r` é o giro final de cada uma.
+const MINI_CARD = `background:#141418;border:1px solid #2a2a2e;border-radius:14px;box-shadow:0 24px 60px -24px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.02);overflow:hidden;font-family:${BODY};color:#ededed` // (#e5e5e5 não: o ESCURO_1MIN troca esse tom por cinza-escuro)
+const miniHead = (icon, cor, t) => `<div style="display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid #2a2a2e;font-size:13px;color:#d4d4d4;white-space:nowrap">${ico(icon, 16, 'fill', `color:${cor}`)}<span>${t}</span></div>`
+const miniSheet = (nome, linhas, hl) => {
+	const cols = ['', 'A', 'B', 'C', 'D']
+	const cell = (v, extra = '') => `<td style="padding:5px 8px;border-right:1px solid #26262a;border-bottom:1px solid #26262a;font-family:${MONO};font-size:11.5px;white-space:nowrap;${extra}">${v}</td>`
+	return `<div style="${MINI_CARD};width:300px">${miniHead('FileXls', '#22c55e', nome)}
+	<table style="border-collapse:collapse;width:100%"><tr>${cols.map((c) => cell(c, 'color:#71717a;background:#1b1b20;font-size:10px')).join('')}</tr>
+	${linhas.map((l, k) => `<tr>${cell(k + 1, 'color:#71717a;background:#1b1b20;font-size:10px')}${l.map((v, j) => cell(v, hl[0] === k && hl[1] === j ? 'background:rgba(248,113,113,.18);color:#fca5a5;box-shadow:inset 0 0 0 1.5px #f87171' : '')).join('')}</tr>`).join('')}</table></div>`
+}
+const miniMail = (assunto, de, previa, anexo) =>
+	`<div style="${MINI_CARD};width:310px">${miniHead('Envelope', '#60a5fa', 'Caixa de entrada · 47 não lidos')}
+	<div style="display:flex;gap:10px;padding:11px 12px;align-items:flex-start"><span style="flex-shrink:0;width:8px;height:8px;margin-top:6px;border-radius:50%;background:#3b82f6"></span><span style="display:flex;flex-direction:column;gap:3px;min-width:0">
+	<span style="font-size:12px;color:#a1a1aa">${de}</span><span style="font-size:14px;font-weight:600;white-space:nowrap">${assunto}</span><span style="font-size:12px;color:#8a8a8f;line-height:1.35">${previa}</span>
+	${anexo ? `<span style="display:inline-flex;align-items:center;gap:6px;margin-top:4px;padding:4px 8px;border-radius:8px;background:#1f1f25;font-size:11.5px;color:#d4d4d4;width:max-content">${ico('Paperclip', 13)}${anexo}</span>` : ''}</span></div></div>`
+const miniWhats = `<div style="${MINI_CARD};width:280px;background:#0b141a">${miniHead('WhatsappLogo', '#25d366', 'Fornecedor 3 · digitando…')}
+	<div style="display:flex;flex-direction:column;gap:7px;padding:10px 10px 12px">
+	<span style="align-self:flex-start;max-width:85%;padding:7px 10px;border-radius:10px;background:#202c33;font-size:13px">Qual o preço CIF?</span>
+	<span style="align-self:flex-end;display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;background:#005c4b">${ico('Play', 14, 'fill', 'color:#d1fae5')}${waveform('#a7f3d0', 16)}<span style="font-family:${MONO};font-size:10.5px;color:#a7f3d0">0:42</span></span>
+	<span style="align-self:flex-start;max-width:85%;padding:7px 10px;border-radius:10px;background:#202c33;font-size:13px">Te mando amanhã 👍</span></div></div>`
+const miniPdf = `<div style="${MINI_CARD};width:210px">${miniHead('FilePdf', '#f87171', 'proforma_final2.pdf')}
+	<div style="padding:12px 14px 14px;display:flex;flex-direction:column;gap:7px"><span style="font-family:${MONO};font-size:11px;letter-spacing:.14em;color:#a1a1aa">PROFORMA</span>
+	${[92, 70, 84, 55, 78, 62].map((w) => `<span style="display:block;height:6px;width:${w}%;border-radius:3px;background:#2a2a30"></span>`).join('')}
+	<span style="align-self:flex-end;margin-top:4px;font-family:${MONO};font-size:11px;color:#d4d4d4">USD ??.???</span></div></div>`
+const miniPostit = `<div style="width:200px;padding:16px 16px 18px;border-radius:4px;background:#facc15;color:#1c1917;box-shadow:0 24px 50px -20px rgba(0,0,0,.8);font-family:${HEAD};font-size:19px;line-height:1.25;font-weight:600">ligar pro fornecedor 2<br><span style="font-weight:500;font-size:16px">preço até sexta!!</span></div>`
+const miniEspera = `<div style="${MINI_CARD};width:260px;padding:14px 16px;display:flex;align-items:center;gap:12px">${ico('Clock', 30, 'regular', 'color:#fcd34d')}<span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:14px;font-weight:600">Aguardando retorno…</span><span style="font-size:12px;color:#8a8a8f">3 fornecedores · há 4 dias</span></span></div>`
+const miniWhats2 = `<div style="${MINI_CARD};width:270px;background:#0b141a">${miniHead('WhatsappLogo', '#25d366', 'Fornecedor 1')}
+	<div style="display:flex;flex-direction:column;gap:7px;padding:10px 10px 12px">
+	<span style="align-self:flex-end;max-width:85%;padding:7px 10px;border-radius:10px;background:#005c4b;font-size:13px">Preciso de 15 t do Produto 1</span>
+	<span style="align-self:flex-start;max-width:85%;padding:7px 10px;border-radius:10px;background:#202c33;font-size:13px">Seria kg ou t? Manda por e-mail?</span></div></div>`
+const miniUrgente = `<div style="${MINI_CARD};width:290px;padding:12px 14px;display:flex;flex-direction:column;gap:4px"><span style="display:flex;align-items:center;gap:7px;font-size:12px;color:#fca5a5">${ico('Warning', 15, 'fill', 'color:#f87171')}Alta prioridade · Fornecedor 4</span><span style="font-size:14px;font-weight:600">URGENTE: cotação vence hoje!!</span><span style="font-size:12px;color:#8a8a8f">Sem resposta desde segunda.</span></div>`
+const miniCambio = `<div style="width:190px;padding:14px 15px 16px;border-radius:4px;background:#fde68a;color:#1c1917;box-shadow:0 24px 50px -20px rgba(0,0,0,.8);font-family:${HEAD};font-size:17px;line-height:1.25;font-weight:600">câmbio de hoje?<br><span style="font-family:${MONO};font-size:15px;font-weight:500">5,42 ou 5,47??</span></div>`
+const miniCert = `<div style="${MINI_CARD};width:220px;position:relative">${miniHead('FilePdf', '#f87171', 'certificado_P2.pdf')}
+	<div style="padding:12px 14px 16px;display:flex;flex-direction:column;gap:7px">${[88, 64, 80, 52].map((w) => `<span style="display:block;height:6px;width:${w}%;border-radius:3px;background:#2a2a30"></span>`).join('')}</div>
+	<span style="position:absolute;right:14px;bottom:18px;transform:rotate(-12deg);padding:3px 9px;border:2px solid #f87171;border-radius:6px;font-family:${MONO};font-size:13px;font-weight:700;letter-spacing:.12em;color:#f87171">VENCIDO</span></div>`
+const miniNotif = `<div style="${MINI_CARD};width:250px;padding:11px 14px;display:flex;align-items:center;gap:11px"><span style="position:relative;display:flex">${ico('Envelope', 26, 'fill', 'color:#60a5fa')}<span style="position:absolute;right:-7px;top:-6px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:#ef4444;color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center">12</span></span><span style="display:flex;flex-direction:column;gap:1px"><span style="font-size:13.5px;font-weight:600">12 e-mails novos</span><span style="font-size:11.5px;color:#8a8a8f">RE: Cotação · RE: Proforma…</span></span></div>`
 const COLAGEM = [
-	['FileXls', 'comparativo_v7_FINAL.xlsx', -3],
-	['Paperclip', 'COA_anexo (3).pdf', 2],
-	['Envelope', 'RE: RE: Cotação PRODUTO 1', -4],
-	['WhatsappLogo', 'Qual o preço CIF?', 3],
-	['FileXls', 'cotacao_fornecedores (2).xlsx', -2],
-	['Envelope', 'Consegue mandar o preço até sexta?', 2],
-	['Clock', 'Aguardando retorno…', -3],
-	['Envelope', 'FW: FW: proforma', 4],
+	[miniSheet('comparativo_v7_FINAL.xlsx', [['4,85', '5,02', '5,11', '?'], ['T/T 90', 'T/T 30', 'L/C', '—'], ['FOB', 'CIF', 'FOB', '#REF!']], [2, 3]), -3],
+	[miniNotif, 2],
+	[miniPdf, 3],
+	[miniUrgente, -2],
+	[miniMail('RE: RE: RE: Cotação PRODUTO 1', 'Fornecedor 1', 'Segue em anexo a planilha atualizada, favor desconsiderar a anterior…', 'cotacao_v3.xlsx'), -3],
+	[miniCambio, 4],
+	[miniWhats, 3],
+	[miniSheet('precos_jan_FINAL_rev2.xlsx', [['Produto 1', '4,85', '#N/D'], ['Produto 2', '39,10', '?'], ['Produto 3', '#N/D', '']].map((l) => [...l, '']), [0, 2]), -2],
+	[miniSheet('cotacao_fornecedores (2).xlsx', [['Forn. 1', '4,85', 'ok'], ['Forn. 2', '?', 'cobrar'], ['Forn. 3', '5,11', '?']].map((l) => [...l, '']), [1, 1]), -2],
+	[miniPostit, 4],
+	[miniCert, -3],
+	[miniEspera, -3],
+	[miniWhats2, 2],
+	[miniMail('FW: FW: proforma', 'Compras · Matriz', 'Alguém conferiu o CIF dessa? Não bate com a planilha.', null), 3],
 ]
-const COL_RX = 690, COL_RY = 330
-const colagem = COLAGEM.map(([icon, t, r], k) => {
-	const a = ((30 + k * 45) * Math.PI) / 180
-	const x = Math.round(960 + COL_RX * Math.cos(a)), y = Math.round(540 - COL_RY * Math.sin(a))
-	return `<span class="hchip" data-r="${r}" style="left:${x}px;top:${y}px">${ico(icon, 26, 'regular', `color:${icon === 'FileXls' ? T.green700 : icon === 'WhatsappLogo' ? '#25d366' : T.mutedFg}`)}<span>${t}</span></span>`
+// duas órbitas alternadas (interna e externa) para dar profundidade; podem se sobrepor, sem cobrir a frase do centro
+const ORBITAS = [[680, 330], [800, 395]]
+const colagem = COLAGEM.map(([html, r], k) => {
+	const a = ((30 + (k * 360) / COLAGEM.length) * Math.PI) / 180
+	const [rx, ry] = ORBITAS[k % 2]
+	const x = Math.round(960 + rx * Math.cos(a)), y = Math.round(540 - ry * Math.sin(a))
+	return `<span class="hchip" data-r="${r}" style="left:${x}px;top:${y}px">${html}</span>`
 }).join('')
 const hw = (t) => t.split(' ').map((w) => `<span class="hw">${w}</span>`).join(' ')
 const hookLayers = `<div class="hook">
 	<div class="hl" id="hk1"><h1 class="kh">${hw('Cotação de compra')}</h1></div>
 	<div class="hl" id="hk2"><div class="hcol">${colagem}</div><h1 class="kh hline"><span class="pa">${hw('por e-mail')}</span><span class="pb">${hw('e planilha')}</span></h1></div>
-	<div class="hl" id="hk3"><h1 class="kh">${hw('Certificado vencido')}</h1></div>
-	<div class="hl" id="hk4"><h1 class="kh"><span class="hbr l">{</span>${hw('sem ninguém ver')}<span class="hbr r">}</span></h1></div>
+	<div class="hl" id="hk3"><h1 class="kh">${hw('Documentos vencidos')}</h1></div>
+	<div class="hl" id="hk4"><h1 class="kh">${hw('sem ninguém ver')}</h1></div>
 	<div class="hl" id="hk5"><h1 class="kh">${hw('Cada cotação lenta')}</h1></div>
+	<div class="star"><i class="halo"></i><svg class="sv" viewBox="-800 -600 1600 1200" width="1600" height="1200" aria-hidden="true"><defs><radialGradient id="stG" cx="0" cy="0" r="680" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ffffff"/><stop offset=".07" stop-color="#e3ecff"/><stop offset=".22" stop-color="#7aa7ff" stop-opacity=".85"/><stop offset=".5" stop-color="#2b6cf0" stop-opacity=".3"/><stop offset="1" stop-color="#1d6ae5" stop-opacity="0"/></radialGradient><filter id="stB" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="22"/></filter></defs><path d="M700 0 Q 26 26 0 500 Q -26 26 -700 0 Q -26 -26 0 -500 Q 26 -26 700 0 Z" fill="url(#stG)" filter="url(#stB)"/></svg><i class="c"></i></div>
 	<div class="hl" id="hk6"><h1 class="kh mline"><span class="mw">é</span><span class="mw" style="color:${T.destructive}">margem</span><span class="mw">indo</span><span class="mw">embora.</span></h1></div>
 </div>`
 // A timeline do Problema (roda no runtime, depois das fontes). Tempos em s desde o fim da cabeça em branco.
@@ -966,16 +1021,31 @@ function buildHook() {
 	// cartões: anti-horário a partir das 2 h, cada um girando levemente no anti-horário; o conjunto também gira
 	qa('#hk2 .hchip').forEach((el, k) => {
 		const r = Number(el.dataset.r);
-		tl.fromTo(el, { xPercent: -50, yPercent: -50, opacity: 0, scale: 0.7, rotation: r + 16, filter: 'blur(10px)' }, { opacity: 1, scale: 1, rotation: r, filter: 'blur(0px)', duration: 0.6, ease: 'expo.out' }, 1.5 + k * 0.1);
+		tl.fromTo(el, { xPercent: -50, yPercent: -50, opacity: 0, scale: 0.7, rotation: r + 16, filter: 'blur(10px)' }, { opacity: 1, scale: 1, rotation: r, filter: 'blur(0px)', duration: 0.6, ease: 'expo.out' }, 1.5 + k * 0.065);
 	});
 	tl.fromTo('#hk2 .hcol', { rotation: 3 }, { rotation: -3, duration: 2.2, ease: 'none', transformOrigin: '50% 50%' }, 1.4);
-	layer('hk3', 3.6, 4.9); words('#hk3 .hw', 3.6);
+	// "Certificado vencido" entra normal, palavra a palavra.
+	tl.set('#hk3', { opacity: 1 }, 3.6); words('#hk3 .hw', 3.6);
+	// TRANSIÇÃO COM A ESTRELA DE 4 PONTAS (como a abertura da referência, só da esquerda para a direita): ela nasce
+	// na borda esquerda e atravessa a tela; por onde passa, "Certificado vencido" sai e "sem ninguém ver" aparece
+	// (a borda do clip-path anda colada na estrela: mesma curva, estrela em −80 + 2000·p e recorte em 1920·p).
+	// A estrela PARA no canto direito (centro na borda, meio para fora) e fica lá até a próxima frase. O zoom out de
+	// "sem ninguém ver" começa junto com a revelação, sem pausa; o blink vem quando a frase fica inteira.
+	const SX0 = -80, SX1 = 1920, SW = 4.85, SD = 0.75;
+	tl.set('#hk4', { opacity: 1, clipPath: 'inset(0% 100% 0% 0%)' }, SW);
+	tl.fromTo('.star', { x: SX0, opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.25, ease: 'power2.out' }, SW - 0.15);
+	tl.to('.star', { x: SX1, duration: SD, ease: 'power3.inOut' }, SW);
+	tl.fromTo('#hk3', { clipPath: 'inset(0% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 100%)', duration: SD, ease: 'power3.inOut' }, SW);
+	tl.to('#hk4', { clipPath: 'inset(0% 0% 0% 0%)', duration: SD, ease: 'power3.inOut' }, SW);
+	tl.to('.star', { opacity: 0, scale: 0.8, duration: 0.3, ease: 'power2.in' }, 6.2 - 0.3); // estacionada no canto direito até a próxima frase
+	tl.set('#hk3', { opacity: 0 }, SW + SD);
+	const k4 = '#hk4 .kh', T4 = SW + SD - 0.05;
+	tl.fromTo(k4, { filter: 'brightness(2.6) drop-shadow(0 0 22px rgba(150,190,255,.95))' }, { filter: 'brightness(1) drop-shadow(0 0 0px rgba(150,190,255,0))', duration: 0.45, ease: 'power2.out' }, T4);
+	tl.fromTo(k4, { scale: 1.6 }, { scale: 0.9, duration: 1.35, ease: 'power2.out', transformOrigin: '50% 50%' }, SW); // zoom out sem pausa: começa com a revelação
+	tl.to('#hk4', { opacity: 0, filter: 'blur(10px)', duration: 0.3, ease: 'power2.in' }, 6.2 - 0.3);
 	// glow de cima: acende BEM GRANDE com "Certificado vencido" e diminui a cada troca de frase, até a troca na última
 	tl.fromTo('.gt', { opacity: 0, scaleX: 1, scaleY: 0.1, transformOrigin: '50% 0%' }, { opacity: 1, scaleX: 1.35, scaleY: 1.9, duration: 1.1, ease: 'power3.out' }, 3.6);
 	[[4.9, 1.2, 1.45], [6.2, 1.05, 1.05], [7.3, 0.95, 0.75]].forEach(([t, sx, sy]) => tl.to('.gt', { scaleX: sx, scaleY: sy, duration: 0.9, ease: 'power2.out' }, t));
-	layer('hk4', 4.9, 6.2); words('#hk4 .hw', 5.0);
-	tl.fromTo('#hk4 .hbr.l', { opacity: 0, x: -70 }, { opacity: 1, x: 0, duration: 0.7, ease: 'expo.out' }, 4.9);
-	tl.fromTo('#hk4 .hbr.r', { opacity: 0, x: 70 }, { opacity: 1, x: 0, duration: 0.7, ease: 'expo.out' }, 4.9);
 	layer('hk5', 6.2, 7.3); words('#hk5 .hw', 6.2);
 	// "Money lit on fire": a linha é ancorada à esquerda no centro da tela; a cada palavra ela encolhe e corre
 	// para a esquerda até recentrar (0,22 s), a palavra entra (a mesma entrada para todas) e o TEXTO pisca (flash de brilho).
@@ -1030,9 +1100,12 @@ const KC = [
 const kinCaps = KC.map(([a, b], k) => kin('kc' + (k + 1), a + ' ' + b, '', { bg: true, size: 96 })).join('')
 // CTA: logo (bandeira em gradiente), o slogan sendo digitado e as duas saídas — Get in touch e a barra
 // digitando o endereço. Sobe em cascata (.tc .w).
+// CTA em quatro cenas (2026-10-01): uma frase por cena — "Cote rápido." · "Compre melhor." · "Venda muito bem." — e
+// por fim o logo com Get in touch e o endereço (cues cta1..cta3 e ctaLogo, a partir do waOut).
+const ctaKins = [['ct1', 'Cote rápido.'], ['ct2', 'Compre melhor.'], ['ct3', 'Venda ~muito~ ~bem.~']].map(([h, t]) => kin(h, t, '', { size: 120 })).join('')
 const ctaCard = darkCard(
 	'cta {{c.close}}',
-	`<div class="w" style="position:relative;display:flex">${wordmark(520, T.fg, 'flagGrad')}</div><p class="w" style="position:relative;margin:0 0 18px;font-family:${HEAD};font-size:40px;font-weight:500;letter-spacing:-.02em;color:${T.fg}"><span class="typ">Cote rápido. Compre melhor. Venda muito bem.</span></p><div class="w" style="position:relative;display:flex;align-items:center;gap:20px"><span style="display:inline-flex;align-items:center;gap:12px;height:64px;padding:0 30px 0 34px;border-radius:9999px;background:${T.fg};color:#000000;font-family:${HEAD};font-size:23px;font-weight:600;letter-spacing:-.01em;box-shadow:0 16px 36px -16px rgba(0,0,0,.5)">Get in touch${ico('ArrowRight', 22, 'bold')}</span><span style="position:relative;display:flex;align-items:center;justify-content:center;width:420px;height:64px;border-radius:9999px;background:#ffffff;border:1px solid ${T.border};box-shadow:0 12px 32px -14px rgba(0,0,0,.2)"><span style="position:absolute;left:22px;top:50%;transform:translateY(-50%);display:flex">${ico('MagnifyingGlass', 22, 'bold', `color:${T.mutedFg}`)}</span><span style="display:inline-flex;align-items:center;gap:6px"><span class="url" style="font-family:${MONO};font-size:22px;letter-spacing:0;color:${T.fg}">www.faradays.io</span><span class="caret" style="width:2px;height:28px;background:${T.fg}"></span></span></span></div>`
+	`<div class="w" style="position:relative;display:flex">${wordmark(520, T.fg, 'flagGrad')}</div><div class="w" style="position:relative;display:flex;align-items:center;gap:20px"><span style="display:inline-flex;align-items:center;gap:12px;height:64px;padding:0 30px 0 34px;border-radius:9999px;background:${T.fg};color:#000000;font-family:${HEAD};font-size:23px;font-weight:600;letter-spacing:-.01em;box-shadow:0 16px 36px -16px rgba(0,0,0,.5)">Get in touch${ico('ArrowRight', 22, 'bold')}</span><span style="position:relative;display:flex;align-items:center;justify-content:center;width:420px;height:64px;border-radius:9999px;background:#ffffff;border:1px solid ${T.border};box-shadow:0 12px 32px -14px rgba(0,0,0,.2)"><span style="position:absolute;left:22px;top:50%;transform:translateY(-50%);display:flex">${ico('MagnifyingGlass', 22, 'bold', `color:${T.mutedFg}`)}</span><span style="display:inline-flex;align-items:center;gap:6px"><span class="url" style="font-family:${MONO};font-size:22px;letter-spacing:0;color:${T.fg}">www.faradays.io</span><span class="caret" style="width:2px;height:28px;background:${T.fg}"></span></span></span></div>`
 )
 
 /* ---------------- instâncias externas: e-mail e WhatsApp do exportador, celular ---- */
@@ -1202,18 +1275,20 @@ ${chat3}
 </div>`
 
 /* ---------------- legendas fora da câmera (caps. 1 e 3) ------------------ */
+// 3 min (2026-10-06): as legendas entram palavra a palavra, do desfoque para o foco, como a tipografia do 1 min (.kw + kIn).
+const kws = (t, passo = 0.035, d0 = 0) => (CURTO ? t : t.split(' ').map((w, k) => `<span class="kw" style="animation-delay:${(d0 + k * passo).toFixed(2)}s">${w}</span>`).join(' '))
 // Legenda solta: overline em mono (opcional — vazio omite) + texto grande.
 const cap = (cls, over, text, place, size = 46) =>
 	`<div class="cap ${cls}" style="position:absolute;${place};display:flex;flex-direction:column;gap:${size > 40 ? 18 : 12}px">
 	${over ? `<span style="font-family:${MONO};font-size:15px;letter-spacing:.18em;text-transform:uppercase;color:${T.brand}">${over}</span>` : ''}
-	<p style="margin:0;font-family:${HEAD};font-size:${size}px;line-height:1.12;letter-spacing:-.02em;font-weight:600;color:${T.fg}">${text}</p>
+	<p style="margin:0;font-family:${HEAD};font-size:${size}px;line-height:1.12;letter-spacing:-.02em;font-weight:600;color:${T.fg}">${kws(text)}</p>
 </div>`
 // Cap. 3, fase A — timeline de legendas à esquerda do celular: cada passo entra (ponto + texto) e
 // FICA; quando o seguinte entra, o anterior esmaece (.past) e um trilho fino liga os dois pontos.
 // A pilha cresce para baixo a partir de y=330 e sai inteira quando o sistema entra (toSys).
 const CAP_STEPS = [
 	'A IA entende a solicitação por áudio, texto ou foto.',
-	'Responde com preço de tabela, último cotado, último faturado, lead time e crédito — e marca em vermelho o que trava o pedido.',
+	CURTO ? 'Responde com preço, prazo e crédito — e marca o que trava o pedido.' : 'Responde com preço de tabela, último cotado, último faturado, lead time e crédito — e marca em vermelho o que trava o pedido.',
 	'Ajustou? A cotação sai na hora, com ICMS e câmbio do dia.',
 	'Pediu COA, NF, boleto ou ficha técnica? A IA manda na hora.',
 	'Rastreio de uma NF? Ela consulta e responde no mesmo chat.'
@@ -1223,15 +1298,15 @@ const CAP_STEPS2 = [
 	'Resumo do dia e projeção, no horário que você escolher — para o representante e, consolidado, para o gestor.',
 	'Relatório de volume e faturamento? No mesmo chat, com o PDF.'
 ]
-const capStep = (text, k) => `<div class="cti {{c.cap${k + 1}}}"><span class="cti-dot"></span><p>${text}</p></div>`
-const capTimeline = `<div class="ctl" style="position:absolute;left:110px;top:218px;width:540px;display:flex;flex-direction:column;gap:28px">${CAP_STEPS.map(capStep).join('')}</div>`
+const capStep = (text, k) => `<div class="cti {{c.cap${k + 1}}}"><span class="cti-dot"></span><p>${kws(text)}</p></div>`
+const capTimeline = `<div class="ctl" style="position:absolute;left:${CURTO ? 230 : 110}px;top:${CURTO ? 360 : 218}px;width:${CURTO ? 470 : 540}px;display:flex;flex-direction:column;gap:28px">${CAP_STEPS.map(capStep).join('')}</div>`
 const capTimeline2 = `<div class="ctl" style="position:absolute;left:110px;top:400px;width:540px;display:flex;flex-direction:column;gap:28px">${CAP_STEPS2.map((t, k) => capStep(t, k + CAP_STEPS.length)).join('')}</div>`
 // Cap. 1, BID pelo WhatsApp (2026-09-21): timeline própria à esquerda do celular, em BRANCO sobre o véu escuro da OC.
 const CAP_STEPS3 = [
 	'Gestor de compras? Crie um BID por aqui — a FS1 mostra a prévia e só dispara com o seu “sim”.',
 	'Depois peça o comparativo: ela responde com as melhores por produto e as ordens de compra.'
 ]
-const capsBot = `<div class="ctl dark" style="position:absolute;left:110px;top:300px;width:540px;display:flex;flex-direction:column;gap:28px">${CAP_STEPS3.map((t, k) => `<div class="cti {{c.bc${k + 1}}}"><span class="cti-dot"></span><p>${t}</p></div>`).join('')}</div>`
+const capsBot = `<div class="ctl dark" style="position:absolute;left:110px;top:300px;width:540px;display:flex;flex-direction:column;gap:28px">${CAP_STEPS3.map((t, k) => `<div class="cti {{c.bc${k + 1}}}"><span class="cti-dot"></span><p>${kws(t)}</p></div>`).join('')}</div>`
 const EXT_CAP = 'left:1084px;top:118px;width:780px'
 const caps = [
 	capTimeline,
@@ -1244,7 +1319,7 @@ const caps = [
 ].join('')
 // Véu do comparativo (depois do zoom out): a ação para, uma faixa com gradiente escuro SOBE pela parte de
 // baixo da prancha com a legenda centralizada, espera, desce e a ação continua (pedido de 2026-09-12).
-const veilBox = (hole, text) => `<div class="veil ${hole}"><div class="veil-t"><p style="margin:0;font-family:${HEAD};font-size:44px;line-height:1.15;letter-spacing:-.02em;font-weight:600;color:#ffffff;max-width:1640px">${text}</p></div></div>`
+const veilBox = (hole, text) => `<div class="veil ${hole}"><div class="veil-t"><p style="margin:0;font-family:${HEAD};font-size:44px;line-height:1.15;letter-spacing:-.02em;font-weight:600;color:#ffffff;max-width:1640px">${kws(text, 0.035, 0.4)}</p></div></div>`
 // Cena INTERNACIONAL × LOCAL (2026-09-20, 4ª apresentação — pedido: "comparação lado a lado, algo mais simples
 // que possa ser entendido em uma visualização"). Dois recibos espelhados, um por mercado, com a MESMA
 // estrutura em três blocos: O QUE ELE COTOU → O QUE A FS1 AJUSTA → A RÉGUA. Um número grande por linha; as
@@ -1284,10 +1359,14 @@ const veil2 = veilBox('{{c.veil2}}', 'Todas as conversas dos representantes, em 
 
 /* ---------------- CSS -------------------------------------------------- */
 // Só no corte de 1 min: tipografia cinética, colagem, inclinação 3D dos recortes, barra de progresso e CTA.
-const CSS_1MIN = `.tc .opP{visibility:hidden}
-.q.qb,.dock{display:none !important}
-@keyframes kIn{0%{opacity:0;filter:blur(16px);transform:translateY(16px) scale(1.06)}100%{opacity:1;filter:blur(0);transform:none}}
-.vf.kin{transition:opacity .3s var(--ease),filter .3s var(--ease)}
+// Estilo do 1 min que vale também para o 3 min desde 2026-10-06 (1 = os dois: tema escuro, sem grain, glow, gradientes,
+// botões claros; 0 = só o corte de 1 min). No 1 min a ordem dos trechos é a original — o arquivo sai igual.
+const CSS_TOPO = [
+	[0, `.tc .opP{visibility:hidden}`],
+	[1, `.grain{display:none !important} /* sem o film grain no 1 min (2026-10-01) */`],
+	[0, `.q.qb,.dock{display:none !important}`],
+	[1, `@keyframes kIn{0%{opacity:0;filter:blur(16px);transform:translateY(16px) scale(1.06)}100%{opacity:1;filter:blur(0);transform:none}}`],
+	[0, `.vf.kin{transition:opacity .3s var(--ease),filter .3s var(--ease)}
 .vf.kin.exit{filter:blur(10px)}
 .kin .kw{display:inline-block;opacity:0}
 .kin.show .kw,.kin.exit .kw{animation:kIn .6s var(--ease) both}
@@ -1308,12 +1387,46 @@ const CSS_1MIN = `.tc .opP{visibility:hidden}
 .tilt.tb{animation:tiltB 7s cubic-bezier(.2,.7,.2,1) both}
 @keyframes tiltA{0%{transform:perspective(2600px) rotateX(14deg) rotateY(-12deg) scale(.84)}100%{transform:perspective(2600px) rotateX(4deg) rotateY(-3deg) scale(.94)}}
 @keyframes tiltB{0%{transform:perspective(2600px) rotateX(12deg) rotateY(12deg) scale(.84)}100%{transform:perspective(2600px) rotateX(3deg) rotateY(3deg) scale(.94)}}
-.typ{display:inline-block;clip-path:inset(0 100% 0 0)}
-.tc.show .typ{animation:typ 1.5s steps(42,end) .7s forwards}
-@keyframes typ{to{clip-path:inset(0 0 0 0)}}
-.tc.cta.show .url{animation-delay:2.4s}
+.tc.cta.show .url{animation-delay:1.1s}`],
+	[1, `/* Solução: bolhas mais azuis, entrando em POPUP, com um glow que começa forte e se apaga devagar (para não roubar
+   o destaque das que vêm depois). O atraso de cada uma vem do animation-delay inline do stepsRow. */
+.opCol .qfb{background:linear-gradient(100deg,#1e40af,#2563eb,#3b82f6,#2563eb,#1e40af);background-size:220% 100%}
+.opCol .qfb::before{content:none}
+@keyframes qPop{0%{opacity:0;transform:scale(.5) translateY(18px)}60%{opacity:1;transform:scale(1.09) translateY(0)}100%{opacity:1;transform:scale(1)}}
+@keyframes qGlow{0%{box-shadow:0 0 0 0 rgba(96,165,250,0),0 0 0 0 rgba(59,130,246,0)}12%{box-shadow:0 0 0 6px rgba(96,165,250,.35),0 0 70px 10px rgba(59,130,246,.95)}100%{box-shadow:0 0 0 0 rgba(96,165,250,0),0 0 24px 0 rgba(59,130,246,.3)}}
+.tc.show .opCol .qfb{animation:qPop .65s cubic-bezier(.34,1.56,.64,1) both,aiSweep 3.5s linear infinite,qGlow 3.2s ease-out both}`],
+	[0, `/* Demos (menos o celular e a Visão Geral): só o COMPONENTE, sem o sistema em volta — trilho, cabeçalho, página e
+   véus somem (visibility, para a câmera seguir mirando o mesmo lugar); cada componente ganha borda em gradiente
+   colorido e um glow atrás. */
+.zoomer.comp{background:transparent !important;box-shadow:none !important}
+.zoomer.comp aside,.zoomer.comp .hdr,.zoomer.comp [data-c=pgBid],.zoomer.comp [data-c=pgDocs]>div:first-child,.zoomer.comp [data-c=pgDocs]>div:nth-child(2)>div:not(.dtab){visibility:hidden}
+[data-c=overlay],[data-c=fchOverlay],[data-c=novaOverlay]{display:none}`],
+	[1, `[data-c=cobOverlay]{background:rgba(0,0,0,.78) !important;backdrop-filter:blur(8px) !important}`],
+	[0, `/* Disparo de BID simplificado (2026-10-01): sem as abas Comparativo/Disparar, sem e-mail/telefone nas linhas, sem a
+   frase do rodapé e sem Cancelar; o Disparar BID fica CLARO; os envelopes saem (a transição é a explosão do botão). */
+[data-c=pillCmp],[data-c=pillDisp],.env{display:none !important}
+.exr>span:nth-child(2)>span:nth-child(2)>span:nth-child(2){display:none !important}
+.exr>span:nth-child(2)>span:nth-child(2){font-size:12.5px !important}`],
+	[1, `.cb{border-color:rgba(255,255,255,.4) !important}
+.cb:has(svg){background:#fafafa !important;border-color:#fafafa !important;color:#09090b !important}
+.dot.dk{background:#fafafa !important}`],
+	[0, `.exr{font-size:15px !important}
+[data-c=disp]>div:nth-child(3),[data-c=disp]>div:nth-child(4)>span:first-child{display:none !important}
+[data-c=cob]>div:first-child>span,[data-c=cob]>div:nth-child(3),[data-c=docOut],[data-c=docBack]{display:none !important}`],
+	[1, `[data-c=btnFechar]>span{background:#fafafa !important;color:#09090b !important}
+[data-c=disp]>div:nth-child(4)>span:last-child{background:#fafafa !important;color:#09090b !important;height:44px !important;padding:0 18px !important;font-size:15px !important;box-shadow:0 0 30px rgba(120,170,255,.35)}
+.dmodal,.zoomer.comp .dtab,[data-c=cob],[data-c=sp],[data-c=ocPg1],[data-c=ocPg2]{border:1.5px solid transparent !important;background:linear-gradient(#141418,#141418) padding-box,linear-gradient(125deg,#1d6ae5,#38bdf8 30%,#7c8cf8 55%,#c084fc 78%,#1d6ae5) border-box !important;box-shadow:0 30px 120px -20px rgba(56,130,255,.55),0 0 160px rgba(124,140,248,.22) !important}`],
+	[0, `.dtab{border-radius:12px;overflow:hidden}
+.dmodal{top:150px !important;height:600px !important}.dmodal.short{top:230px !important;height:440px !important}
+/* comparativo com um produto só: a melhor cotação sugerida pela FS1 em destaque */`],
+	[1, `.crow.win{background:rgba(0,201,80,.16) !important;box-shadow:inset 0 0 0 1.5px ${T.green600},0 0 34px rgba(0,201,80,.35) !important}
 .kin h1{text-shadow:0 0 42px rgba(90,150,255,.35)}
-.gfx{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;overflow:hidden}
+.row.warn{background:linear-gradient(90deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.08) 50%,rgba(255,255,255,0) 100%) no-repeat,linear-gradient(90deg,rgba(251,191,36,.2) 0%,rgba(251,191,36,.1) 45%,rgba(251,191,36,.04) 100%) !important;background-size:34% 100%,100% 100% !important}
+.row.warn.red{background-image:linear-gradient(90deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.08) 50%,rgba(255,255,255,0) 100%),linear-gradient(90deg,rgba(248,113,113,.2) 0%,rgba(248,113,113,.1) 45%,rgba(248,113,113,.04) 100%) !important}`],
+	[0, `/* o Disparar BID faz só o clique: encolhe e volta (sem cursor, sem dissolução) */
+@keyframes bClick{0%{transform:scale(1)}35%{transform:scale(.88)}70%{transform:scale(1.04)}100%{transform:scale(1)}}
+[data-c=disp].click>div:nth-child(4)>span:last-child{animation:bClick .45s cubic-bezier(.3,0,.3,1) both;position:relative}`],
+	[1, `.gfx{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;overflow:hidden}
 .gb{position:absolute;left:0;top:0;transition:transform 2s var(--ease),opacity 2s var(--ease)}
 .gb i{position:absolute;inset:0;border-radius:50%;filter:blur(50px)}
 .ga{width:960px;height:600px}
@@ -1331,17 +1444,42 @@ const CSS_1MIN = `.tc .opP{visibility:hidden}
 .g1 .ga{transform:translate(-280px,-300px)}.g1 .gbb{transform:translate(1380px,520px)}
 .g2 .ga{transform:translate(1240px,-340px)}.g2 .gbb{transform:translate(-380px,480px)}
 .g3 .ga{transform:translate(-320px,620px)}.g3 .gbb{transform:translate(1460px,-360px)}
-.g4 .ga{transform:translate(480px,-330px)}.g4 .gbb{transform:translate(-300px,560px)}
-.hook{position:absolute;inset:0;pointer-events:none}
+.g4 .ga{transform:translate(480px,-330px)}.g4 .gbb{transform:translate(-300px,560px)}`],
+	[0, `.hook{position:absolute;inset:0;pointer-events:none}
 .hl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0}
 .kh{${KIN_H};position:relative;font-size:104px;text-shadow:0 0 42px rgba(90,150,255,.35)}
 .kh .hw,.kh .mw,.kh .hbr{display:inline-block}
 .hbr{font-weight:300;font-size:1.3em;line-height:1;color:${T.mutedFg};transform:translateY(-.06em)}
+.star{position:absolute;left:0;top:540px;width:0;height:0;mix-blend-mode:screen;opacity:0;pointer-events:none}
+.star i{position:absolute;left:0;top:0;transform:translate(-50%,-50%);border-radius:50%}
+.star .halo{width:900px;height:700px;background:radial-gradient(closest-side,rgba(40,110,255,.4),rgba(29,106,229,.15) 60%,transparent);filter:blur(30px)}
+.star .sv{position:absolute;left:0;top:0;transform:translate(-50%,-50%);overflow:visible}
+.star .c{width:240px;height:240px;background:radial-gradient(closest-side,#ffffff,rgba(200,220,255,.85) 30%,rgba(90,150,255,.3) 62%,transparent);filter:blur(18px)}
 .mline{position:absolute;left:50%;top:50%;display:block;margin:0}
 .mline .mw{margin-right:.26em}
 .hcol{position:absolute;inset:0}
-.hchip{position:absolute;display:inline-flex;align-items:center;gap:10px;padding:16px 24px;border-radius:14px;background:#ffffff;border:1px solid ${T.border};box-shadow:0 18px 40px -20px rgba(0,0,0,.28);font-size:24px;color:${T.fg};white-space:nowrap;opacity:0}`
-const css = `${CURTO ? CSS_1MIN : ""}
+.hchip{position:absolute;display:block;opacity:0}`],
+].filter(([ambos]) => CURTO || ambos).map(([, s]) => s).join('\n')
+// 3 min (2026-10-06): o texto no ritmo do 1 min — as palavras das cartelas, do fechamento e das legendas entram do
+// desfoque para o foco (kIn, no lugar do rise), com o mesmo brilho azul atrás dos títulos.
+const CSS_3MIN = `.tc.show .w,.q.show .w,.q.l2 .l2w,.q.bgin .qw2{animation-name:kIn}
+.q h1,.tc h1,.mkt p{text-shadow:0 0 42px rgba(90,150,255,.35)}
+.cap .kw,.cti .kw,.veil .kw{display:inline-block}
+.cap.show .kw,.cti.show .kw,.veil.show .kw{animation:kIn .6s var(--ease) both}
+.vf.q,.vf.tc{transition-property:opacity,filter}
+.vf.q.exit,.vf.tc.exit{filter:blur(10px)}
+/* inclinação 3D do 1 min: os recortes entram inclinados e assentam (c.tilt alterna ta/tb para reiniciar) */
+.tilt{position:absolute;inset:0;transform-origin:50% 55%}
+.tilt.ta{animation:tiltA 7s cubic-bezier(.2,.7,.2,1) both}
+.tilt.tb{animation:tiltB 7s cubic-bezier(.2,.7,.2,1) both}
+@keyframes tiltA{0%{transform:perspective(2600px) rotateX(14deg) rotateY(-12deg) scale(.84)}100%{transform:perspective(2600px) rotateX(4deg) rotateY(-3deg) scale(.94)}}
+@keyframes tiltB{0%{transform:perspective(2600px) rotateX(12deg) rotateY(12deg) scale(.84)}100%{transform:perspective(2600px) rotateX(3deg) rotateY(3deg) scale(.94)}}
+/* com a inclinação, o que espera fora do quadro apareceria nas bordas: some enquanto espera e depois de sair (o deslize de saída continua) */
+.sr.pre,.sl.pre{visibility:hidden}
+.sr.exit{visibility:hidden;transition:transform .9s var(--ease),visibility 0s .9s}
+.sl.exit{visibility:hidden;transition:transform .85s var(--ease),visibility 0s .85s}
+`
+const css = `${CSS_TOPO}
 @font-face{font-family:Aspekta;src:url(data:font/woff2;base64,${ASPEKTA}) format('woff2');font-weight:100 900;font-display:swap}
 :root{--ease:cubic-bezier(.625,.05,0,1)}
 body{margin:0;background:${T.bg}}
@@ -1625,14 +1763,14 @@ ${Array.from({ length: 11 }, (_, i) => `.tc.show .w:nth-child(${i + 2}){animatio
 /* indicador "ao vivo" do painel de conversas */
 .live-dot{position:relative;display:inline-block;width:8px;height:8px;border-radius:9999px;background:#00c950}
 .live-dot::after{content:"";position:absolute;inset:-4px;border-radius:9999px;border:2px solid #00c950;animation:pulse 1.4s ease-out infinite}
-`
+${CURTO ? '' : CSS_3MIN}`
 
 /* ---------------- stage ---------------------------------------------- */
 // No 1 min os recortes da janela e do celular entram inclinados em 3D e assentam (.tilt, c.tilt).
 // Glow do 1 min (como a referência): manchas de luz azul em modo screen por cima de tudo, que mudam de lugar a
 // cada sessão (c.gfx = g0..g4) e derivam devagar; o horizonte aceso embaixo. (A moldura do palco saiu a pedido.)
 const glowFx = `<div class="gfx {{c.gfx}}"><div class="gb ga"><i></i></div><div class="gb gbb"><i></i></div><div class="gb gh"><i></i></div><div class="gb gt"><i></i></div></div>`
-const TILT_A = CURTO ? '<div class="tilt {{c.tilt}}">' : '', TILT_Z = CURTO ? '</div>' : ''
+const TILT_A = '<div class="tilt {{c.tilt}}">', TILT_Z = '</div>' // no 3 min desde 2026-10-06
 const stage = `<div class="stage" style="position:relative;width:1920px;height:1080px;overflow:hidden;background:${STAGE};color:${T.fg};font-family:${BODY};font-size:16px;line-height:1.5;letter-spacing:.02em">
 	${docsQCard}
 	${waQCard}
@@ -1682,7 +1820,7 @@ const stage = `<div class="stage" style="position:relative;width:1920px;height:1
 	${hintCard}
 	${bidQCard}
 	${openCard}
-	${CURTO ? hookLayers + kinCaps + ctaCard + glowFx : closeCard}
+	${CURTO ? hookLayers + kinCaps + ctaKins + ctaCard : closeCard}${ESCURO ? glowFx : ''}
 </div>`
 
 /* ---------------- lógica (timeline) ------------------------------------ */
@@ -1691,32 +1829,33 @@ const stage = `<div class="stage" style="position:relative;width:1920px;height:1
 // A duração total (DURACAO) é derivada abaixo: o relógio acaba FECHO ms depois de waOut (o fechamento segura
 // só esse tempo). Até 2026-09-12 era um valor fixo (2:00 → 2:10 → 2:15) com o fechamento segurando o resto.
 const LEAD = 2000
-// Corte de 1 minuto: RECORTES do roteiro de 3 min, [início, fim, pausa antes, legenda] em ms do 3 min. Cada recorte
-// toca a 1×; o que fica entre dois recortes COLAPSA (os cues disparam juntos, no meio da pausa, por baixo da
+// Corte de 1 minuto: RECORTES do roteiro de 3 min, [início, fim, pausa antes, legenda, velocidade] em ms do 3 min. Cada
+// recorte toca a 1× (ou no fator dado: 0,6 = 40% mais rápido); o que fica entre dois recortes COLAPSA (os cues disparam juntos, no meio da pausa, por baixo da
 // legenda opaca que cobre a troca). O primeiro recorte é a abertura (Solução), e a pausa dele é o Problema.
 const HOOK_MS = 10000 // o Problema (timeline GSAP do runtime, HOOK_JS)
 const FRAGS_1MIN = [
-	[0, 4300, HOOK_MS, null],                 // Solução: Faradays → FS1 por Faradays → slogan (parceiros ocultos)
-	[18900, 24700, 1700, 'kc1'],              // Demo: a FS1 marca 3 de 4 exportadores → Disparar BID → envelopes
-	[39775, 45400, 1700, 'kc2'],              // comparativo "lendo e-mail…" → varredura da IA (o véu colapsa)
-	[51300, 52400, 0, null],                  // a IA marca as vencedoras
-	[56500, 59600, 1700, 'kc3'],              // as duas OCs em PDF, carimbo ENVIADA
-	[91000, 96000, 1700, 'kc4'],              // Recursos: drive → a IA lê e renomeia
-	[102600, 106900, 1700, 'kc5'],            // linhas em atenção → cobrança automática
-	[122800, 128400, 1700, 'kc6'],            // áudio do representante → números e alertas
-	[130200, 133800, 0, null],                // "muda pra FOB" → cotação emitida
-	[162000, 165000, 1700, 'kc7'],            // Visão Geral ao vivo
+	[0, 6700, HOOK_MS, null],                 // Solução: Faradays → FS1 por Faradays → slogan e as 3 bolhas em popup, com tempo para ler (parceiros ocultos)
+	[18900, 20250, 2000, 'kc1'],              // Demo: o modal entra → match cut na legenda "FS1 cruzando o cadastro…"
+	[20250, 21900, 1800, null],               // pausa de 1,8 s para ler a legenda → zoom out com as linhas marcando
+	[22500, 23900, 0, null],                  // (0,6 s de espera cortados) clique no Disparar BID → corte seco para a próxima cena
+	[39775, 45400, 2000, 'kc2'],              // comparativo "lendo e-mail…" → varredura da IA (o véu colapsa)
+	[51300, 53000, 0, null],                  // a IA marca a vencedora, com tempo para ver antes do corte
+	[91000, 99100, 2000, 'kc4', 0.6],         // Recursos: drive sincronizando com o sistema ao fundo (mais rápido) → a IA lê e renomeia → os arquivos voam para a tabela
+	[102600, 108300, 2000, 'kc5'],            // linhas em atenção → cobrança automática, com tempo para ler e a pílula da cobrança saindo
+	[122800, 128400, 2000, 'kc6'],            // áudio do representante → números e alertas
+	[130200, 135600, 0, null],                // "muda pra FOB" → cotação emitida, segurando o fim
+	[162100, 165100, 2000, 'kc7'],            // Visão Geral ao vivo (começa logo depois do toSys, 162075: a saída do celular e a entrada do sistema caem sob a legenda)
 	[174075, Infinity, 0, null],              // CTA
 ]
 const FR = []
-{ let acc = 0; for (const [a, b, h, k] of FRAGS_1MIN) { FR.push({ a, b, h, k, cap: acc, start: acc + h }); acc += h + (b - a) } }
+{ let acc = 0; for (const [a, b, h, k, f = 1] of FRAGS_1MIN) { FR.push({ a, b, h, k, f, cap: acc, start: acc + h }); acc += h + (b - a) * f } }
 // Cues que o corte curto não dispara nem colapsados: o resto da conversa do celular (COA/NF/boleto, ficha,
 // rastreio, resumo do dia), que apareceria dentro do celular enquanto ele some.
 const SKIP_1MIN = new Set(['ptyp3', 'p5', 'cap4', 'p6', 'p7', 'ptyp4', 'p8', 'p9', 'ptyp5', 'p10', 'cap5', 'chatB', 'rs1', 'cap6', 'rs2', 'rtyp', 'rs3', 'cap7'])
 const mapa1min = (t) => {
 	for (const f of FR) {
 		if (t < f.a) return Math.round(f.cap + f.h / 2)
-		if (t < f.b) return Math.round(f.start + t - f.a)
+		if (t < f.b) return Math.round(f.start + (t - f.a) * f.f)
 	}
 }
 const CUES = [
@@ -1732,6 +1871,7 @@ const CUES = [
 	['bZoom', 7100], ['bLine2', 7800], ['ch2Out', 11500],
 	['cNova', 12750], ['kNova', 13500], ['it1', 14625], ['it2', 15125], ['it3', 15625], ['cCriar', 17875], ['kCriar', 18625],
 	['aiSel', 19500], ['aSel', 20600], ['aiOk', 21650],
+	...(CURTO ? [['legOut', 20250]] : []), // 1 min: o corte com zoom na legenda "FS1 cruzando…" recua aqui, antes de as linhas marcarem
 	['cDisp', 22550], ['kDisp', 23250], ['env', 24625], ['split', 25375], ['mailIn', 26250], ['capMail', 26625], ['mailOpen', 26750],
 	['replyOpen', 27250], ['t1', 27625], ['t2', 27875], ['t3', 28125], ['t4', 28375], ['cSend', 28875], ['kSend', 30375], ['flyGone', 31750],
 	['waIn', 32500], ['waMsg', 33900], ['cWaSend', 34150], ['waSend', 36400], ['waGone', 37650], ['unsplit', 38650],
@@ -1769,8 +1909,10 @@ if (CURTO) {
 	CUES.sort((a, b) => a[1] - b[1])
 }
 // Fechamento: o relógio acaba FECHO ms depois de waOut (pedido de 2026-09-12: 3 s); o loop recomeça 2,6 s depois.
-const FECHO = CURTO ? 4500 : 3000 // no 1 min o CTA segura 4,5 s
+const CTA_MS = 1300 // 1 min: cada frase do CTA fica 1,3 s; o logo segura 4 s
+const FECHO = CURTO ? CTA_MS * 3 + 4000 : 3000
 CUES.push(['end', CUES.find(([n]) => n === 'waOut')[1] + FECHO])
+if (CURTO) { const w = CUES.find(([n]) => n === 'waOut')[1]; CUES.push(['cta1', w], ['cta2', w + CTA_MS], ['cta3', w + 2 * CTA_MS], ['ctaLogo', w + 3 * CTA_MS]); CUES.sort((a, b) => a[1] - b[1]) }
 const DURACAO = CUES[CUES.length - 1][1]
 const RELOGIO = `${Math.floor(DURACAO / 60000)}:${String(Math.round((DURACAO % 60000) / 1000)).padStart(2, '0')}`
 
@@ -1779,7 +1921,23 @@ const RELOGIO = `${Math.floor(DURACAO / 60000)}:${String(Math.round((DURACAO % 6
 const LOGIC_1MIN = `
 		for (let k = 1; k <= 7; k++) c['kc' + k] = seq('pre', ['kc' + k, 'show'], ['kc' + k + 'x', 'exit']);
 		c.gfx = seq('g0', ['open', 'g1'], ['kc1', 'g2'], ['kc2', 'g3'], ['kc3', 'g1'], ['kc4', 'g2'], ['kc5', 'g3'], ['kc6', 'g1'], ['kc7', 'g2'], ['waOut', 'g4']);
-		c.tilt = seq('', ['kc1', 'ta'], ['kc2', 'tb'], ['kc4', 'ta'], ['kc5', 'tb'], ['kc6', 'ta'], ['kc7', 'tb']);
+		c.ct1 = seq('pre', ['cta1', 'show'], ['cta2', 'exit']); c.ct2 = seq('pre', ['cta2', 'show'], ['cta3', 'exit']); c.ct3 = seq('pre', ['cta3', 'show'], ['ctaLogo', 'exit']);
+		c.tilt = seq('', ['kc1x', 'ta'], ['kc2x', 'tb'], ['kc4x', 'ta'], ['kc5x', 'tb'], ['kc6x', 'ta'], ['kc7x', 'tb']); // reinicia quando a legenda SAI (no início dela, o componente anterior ainda aparecia pulando para trás)
+`
+// 3 min no tema escuro (2026-10-06): as manchas do glow trocam de lugar a cada cartela e a cada demo
+const LOGIC_3MIN = `
+		c.tilt = seq('', ['ch2Out', 'ta'], ['cutA2', 'tb'], ['botIn', 'ta'], ['ch1Out', 'tb'], ['ch3Out', 'ta'], ['toSys', 'tb']); // a janela/o celular entram inclinados e assentam a cada demo e no corte para o comparativo
+		c.gfx = seq('g0', ['open', 'g1'], ['openOut', 'g2'], ['ch2Out', 'g3'], ['mktIn', 'g1'], ['bidOut', 'g2'], ['ch1Out', 'g3'], ['docsOut', 'g1'], ['ch3Out', 'g3'], ['waOut', 'g4']);
+`
+// 1 min, no fim do renderVals (sobrescreve o que o roteiro de 3 min definiu)
+const LOGIC_1MIN_FIM = `		// só o componente nas demos; o sistema aparece ao fundo enquanto o drive sincroniza e na Visão Geral
+		c.zoomer = (seq('', ['aiSel', 'snap'], ['legOut', ''], ['cut2', 'snap'], ['readWa', '']) + (i >= I.toSys || (i >= I.ch1Out && i < I.docsOut) ? '' : ' comp')).trim();
+		// MATCH CUT para a direita: quando a legenda vira "FS1 cruzando o cadastro…", a câmera corta seco para ela;
+		// em legOut recua (zoom out) a tempo de mostrar as linhas sendo marcadas
+		if (i >= I.aiSel && i < I.legOut) st.zoom = focus(LEG[0], LEG[1], LEG[2]);
+		// Disparar BID sem cursor: o botão faz o clique sozinho (encolhe e volta, .click)
+		if ((i >= I.cDisp && i < I.cutA2) || (i >= I.cFechar && i < I.kc4x)) c.cur = 'hide'; // sem cursor no disparo nem indo para Fechar cotação
+		c.disp = (c.disp + (i >= I.kDisp && i < I.cutA2 ? ' click' : '')).trim();
 `
 const CAP_FIM = CURTO ? ", ['toSys', 'exit']" : ''
 const logic = `
@@ -1796,12 +1954,12 @@ const LEFT = [64, 261, 0.58];
 // Ponto da janela → prancha, para a câmera (fx, fy, s) em foco ou (x, y, s) encostada.
 const zpt = (cx, cy, f) => [960 + f[2] * (cx - f[0]), 540 + f[2] * (cy - f[1])];
 const lpt = (cx, cy) => [LEFT[0] + LEFT[2] * cx, LEFT[1] + LEFT[2] * cy];
-const ZP = [750, 330, 1.9];
+const ZP = ${CURTO ? "[750, 480, 1.9]; // no 1 min o modal do comparativo fica em top 150 com 600 px e uma caixa só, com 6 fornecedores\nconst LEG = [1223, 336, 3.2]; // centro da legenda ‘FS1 cruzando…’ na janela (medido sem a inclinação: 320 px) e o zoom do corte" : '[750, 330, 1.9];'}
 // Focos das caixas de diálogo (coordenadas da janela): centro da área de conteúdo, escala alta para
 // legibilidade (13,33px do app viram ~21px na prancha). O modal baixo do disparo (1152×440, centrado na
 // tela) cabe a 1,55.
 const F_DLG = [832, 450, 1.6];
-const F_WARN = [728, 385, 1.5]; // COORDENADAS DA JANELA (focus() desconta WX/WY): as duas linhas em atenção — Halal y 333–385, Kosher 385–437 — de Tipo a Status
+const F_WARN = [728, ${CURTO ? 541 : 385}, 1.5]; // COORDENADAS DA JANELA (focus() desconta WX/WY): as duas linhas em atenção — Halal y 333–385, Kosher 385–437 — de Tipo a Status
 const F_DISP = [832, 450, 1.55];
 // Cap. 3, fase B: a tela inteira aparece sem zoom; depois a câmera fecha no painel da conversa
 // (x=678, y=56 na janela, 922 de largura) e o encosta à esquerda da prancha (64..1032, y 97..983) a
@@ -1873,7 +2031,7 @@ class Component extends DCLogic {
 		st.dTx = seq(camFocus(D_FOCUS[0], D_FOCUS[1], D_FOCUS[2]), ['dZoom', CAM0], ['ch1Out', camFocus(960, 540, 0.62)]);
 		c.ch3 = seq('pre', ['docsOut', 'show'], ['wZoom', 'show bgin'], ['wLine2', 'show bgin l2'], ['ch3Out', 'show bgin l2 exit']);
 		st.wTx = seq(camFocus(W_FOCUS[0], W_FOCUS[1], W_FOCUS[2]), ['wZoom', CAM0], ['ch3Out', camFocus(960, 540, 0.62)]);
-		c.close = seq('pre', ['waOut', 'show']);${CURTO ? LOGIC_1MIN : ''}
+		c.close = seq('pre', ['waOut', 'show']);${CURTO ? LOGIC_1MIN : LOGIC_3MIN}
 		// Bolha estacionada de cada capítulo: voa na saída da cartela (de DOCK_FROM a DOCK_TO), some nos
 		// zooms que cobrem o canto (volta com fade quando a câmera recua), sai quando a cartela seguinte entra.
 		c.dock0 = seq('pre', ['ch2Out', 'on'], ['kNova', 'hide'], ['split', 'on re'], ['cut2', 'hide'], ['zoomOut2', 'on re'], ['kFechar', 'hide'], ['bidOut', 'exit']);
@@ -2043,7 +2201,7 @@ class Component extends DCLogic {
 			idle: [900, 620],
 			cNova: [1664, 188],
 			cCriar: zpt(1092, 658, F_DLG),
-			cDisp: zpt(1295, 628, F_DISP),
+			cDisp: zpt(${CURTO ? '1297, 623' : '1295, 628'}, F_DISP),
 			cFechar: [1464, 903],
 		};
 		const cx = seq(null, ['cNova', 'cNova'], ['cCriar', 'cCriar'], ['cDisp', 'cDisp'],
@@ -2057,7 +2215,7 @@ class Component extends DCLogic {
 		c.cur = (curOn ? '' : 'hide') + ' ' + click;
 		// Envelopes: do botão "Disparar BID" às linhas dos exportadores (coordenadas do modal).
 		for (let k = 0; k < 3; k++) st['env' + k] = seq(tr(1040, 398), ['kDisp', tr(1090, 154 + 52 * k)]);
-		return { c, st, replay: () => this.startAt('Abertura') };
+${CURTO ? LOGIC_1MIN_FIM + "\t\tc.close = seq('pre', ['ctaLogo', 'show']); // o logo entra depois das três frases\n" : ''}		return { c, st, replay: () => this.startAt('Abertura') };
 	}
 }
 `
@@ -2141,7 +2299,10 @@ const ESCURO_1MIN = [
 	['color:#0a0a0a', 'color:#fafafa'], ['#111111', '#ededed'], ['#222222', '#e5e5e5'], ['#333333', '#d4d4d4'],
 	['#3b3b3b', '#d4d4d4'], ['#555555', '#a1a1a1'], ['#6b6b6b', '#a1a1a1'], ['#7a7a7a', '#8a8a8a'],
 ]
-const escurecer = (h) => (CURTO ? ESCURO_1MIN.reduce((a, [de, para]) => (de instanceof RegExp ? a.replace(de, para) : a.split(de).join(para)), h) : h)
+// No 1 min, "exportador" vira "fornecedor" no vídeo inteiro e Halal/Kosher viram documentos genéricos (2026-10-01).
+const FORNECEDOR_1MIN = [['HALAL', 'DOCUMENTO 1'], ['Halal', 'Documento 1'], ['KOSHER', 'DOCUMENTO 2'], ['Kosher', 'Documento 2'], ['EXPORTADORES', 'FORNECEDORES'], ['EXPORTADOR', 'FORNECEDOR'], ['Exportadores', 'Fornecedores'], ['Exportador', 'Fornecedor'], ['exportadores', 'fornecedores'], ['exportador', 'fornecedor']]
+const fornecedor = (h) => (CURTO ? FORNECEDOR_1MIN.reduce((a, [de, para]) => a.split(de).join(para), h) : h)
+const escurecer = (h) => (ESCURO ? ESCURO_1MIN.reduce((a, [de, para]) => (de instanceof RegExp ? a.replace(de, para) : a.split(de).join(para)), h) : h)
 const standaloneHtml = toStandalone(html)
 if (/\{\{/.test(standaloneHtml)) throw new Error('hole sobrando no standalone: ' + standaloneHtml.match(/\{\{[^}]*\}\}/)[0])
 
@@ -2256,9 +2417,10 @@ async function toggleFS() {
 		else { await document.documentElement.requestFullscreen(); try { await screen.orientation.lock('landscape') } catch {} }
 	} catch {}
 }
-// Ao entrar em tela cheia: pausa (a take começa no espaço/clique) e esconde os overlays.
+// Ao entrar em tela cheia: pausa (a take começa no espaço/clique) e esconde os overlays.${CURTO ? `
+// No corte de 1 min, a tela cheia (tecla F ou botão) REINICIA do começo e já toca: é a take da gravação.` : ''}
 document.addEventListener('fullscreenchange', () => {
-	if (document.fullscreenElement) { if (comp.frozen == null) togglePause(); clearTimeout(ctlTimer); setControls(false) }
+	if (document.fullscreenElement) { ${CURTO ? "comp.frozen = null; comp.startAt('Abertura'); updateTL()" : 'if (comp.frozen == null) togglePause()'}; clearTimeout(ctlTimer); setControls(false) }
 	else showControls(true)
 })
 // Celular na vertical: instrução para girar; o vídeo espera (e retoma sozinho ao girar).
@@ -2346,5 +2508,5 @@ ${CURTO ? `<script>${GSAP}</script>` : ''}<script>${runtime}${CURTO ? HOOK_JS.re
 </body>
 </html>
 `
-fs.writeFileSync(CURTO ? 'index-1min.html' : 'index.html', escurecer(standalone))
+fs.writeFileSync(CURTO ? 'index-1min.html' : 'index.html', fornecedor(escurecer(standalone)))
 console.log('ok standalone', CURTO ? '(1 min)' : '', RELOGIO, (standalone.length / 1024).toFixed(0) + ' KB')
