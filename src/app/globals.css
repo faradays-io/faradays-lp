@@ -646,3 +646,161 @@
 		transform: translate(-1%, 7%);
 	}
 }
+
+/* ---- Palco escuro (/distribuicao) --------------------------------------
+   O fundo e a luz do vídeo do showcase trazidos para a página (spec em
+   docs/glow-e-fundo.md da branch showcase-video): preto quase puro, um
+   horizonte azul nascendo da borda de baixo e duas manchas (A azul, B céu)
+   que trocam de canto a cada sessão — no vídeo a troca é por legenda, aqui
+   por seção rolada (`StageGlow`). Os tokens são os do `.dark` global; o
+   palco só aprofunda o fundo, para a luz ter de onde sair. */
+.stage {
+	--background: #040406;
+}
+
+/* Grão global mais baixo no palco: os 12% calibrados no claro viram
+   chuvisco sobre o preto. */
+body:has(.stage) [data-grain] {
+	opacity: 0.06;
+}
+
+/* Brilho do texto grande, o mesmo text-shadow das frases do vídeo. */
+.text-glow {
+	text-shadow: 0 0 42px rgba(90, 150, 255, 0.35);
+}
+
+/* Horizonte: meia-elipse com o centro no meio da base (o de baixo). As
+   escalas e a opacidade de entrada/saída são do GSAP, em camadas por fora;
+   aqui só o desenho e a respiração contínua do vídeo (6 s, vai e volta). */
+.stage-horizon {
+	background: radial-gradient(
+		55% 70% at 50% 100%,
+		rgba(40, 110, 255, 1) 0%,
+		rgba(29, 106, 229, 0.45) 50%,
+		transparent 80%
+	);
+	transform-origin: 50% 100%;
+	animation: stage-breathe 6s ease-in-out infinite alternate;
+}
+@keyframes stage-breathe {
+	from {
+		opacity: 0.75;
+		transform: scaleX(0.92);
+	}
+	to {
+		opacity: 1;
+		transform: scaleX(1.04);
+	}
+}
+
+/* Manchas. A posição é do cenário (`data-scene` na camada), com a troca
+   deslizando em 2 s na curva do projeto, como no vídeo; o miolo deriva em
+   loop por dentro (A 9 s, B 11 s). Tamanhos do vídeo em 1920 px (960 × 600
+   e 820), em vw com piso — no celular elas não podem virar um ponto. */
+.stage-blob {
+	position: absolute;
+	top: 0;
+	left: 0;
+	opacity: 0;
+	transition:
+		transform 2s var(--ease-fluid),
+		opacity 1.2s var(--ease-fluid);
+}
+.stage-blob > * {
+	width: 100%;
+	height: 100%;
+}
+.stage-blob-a {
+	width: max(50vw, 30rem);
+	height: max(31.25vw, 19rem);
+}
+.stage-blob-a > * {
+	background: radial-gradient(
+		closest-side,
+		rgba(40, 110, 255, 0.9),
+		rgba(29, 106, 229, 0.35) 55%,
+		transparent
+	);
+	animation: stage-drift-a 9s ease-in-out infinite alternate;
+}
+.stage-blob-b {
+	width: max(42.7vw, 26rem);
+	height: max(42.7vw, 26rem);
+}
+.stage-blob-b > * {
+	background: radial-gradient(
+		closest-side,
+		rgba(56, 189, 248, 0.55),
+		rgba(29, 106, 229, 0.2) 55%,
+		transparent
+	);
+	animation: stage-drift-b 11s ease-in-out infinite alternate;
+}
+@keyframes stage-drift-a {
+	to {
+		transform: translate(4.7vw, 2vw) scale(1.12);
+	}
+}
+@keyframes stage-drift-b {
+	from {
+		transform: scale(1.05);
+	}
+	to {
+		transform: translate(-4.2vw, -2.6vw) scale(0.92);
+	}
+}
+
+/* Cenários — posições do vídeo (px em 1920 × 1080 → vw/vh). `hero` é o g0
+   do Problema: só o horizonte, manchas apagadas no canto onde vão nascer. */
+.stage-glow[data-scene] .stage-blob {
+	opacity: 0.8;
+}
+.stage-glow[data-scene='hero'] .stage-blob {
+	opacity: 0;
+}
+.stage-glow[data-scene='hero'] .stage-blob-a,
+.stage-glow[data-scene='g1'] .stage-blob-a {
+	transform: translate(-14.6vw, -27.8vh);
+}
+.stage-glow[data-scene='hero'] .stage-blob-b,
+.stage-glow[data-scene='g1'] .stage-blob-b {
+	transform: translate(71.9vw, 48.1vh);
+}
+.stage-glow[data-scene='g2'] .stage-blob-a {
+	transform: translate(64.6vw, -31.5vh);
+}
+.stage-glow[data-scene='g2'] .stage-blob-b {
+	transform: translate(-19.8vw, 44.4vh);
+}
+.stage-glow[data-scene='g3'] .stage-blob-a {
+	transform: translate(-16.7vw, 57.4vh);
+}
+.stage-glow[data-scene='g3'] .stage-blob-b {
+	transform: translate(76vw, -33.3vh);
+}
+.stage-glow[data-scene='cta'] .stage-blob-a {
+	transform: translate(25vw, -30.6vh);
+}
+.stage-glow[data-scene='cta'] .stage-blob-b {
+	transform: translate(-15.6vw, 51.9vh);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.stage-horizon,
+	.stage-blob > * {
+		animation: none;
+	}
+	.stage-blob {
+		transition-duration: 0.01s;
+	}
+}
+
+/* Traço do aviso de scroll do hero: desce pelo trilho e some no pé. */
+@keyframes scroll-cue {
+	from {
+		transform: translateY(-100%);
+	}
+	to {
+		transform: translateY(200%);
+	}
+}
