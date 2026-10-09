@@ -6,7 +6,7 @@ import { SplitHoverText } from '@/components/custom-ui/split-hover-text'
 import { CopyEmail } from '@/components/landing/copy-email'
 import { FaradaysComposed } from '@/components/landing/faradays-composed'
 import { HomeLoader } from '@/components/landing/home-loader'
-import { LEGAL_PAGES } from '@/components/landing/legal-data'
+import { FOOTER_LEGAL_LINKS } from '@/components/landing/legal-data'
 import { Reveal } from '@/components/landing/reveal'
 import { SOLUTIONS } from '@/components/landing/solutions-data'
 import { useCopy, useLang } from '@/components/language-provider'
@@ -193,7 +193,7 @@ export function HomeContent() {
 						aria-label={t.ariaPolicies}
 						className="flex flex-wrap gap-4"
 					>
-						{LEGAL_PAGES.map((page) => (
+						{FOOTER_LEGAL_LINKS.map((page) => (
 							<Link
 								key={page.slug}
 								href={page.slug}

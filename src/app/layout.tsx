@@ -14,9 +14,9 @@ import { DEFAULT_LANG, HTML_LANG, isLang, LANG_COOKIE } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 
 export const metadata: Metadata = {
-	title: 'Faradays — AI agents for enterprise support',
+	title: 'Faradays — Inteligência artificial aplicada à operação',
 	description:
-		'Landing page study inspired by giga.ai — structure and motion, with original placeholder content.',
+		'Motores de decisão, portais e agentes de IA que trabalham com os dados que a sua empresa já tem. Operação de distribuição no WhatsApp, com o gestor acompanhando tudo no portal.',
 	verification: {
 		other: {
 			'facebook-domain-verification': 'bvn3zc4rndhujiy2yzs7or5ooluoqy'
