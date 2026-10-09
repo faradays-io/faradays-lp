@@ -75,12 +75,6 @@ const FEATURES: readonly {
  * Os itens são âncoras de verdade: o Lenis global intercepta o clique e
  * desce suave, já descontando a altura da nav (`anchors.offset` no
  * LenisProvider).
- *
- * No palco escuro: a seção não tem fundo (a luz do `StageGlow` passa por
- * trás), a barra do índice carrega na fita de IA com brilho, e cada recorte
- * entra como no vídeo — inclinado em 3D (rotateX 14°, um pouco menor) e
- * endireitando com o scroll até ficar de frente na metade da tela, sobre um
- * halo azul.
  */
 export function FeatureIndex() {
 	const { lang } = useLang()
@@ -124,35 +118,6 @@ export function FeatureIndex() {
 					}
 				)
 			})
-
-			if (window.matchMedia('(prefers-reduced-motion: reduce)').matches)
-				return
-			gsap.utils
-				.toArray<HTMLElement>('[data-feature-tilt]', root)
-				.forEach((tilt) => {
-					gsap.fromTo(
-						tilt,
-						{
-							rotationX: 14,
-							scale: 0.92,
-							y: 48,
-							transformPerspective: 1800,
-							transformOrigin: '50% 100%'
-						},
-						{
-							rotationX: 0,
-							scale: 1,
-							y: 0,
-							ease: 'none',
-							scrollTrigger: {
-								trigger: tilt,
-								start: 'top bottom',
-								end: 'top 45%',
-								scrub: 0.6
-							}
-						}
-					)
-				})
 		}, root)
 		return () => ctx.revert()
 	}, [ready])
@@ -161,7 +126,7 @@ export function FeatureIndex() {
 		<section
 			id="features"
 			ref={rootRef}
-			className="text-foreground py-24 lg:py-32"
+			className="bg-background text-foreground py-24 lg:py-32"
 		>
 			<div className="max-w-page mx-auto w-full px-[var(--gutter)]">
 				{/* Índice nas colunas 2-3, blocos nas 5-11: a coluna 4 fica
@@ -191,12 +156,7 @@ export function FeatureIndex() {
 												: 'text-foreground/40 hover:text-foreground/70'
 										)}
 									>
-										<span
-											className={cn(
-												'font-mono text-xs tracking-widest transition-colors duration-300',
-												i === active && 'text-[#4aa8ff]'
-											)}
-										>
+										<span className="font-mono text-xs tracking-widest">
 											{String(i + 1).padStart(2, '0')}
 										</span>
 										<span className="font-heading text-h6 mt-1 block text-balance">
@@ -215,7 +175,7 @@ export function FeatureIndex() {
 											<span
 												data-index-fill
 												className={cn(
-													'block h-full w-full origin-left scale-x-0 bg-[image:var(--ai-ribbon)] bg-[length:200%_100%] shadow-[0_0_10px_rgba(56,189,248,0.8)] transition-opacity duration-300',
+													'bg-foreground block h-full w-full origin-left scale-x-0 transition-opacity duration-300',
 													i === active
 														? 'opacity-100'
 														: 'opacity-0'
@@ -246,7 +206,7 @@ export function FeatureIndex() {
 									<h3
 										className={cn(
 											ptSerif.className,
-											'text-glow text-[3rem]/[1.05] font-medium'
+											'text-[3rem]/[1.05] font-medium'
 										)}
 									>
 										{feature.title[lang]}
@@ -257,18 +217,10 @@ export function FeatureIndex() {
 									{/* Título e descrição na largura da coluna, sem medida
 									   própria nem balanceamento de linhas: o texto ocupa o
 									   mesmo campo que a ilustração abaixo. */}
-									{/* Halo + recorte inclinado. O `isolate` segura
-									   o halo (-z-10) atrás do recorte e à frente
-									   da luz do palco. */}
-									<div className="relative isolate mt-16 lg:mt-20">
-										<div
-											aria-hidden
-											className="absolute inset-x-[8%] top-[15%] bottom-0 -z-10 rounded-full bg-[radial-gradient(closest-side,rgba(40,110,255,0.35),rgba(29,106,229,0.1)_60%,transparent)] blur-3xl"
-										/>
-										<div data-feature-tilt>
-											<DemoFragment screen={feature.id} />
-										</div>
-									</div>
+									<DemoFragment
+										screen={feature.id}
+										className="mt-16 lg:mt-20"
+									/>
 								</Reveal>
 							</article>
 						))}

@@ -21,7 +21,6 @@ export function GrainOverlay({ className }: { className?: string }) {
 	return (
 		<div
 			aria-hidden
-			data-grain
 			className={cn(
 				'pointer-events-none fixed top-[-50%] left-[-50%] z-90 h-[200vh] w-[200vw] animate-[grain-jump_0.5s_steps(6)_infinite] opacity-[0.12] will-change-transform motion-reduce:animate-none',
 				className
