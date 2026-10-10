@@ -5,6 +5,7 @@ import {
 	Libre_Baskerville,
 	Manrope,
 	Merriweather,
+	Noto_Serif,
 	PT_Serif,
 	Space_Grotesk
 } from 'next/font/google'
@@ -64,6 +65,15 @@ export const ptSerif = PT_Serif({
 	weight: ['400', '700'],
 	display: 'swap',
 	variable: '--font-pt-serif'
+})
+
+/* Voz serif da home institucional (`.institucional`, referência
+   getenter.ai): variável, usada em light 300. Não entra no TYPE — o escopo
+   `.institucional` do globals.css aponta o `--ff-serif` para ela. */
+export const notoSerif = Noto_Serif({
+	subsets: ['latin'],
+	display: 'swap',
+	variable: '--font-noto-serif'
 })
 
 // ---- Local (src relative to this file) ----------------------------
@@ -194,6 +204,12 @@ export const SPECIMENS: FontSpecimen[] = [
 		category: 'serif',
 		source: 'google',
 		className: merriweather.className
+	},
+	{
+		name: 'Noto Serif',
+		category: 'serif',
+		source: 'google',
+		className: notoSerif.className
 	},
 	{
 		name: 'Libre Baskerville',

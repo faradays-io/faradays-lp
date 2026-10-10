@@ -15,7 +15,11 @@ const FONT_SIZES = [
 	'h6',
 	'body-lg',
 	'body',
-	'body-sm'
+	'body-sm',
+	'serif-xl',
+	'serif-lg',
+	'serif-md',
+	'serif-sm'
 ]
 
 const twMerge = extendTailwindMerge({
