@@ -1,13 +1,28 @@
 import type { Metadata } from 'next'
 
-import { HomeFooter } from '@/components/landing/home-footer'
-import { NavBar } from '@/components/landing/nav-bar'
-import { NewHomeHero } from '@/components/landing/new-home-hero'
+import { CaseBillboard } from '@/components/institucional/case-billboard'
+import { ClosingBillboard } from '@/components/institucional/closing-billboard'
+import { InstitutionalHero } from '@/components/institucional/hero'
+import { HowItWorks } from '@/components/institucional/how-it-works'
+import { LanguageGlobe } from '@/components/institucional/language-globe'
+import { LogoWall } from '@/components/institucional/logo-wall'
+import { NewsGrid } from '@/components/institucional/news-grid'
+import { Security } from '@/components/institucional/security'
+import { SiteFooter } from '@/components/institucional/site-footer'
+import { SiteHeader } from '@/components/institucional/site-header'
+import { SolutionsStaggered } from '@/components/institucional/solutions-staggered'
+import { Testimonials } from '@/components/institucional/testimonials'
 import { PageTransition } from '@/components/landing/page-transition'
-import { SolutionsIndex } from '@/components/landing/solutions-index'
+import { notoSerif } from '@/lib/fonts'
+import { cn } from '@/lib/utils'
 
-/* Rota de staging da próxima home (institucional: hero + soluções +
-   footer; produtos vivem nas subpáginas). noindex até substituir a raiz. */
+/* Próxima home institucional, na estrutura da referência getenter.ai
+   (docs/referencia-getenter.md): casca completa com placeholders, seções
+   na ordem do original. Pasta privada — fora do roteamento; o preview
+   local mora em `src/app/new/` (só em dev). noindex até substituir a raiz.
+
+   `light institucional`: tokens claros com fundo branco puro e a serif
+   trocada para Noto Serif (a variável vem do `notoSerif.variable`). */
 export const metadata: Metadata = {
 	title: 'Faradays',
 	description: 'Inteligência artificial aplicada à sua operação.',
@@ -16,14 +31,27 @@ export const metadata: Metadata = {
 
 export default function NewHomePage() {
 	return (
-		<div className="light light-home bg-background text-foreground min-h-svh">
+		<div
+			className={cn(
+				notoSerif.variable,
+				'light institucional bg-background text-foreground min-h-svh'
+			)}
+		>
 			<PageTransition />
-			<NavBar solutions />
-			<main>
-				<NewHomeHero />
-				<SolutionsIndex />
+			<SiteHeader />
+			<main className="pt-26">
+				<InstitutionalHero />
+				<LogoWall />
+				<CaseBillboard />
+				<HowItWorks />
+				<Testimonials />
+				<Security />
+				<SolutionsStaggered />
+				<NewsGrid />
+				<ClosingBillboard />
 			</main>
-			<HomeFooter />
+			<SiteFooter />
+			<LanguageGlobe />
 		</div>
 	)
 }
