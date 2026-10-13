@@ -54,7 +54,7 @@ export function CreditoHero() {
 		<section
 			id="hero"
 			ref={rootRef}
-			className="bg-background relative -mt-23 flex flex-col pt-23"
+			className="bg-background relative -mt-26 flex flex-col pt-26"
 		>
 			<div className="flex min-h-[calc(100svh-5.75rem)] w-full flex-col items-center justify-center px-7 pt-14 pb-16 text-center">
 				<span

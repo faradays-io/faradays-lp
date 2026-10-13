@@ -56,6 +56,11 @@ const COPY = {
 		issued: 'Cotação COT-V-0187 emitida — ICMS SP e câmbio do dia já calculados.',
 		pdfMeta: '2.000 kg · Texapon® · 1 pág.',
 		inputPlaceholder: 'Mensagem',
+		// Celular do recorte da feature WhatsApp (o lado do representante).
+		phoneName: 'Faradays',
+		phoneStatus: 'Agente IA · responde na hora',
+		phoneTyping: 'digitando…',
+		phoneToday: 'Hoje',
 		// Card de preview do PDF (estágio 2 do hold).
 		pdfName: 'COT-V-0187 · Lauril SP.pdf',
 		preview: 'pré-visualização',
@@ -180,6 +185,10 @@ const COPY = {
 		issued: "Quote COT-V-0187 issued — SP ICMS and today's exchange rate already computed.",
 		pdfMeta: '2,000 kg · Texapon® · 1 page',
 		inputPlaceholder: 'Message',
+		phoneName: 'Faradays',
+		phoneStatus: 'AI agent · replies instantly',
+		phoneTyping: 'typing…',
+		phoneToday: 'Today',
 		pdfName: 'COT-V-0187 · Lauril SP.pdf',
 		preview: 'preview',
 		navHome: 'Home',
@@ -1147,13 +1156,15 @@ function BoardBubble({
 					: 'origin-bottom-left justify-start'
 			)}
 		>
+			{/* Cores do WhatsApp claro, fixas: é a tela do celular, não um
+			   pedaço do tema do site. */}
 			<div
 				className={cn(
-					'w-fit rounded-[1em] px-[0.9em] py-[0.6em] shadow-sm',
-					wide ? 'max-w-[92%]' : 'max-w-[78%]',
+					'w-fit rounded-[0.75em] px-[0.75em] py-[0.5em] text-[#111b21] shadow-[0_1px_0.5px_rgba(11,20,26,0.13)]',
+					wide ? 'max-w-[90%]' : 'max-w-[80%]',
 					side === 'rep'
-						? 'bg-brand text-brand-foreground rounded-br-[0.35em]'
-						: 'bg-card text-foreground rounded-bl-[0.35em] border'
+						? 'rounded-tr-[0.2em] bg-[#d9fdd3]'
+						: 'rounded-tl-[0.2em] bg-white'
 				)}
 			>
 				{children}
@@ -1165,18 +1176,18 @@ function BoardBubble({
 /* Rótulo do autor nos balões do sistema. */
 function BotLabel() {
 	return (
-		<span className="text-foreground/50 flex items-center gap-[0.35em] font-mono text-[0.7em] tracking-widest uppercase">
+		<span className="flex items-center gap-[0.35em] font-mono text-[0.7em] tracking-widest uppercase">
 			<Sparkle
 				weight="fill"
-				className="size-[0.85em] shrink-0 text-[#4aa8ff]"
+				className="ai-spark size-[0.85em] shrink-0 text-[#4aa8ff]"
 			/>
-			Faradays
+			<span className="ai-shimmer">Faradays</span>
 		</span>
 	)
 }
 
 const BUBBLE_TIME =
-	'mt-[0.2em] flex items-center justify-end gap-[0.3em] font-mono text-[0.7em] opacity-70'
+	'mt-[0.2em] flex items-center justify-end gap-[0.3em] text-[0.68em] text-[#667781] [&_svg]:text-[#53bdeb]'
 
 /**
  * O chat do lauril num painel com proporção de celular: cabeçalho do
@@ -1288,114 +1299,138 @@ function ChatBoard({
 	}, [ready])
 
 	return (
-		/* A borda do painel é o padding de 1px do wrapper (`bg-border`), não
-		   um `border` do painel: com `border-color` transparente o Chrome
-		   ainda estende o fundo do painel sob a borda (bleed avoidance, mesmo
-		   com `background-clip: padding-box`) e um anel atrás não aparecia.
-		   Aqui o painel não tem borda; o que se vê no anel de 1px é o fundo
-		   do wrapper — cinza em repouso e, enquanto a IA envia, a fita de IA
-		   (camada absoluta que avança 1px além do wrapper, para um anel de
-		   2px), em crossfade de opacidade. */
-		<div className="bg-border relative isolate w-[26em] max-w-full rounded-[calc(0.75em+1px)] p-px">
+		/* Celular do representante, como no vídeo do showcase: aro preto,
+		   tela do WhatsApp claro (status bar só com a ilha, cabeçalho do
+		   contato "Faradays", papel de parede bege, barra de mensagem com o
+		   microfone verde). Enquanto a IA envia, a fita de IA acende em volta
+		   do aro (camada atrás, 2px além dele), em crossfade; no cabeçalho, o
+		   status vira "digitando…". As cores da tela são fixas — é o app,
+		   não o tema do site. */
+		<div className="relative isolate mx-auto w-[22em] max-w-full">
 			<span
 				aria-hidden
 				className={cn(
-					'ai-ribbon-fill absolute -inset-px rounded-[calc(0.75em+2px)] transition-opacity duration-500',
+					'ai-ribbon-fill absolute -inset-[0.2em] -z-10 rounded-[3.2em] blur-[0.15em] transition-opacity duration-500',
 					sending ? 'opacity-100' : 'opacity-0'
 				)}
 			/>
-			<div
-				ref={rootRef}
-				data-screen="whatsapp"
-				className="bg-card relative flex h-[34em] flex-col overflow-hidden rounded-[0.75em]"
-			>
-				<div className="flex items-center gap-[0.75em] border-b px-[1em] py-[0.75em]">
-					<span className="flex size-[2.4em] shrink-0 items-center justify-center rounded-full bg-[#25d366]/15 text-[#128c4b]">
-						<WhatsappLogo weight="fill" className="size-[1.4em]" />
-					</span>
-					<div className="min-w-0 flex-1">
-						<p className="truncate text-[0.95em] font-medium">
-							{t.contact}
-						</p>
-						<p className="text-muted-foreground truncate font-mono text-[0.72em]">
-							{t.channel}
-						</p>
-					</div>
-					<span className={cn(BTN_OUTLINE, BTN_EM)}>
-						<FileText className="size-[1.1em]" />
-						{t.chatAction}
-					</span>
-				</div>
-
-				{/* `justify-end` + `overflow-hidden`: o excedente sai por cima; a
-			   máscara do topo o dissolve em vez de cortar seco. */}
+			<div className="rounded-[3em] bg-[#0f0f0e] p-[0.65em] shadow-[0_2.5em_6em_-2em_rgba(0,0,0,0.45),0_0_0_1px_rgba(0,0,0,0.08)]">
 				<div
-					ref={msgsRef}
-					className="bg-muted/40 flex min-h-0 flex-1 flex-col justify-end gap-[0.6em] overflow-hidden mask-t-from-85% p-[1em]"
+					ref={rootRef}
+					data-screen="whatsapp"
+					className="relative flex h-[42em] flex-col overflow-hidden rounded-[2.35em] bg-[#efeae2] text-[#111b21]"
 				>
-					{step >= 1 && (
-						<BoardBubble side="rep">
-							<p className="text-[0.95em]/[1.35]">{t.ask}</p>
-							<span className={BUBBLE_TIME}>
-								09:41 <Checks className="size-[1.1em]" />
-							</span>
-						</BoardBubble>
-					)}
-					{/* A guarda em cena: duas marcas no catálogo → a IA pergunta
-				   em vez de escolher. */}
-					{step >= 3 && (
-						<BoardBubble side="bot">
-							<BotLabel />
-							<p className="mt-[0.2em] text-[0.95em]/[1.35]">
-								{t.brandsBefore}
-								<strong>{t.brandsStrong}</strong>
-								{t.brandsAfter}
-							</p>
-						</BoardBubble>
-					)}
-					{step >= 4 && (
-						<BoardBubble side="rep">
-							<p className="text-[0.95em]/[1.35]">{t.pick}</p>
-							<span className={BUBBLE_TIME}>
-								09:42 <Checks className="size-[1.1em]" />
-							</span>
-						</BoardBubble>
-					)}
-					{step >= 6 && (
-						<BoardBubble side="bot" wide>
-							<BotLabel />
-							<p className="mt-[0.2em] flex items-center gap-[0.5em] text-[0.95em]/[1.35]">
-								<CheckCircle
-									weight="fill"
-									className="text-brand size-[1.2em] shrink-0"
-								/>
-								{t.issued}
-							</p>
-							{/* Documento na conversa, como o bot envia de verdade. */}
-							<div className="bg-muted/60 mt-[0.6em] flex items-center gap-[0.75em] rounded-[0.6em] border px-[0.75em] py-[0.6em]">
-								<FilePdf
-									weight="fill"
-									className="size-[2em] shrink-0 text-[#d93025]"
-								/>
-								<div className="min-w-0">
-									<p className="truncate text-[0.9em] font-medium">
-										{t.pdfName}
-									</p>
-									<p className="text-muted-foreground font-mono text-[0.72em]">
-										{t.pdfMeta}
-									</p>
-								</div>
-							</div>
-						</BoardBubble>
-					)}
-				</div>
+					{/* Status bar só com a ilha (sem hora nem bateria). */}
+					<div className="relative h-[2.4em] shrink-0 bg-white text-[0.72em]">
+						<span
+							aria-hidden
+							className="absolute top-[0.55em] left-1/2 h-[1.55em] w-[6.5em] -translate-x-1/2 rounded-full bg-[#0f0f0e]"
+						/>
+					</div>
 
-				<div className="flex items-center gap-[0.75em] border-t px-[1em] py-[0.7em]">
-					<Paperclip className="text-foreground/40 size-[1.2em] shrink-0" />
-					<span className="bg-muted text-muted-foreground flex-1 rounded-full px-[0.9em] py-[0.45em] text-[0.85em]">
-						{t.inputPlaceholder}
-					</span>
-					<Microphone className="text-foreground/40 size-[1.2em] shrink-0" />
+					<div className="flex shrink-0 items-center gap-[0.7em] border-b border-[#e9edef] bg-white px-[1em] pb-[0.7em]">
+						<span className="flex size-[2.4em] shrink-0 items-center justify-center rounded-full bg-[#25d366]/15 text-[#128c4b]">
+							<WhatsappLogo
+								weight="fill"
+								className="size-[1.35em]"
+							/>
+						</span>
+						<div className="min-w-0 flex-1">
+							<p className="truncate text-[0.95em] font-semibold">
+								{t.phoneName}
+							</p>
+							<p className="flex items-center gap-[0.3em] truncate text-[0.72em] text-[#667781]">
+								<Sparkle
+									weight="fill"
+									className="ai-spark size-[0.9em] shrink-0 text-[#4aa8ff]"
+								/>
+								<span className="ai-shimmer">
+									{sending ? t.phoneTyping : t.phoneStatus}
+								</span>
+							</p>
+						</div>
+					</div>
+
+					{/* `justify-end` + `overflow-hidden`: o excedente sai por
+					   cima; a máscara do topo o dissolve em vez de cortar seco. */}
+					<div
+						ref={msgsRef}
+						className="flex min-h-0 flex-1 flex-col justify-end gap-[0.5em] overflow-hidden mask-t-from-85% p-[0.9em]"
+					>
+						<div className="self-center">
+							<span className="inline-block rounded-full bg-white px-[0.8em] py-[0.25em] text-[0.68em] text-[#667781] shadow-[0_1px_0.5px_rgba(11,20,26,0.13)]">
+								{t.phoneToday}
+							</span>
+						</div>
+						{step >= 1 && (
+							<BoardBubble side="rep">
+								<p className="text-[0.95em]/[1.35]">{t.ask}</p>
+								<span className={BUBBLE_TIME}>
+									09:41 <Checks className="size-[1.1em]" />
+								</span>
+							</BoardBubble>
+						)}
+						{/* A guarda em cena: duas marcas no catálogo → a IA pergunta
+						   em vez de escolher. */}
+						{step >= 3 && (
+							<BoardBubble side="bot">
+								<BotLabel />
+								<p className="mt-[0.2em] text-[0.95em]/[1.35]">
+									{t.brandsBefore}
+									<strong>{t.brandsStrong}</strong>
+									{t.brandsAfter}
+								</p>
+							</BoardBubble>
+						)}
+						{step >= 4 && (
+							<BoardBubble side="rep">
+								<p className="text-[0.95em]/[1.35]">{t.pick}</p>
+								<span className={BUBBLE_TIME}>
+									09:42 <Checks className="size-[1.1em]" />
+								</span>
+							</BoardBubble>
+						)}
+						{step >= 6 && (
+							<BoardBubble side="bot" wide>
+								<BotLabel />
+								<p className="mt-[0.2em] flex items-center gap-[0.5em] text-[0.95em]/[1.35]">
+									<CheckCircle
+										weight="fill"
+										className="text-brand size-[1.2em] shrink-0"
+									/>
+									{t.issued}
+								</p>
+								{/* Documento na conversa, como o bot envia de verdade. */}
+								<div className="mt-[0.6em] flex items-center gap-[0.75em] rounded-[0.6em] bg-[#f0f2f5] px-[0.75em] py-[0.6em]">
+									<FilePdf
+										weight="fill"
+										className="size-[2em] shrink-0 text-[#d93025]"
+									/>
+									<div className="min-w-0">
+										<p className="truncate text-[0.9em] font-medium">
+											{t.pdfName}
+										</p>
+										<p className="font-mono text-[0.72em] text-[#667781]">
+											{t.pdfMeta}
+										</p>
+									</div>
+								</div>
+							</BoardBubble>
+						)}
+					</div>
+
+					<div className="flex shrink-0 items-center gap-[0.5em] px-[0.7em] pt-[0.4em] pb-[1em]">
+						<span className="flex flex-1 items-center gap-[0.6em] rounded-full bg-white px-[0.9em] py-[0.6em] text-[0.85em] text-[#8696a0]">
+							<Paperclip className="size-[1.2em] shrink-0" />
+							{t.inputPlaceholder}
+						</span>
+						<span className="flex size-[2.5em] shrink-0 items-center justify-center rounded-full bg-[#25d366] text-white">
+							<Microphone
+								weight="fill"
+								className="size-[1.2em]"
+							/>
+						</span>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -2384,9 +2419,10 @@ export function DemoFragment({
 				   painel, então os dois escalam juntos. Em frame estreito o
 				   card fica no fluxo, abaixo do painel e à direita. */
 				<div className="text-[clamp(11px,1.55cqw,18px)]">
-					{/* Conjunto encostado à direita da coluna: 26em de painel +
-					   o card além dele (left 23em + 19,5em de largura = 42,5em). */}
-					<div className="relative ml-auto w-[42.5em] max-w-full">
+					{/* O CELULAR centrado no recorte; o card é absoluto
+					   em relação a ele e pousa à direita, avançando além
+					   do aro (left 19em de 22em). */}
+					<div className="relative mx-auto w-[22em] max-w-full">
 						<ChatBoard
 							t={t}
 							onFinal={() => popRef.current?.restart()}
@@ -2394,7 +2430,7 @@ export function DemoFragment({
 						/>
 						<div
 							data-fragment-card
-							className="mt-[1em] ml-auto w-[19.5em] text-[0.95em] opacity-0 @3xl:absolute @3xl:bottom-[5em] @3xl:left-[23em] @3xl:mt-0 @3xl:ml-0"
+							className="mt-[1em] ml-auto w-[19.5em] text-[0.95em] opacity-0 @3xl:absolute @3xl:bottom-[6em] @3xl:left-[19em] @3xl:mt-0 @3xl:ml-0"
 						>
 							{card}
 						</div>

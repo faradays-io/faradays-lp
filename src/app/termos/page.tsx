@@ -38,7 +38,7 @@ const CONTENT: Localized<LegalContent> = {
 							'**Cliente.** A pessoa jurídica que contrata um Plano e configura a Plataforma para a própria operação.',
 							'**Usuário.** Pessoa indicada pelo Cliente para usar a Plataforma — administradores e gestores no portal, e Representantes que operam pelo WhatsApp.',
 							'**Representante.** Usuário cujo número de WhatsApp está cadastrado no assistente. É a unidade de contagem dos Planos: cada número conectado é um Representante; gestores e administradores que só usam o portal não contam.',
-							'**Plano.** Cada uma das modalidades de contratação da Plataforma (Basic, Pro e Enterprise), com os limites, funcionalidades e níveis de suporte descritos na [página de preços](/distribuicao/precos) na data da contratação.',
+							'**Plano.** Cada uma das modalidades de contratação da Plataforma (Basic, Pro e Enterprise), com os limites, funcionalidades e níveis de suporte descritos na [página de preços](/fs1/precos) na data da contratação.',
 							'**Dados do Cliente.** Tudo o que o Cliente e seus Usuários inserem ou conectam à Plataforma: cadastros de clientes finais e fornecedores, cotações, pedidos, notas, documentos, e-mails, arquivos do drive e conversas do assistente. É o mesmo termo do Aviso de Privacidade.',
 							'**Serviços de Terceiros.** Plataformas externas que o Cliente conecta à Plataforma por conta própria: a Meta (WhatsApp Business Platform), a Microsoft (365, SharePoint, OneDrive, Entra ID), o fornecedor do ERP e outras que venham a ser suportadas.'
 						]
@@ -94,7 +94,7 @@ const CONTENT: Localized<LegalContent> = {
 						type: 'sub',
 						heading: 'Planos e limites',
 						body: [
-							'Os Planos Basic e Pro têm preço por mês, com limite de Representantes incluídos; o Plano Enterprise é contratado sob proposta e contrato próprio. Os valores, limites e funcionalidades vigentes são os publicados na [página de preços](/distribuicao/precos) na data da contratação ou renovação.',
+							'Os Planos Basic e Pro têm preço por mês, com limite de Representantes incluídos; o Plano Enterprise é contratado sob proposta e contrato próprio. Os valores, limites e funcionalidades vigentes são os publicados na [página de preços](/fs1/precos) na data da contratação ou renovação.',
 							'Representantes acima do limite do Plano são cobrados proporcionalmente ao valor por Representante do Plano, ou exigem migração para o Plano seguinte, a critério do Cliente.'
 						]
 					},
@@ -294,7 +294,7 @@ const CONTENT: Localized<LegalContent> = {
 							'**Customer.** The legal entity that contracts a Plan and configures the Platform for its own operation.',
 							'**User.** A person designated by the Customer to use the Platform — administrators and managers on the portal, and Representatives who operate through WhatsApp.',
 							'**Representative.** A User whose WhatsApp number is registered with the assistant. It is the unit of measure of the Plans: each connected number is one Representative; managers and administrators who only use the portal do not count.',
-							'**Plan.** Each of the ways of contracting the Platform (Basic, Pro and Enterprise), with the limits, features and support levels described on the [pricing page](/distribuicao/precos) on the date of contracting.',
+							'**Plan.** Each of the ways of contracting the Platform (Basic, Pro and Enterprise), with the limits, features and support levels described on the [pricing page](/fs1/precos) on the date of contracting.',
 							'**Customer Data.** Everything the Customer and its Users enter into or connect to the Platform: end-client and supplier records, quotes, orders, invoices, documents, e-mails, drive files and assistant conversations. It is the same term used in the Privacy Notice.',
 							'**Third-Party Services.** External platforms the Customer connects to the Platform on its own: Meta (WhatsApp Business Platform), Microsoft (365, SharePoint, OneDrive, Entra ID), the ERP vendor and others that may come to be supported.'
 						]
@@ -350,7 +350,7 @@ const CONTENT: Localized<LegalContent> = {
 						type: 'sub',
 						heading: 'Plans and limits',
 						body: [
-							'The Basic and Pro Plans are priced per month, with a limit of included Representatives; the Enterprise Plan is contracted under a proposal and a specific agreement. The prices, limits and features in force are those published on the [pricing page](/distribuicao/precos) on the date of contracting or renewal.',
+							'The Basic and Pro Plans are priced per month, with a limit of included Representatives; the Enterprise Plan is contracted under a proposal and a specific agreement. The prices, limits and features in force are those published on the [pricing page](/fs1/precos) on the date of contracting or renewal.',
 							"Representatives above the Plan limit are charged pro rata at the Plan's per-Representative price, or require migration to the next Plan, at the Customer's discretion."
 						]
 					},

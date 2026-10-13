@@ -10,8 +10,8 @@ import { cn } from '@/lib/utils'
  * Duas camadas de background: o miolo na tinta do tema, recortado no
  * padding-box, e a fita (`--ai-ribbon`, a mesma do `.ai-shimmer`) recortada
  * no border-box. Como a borda de 1,5px é transparente, é a fita que aparece
- * nela — um contorno inteiro em gradiente, girando. Mais um brilho no
- * `::before`: a mesma fita, desfocada, escapando por baixo.
+ * nela — um contorno inteiro em gradiente, girando. Sem brilho desfocado
+ * por baixo: saiu a pedido, o contorno basta.
  *
  * As camadas de miolo usam `var(--primary)`, não hex fixo — assim o botão
  * acompanha o tema (claro e escuro) sem variante `dark:`. Tipografia, raio,
@@ -38,9 +38,7 @@ function AiGradientButton({
 				// borda, que fica transparente só para revelá-la
 				'bg-[image:linear-gradient(var(--primary),var(--primary)),var(--ai-ribbon)]',
 				// sem movimento: a fita fica parada, o degradê continua lá
-				'motion-reduce:animate-none motion-reduce:before:animate-none',
-				// brilho desfocado por baixo, na mesma fita e no mesmo giro
-				'before:animate-ai-sweep before:absolute before:bottom-[-20%] before:left-1/2 before:z-0 before:h-1/5 before:w-3/5 before:-translate-x-1/2 before:bg-[image:var(--ai-ribbon)] before:bg-[length:200%] before:[filter:blur(calc(0.8*1rem))]',
+				'motion-reduce:animate-none',
 				className
 			)}
 			{...props}

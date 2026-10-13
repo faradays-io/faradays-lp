@@ -11,11 +11,11 @@ import { DEFAULT_LENIS_OPTIONS } from '@/lib/lenis-config'
 
 gsap.registerPlugin(ScrollTrigger)
 
-/* Altura da nav fixa (`p-7` + `h-9` = 92px, o mesmo `pt-23` que as páginas
+/* Altura da nav fixa (`pt-10` + `pb-7` + `h-9` = 104px, o mesmo `pt-26` que as páginas
    usam para escapar dela). Sem esse recuo o anchor para exatamente no topo
    da seção e a nav — que volta a aparecer quando o scroll sobe — cobre o
    cabeçalho dela. */
-const NAV_OFFSET = 92
+const NAV_OFFSET = 104
 
 // Global smooth scroll. Lenis is driven by GSAP's ticker (autoRaf: false) so
 // Lenis and ScrollTrigger stay in sync on a single RAF loop.

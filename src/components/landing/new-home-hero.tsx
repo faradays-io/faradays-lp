@@ -54,7 +54,7 @@ export function NewHomeHero() {
 		<section
 			id="hero"
 			ref={rootRef}
-			className="bg-background relative overflow-hidden pt-23"
+			className="bg-background relative overflow-hidden pt-26"
 		>
 			{/* Textura ASCII em cinza neutro + vinheta esmaecendo só a base,
 			   para o hero assentar suave sobre a seção seguinte. */}

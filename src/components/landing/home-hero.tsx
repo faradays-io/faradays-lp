@@ -89,7 +89,7 @@ export function HomeHero() {
 		<section
 			id="hero"
 			ref={rootRef}
-			className="relative z-10 -mt-23 flex flex-col pt-23"
+			className="relative z-10 -mt-26 flex flex-col pt-26"
 		>
 			{/* Copy + CTA — altura pelo conteúdo, sem nenhuma medida em
 			   svh: o bloco mede padding + copy e ponto, então o respiro

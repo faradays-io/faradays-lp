@@ -72,7 +72,7 @@ export default async function BlogPostPage(props: PageProps<'/blog/[slug]'>) {
 			<PageTransition />
 			<NavBar />
 			<ViewCounter slug={post.slug} />
-			<main className="pt-23">
+			<main className="pt-26">
 				<article className="max-w-section mx-auto w-full px-10 py-16 md:px-14 md:py-24">
 					{/* Cabeçalho inteiro em largura cheia — volta, título e tags
 					   — e a capa fechando o bloco; tudo revela junto. Nada de

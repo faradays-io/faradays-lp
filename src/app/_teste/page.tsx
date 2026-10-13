@@ -18,7 +18,7 @@ export default function TestePage() {
 		<div className="light light-home bg-background text-foreground min-h-svh">
 			<PageTransition />
 			<NavBar />
-			<main className="pt-23">
+			<main className="pt-26">
 				<div className="max-w-section mx-auto w-full px-7 py-16 md:py-24">
 					<Reveal>
 						<p className="text-foreground/40 font-mono text-xs tracking-widest uppercase">

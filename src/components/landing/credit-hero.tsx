@@ -40,7 +40,7 @@ export function CreditHero() {
 	return (
 		<section
 			ref={rootRef}
-			className="relative -mt-23 flex min-h-svh flex-col overflow-hidden"
+			className="relative -mt-26 flex min-h-svh flex-col overflow-hidden"
 		>
 			<div className="grid w-full flex-1 items-center gap-10 px-7 pt-36 pb-14 lg:grid-cols-2 lg:gap-14">
 				<div className="flex max-w-2xl flex-col items-start">

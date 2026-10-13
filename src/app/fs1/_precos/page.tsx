@@ -20,7 +20,7 @@ export default function PrecosPage() {
 		<div className="light light-home bg-background text-foreground min-h-svh">
 			<PageTransition />
 			<NavBar pricing />
-			<main className="pt-23">
+			<main className="pt-26">
 				<PricingPlans />
 				<PricingTable />
 				<PricingFaq />

@@ -28,9 +28,32 @@ const COPY = {
  * Hover: célula em cinza claro e o PNG original por cima devolve a cor cheia
  * da marca.
  */
-const PARTNERS = [
+export const PARTNERS = [
 	{ name: 'Monfiza', src: '/company/monfiza.png' },
-	{ name: 'Aventis', src: '/company/aventis.png' }
+	{ name: 'Aventis', src: '/company/aventis.png' },
+	/* Marcas FICTÍCIAS (placeholder, `public/company/dummy/`) para a grade
+	   ter corpo enquanto os logos reais não chegam — trocar pelas marcas
+	   dos clientes antes de ir ao ar. */
+	...[
+		['Northwind', 'northwind'],
+		['Lumina', 'lumina'],
+		['Vertex', 'vertex'],
+		['Orbital', 'orbital'],
+		['Helix', 'helix'],
+		['Quanta', 'quanta'],
+		['Polaris', 'polaris'],
+		['Cobalt', 'cobalt'],
+		['Meridian', 'meridian'],
+		['Atlas Insumos', 'atlas'],
+		['Nimbus', 'nimbus'],
+		['Sierra', 'sierra'],
+		['Kappa Labs', 'kappa'],
+		['Boreal', 'boreal'],
+		['Tetra', 'tetra'],
+		['Solaris', 'solaris'],
+		['Argo Química', 'argo'],
+		['Prisma', 'prisma']
+	].map(([name, slug]) => ({ name, src: `/company/dummy/${slug}.svg` }))
 ]
 
 /* Colunas responsivas: 2 (base) → 3 (md) → 4 (xl) → 5 (2xl) — breakpoints
@@ -207,12 +230,12 @@ export function PartnersSection() {
 							<div
 								key={partner.name}
 								data-partners-cell
-								className="group bg-background relative flex h-52 items-center justify-center md:h-64"
+								className="group bg-background relative flex h-36 items-center justify-center md:h-44"
 							>
 								<CornerDots />
 								<div
 									data-partners-logo
-									className="relative z-10 h-10 w-44 will-change-transform"
+									className="relative z-10 h-9 w-40 will-change-transform"
 								>
 									<div
 										role="img"
@@ -229,7 +252,7 @@ export function PartnersSection() {
 										src={partner.src}
 										alt=""
 										fill
-										sizes="176px"
+										sizes="160px"
 										className="object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100"
 									/>
 								</div>
@@ -244,7 +267,7 @@ export function PartnersSection() {
 								key={`filler-${i}`}
 								aria-hidden
 								className={cn(
-									'bg-background relative h-52 md:h-64',
+									'bg-background relative h-36 md:h-44',
 									fillerClass(i)
 								)}
 							>

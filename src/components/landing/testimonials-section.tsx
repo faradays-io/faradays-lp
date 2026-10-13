@@ -7,8 +7,14 @@ import { useCallback, useEffect, useRef } from 'react'
 import { FibonacciSpiral } from '@/components/landing/fibonacci-spiral'
 import { Reveal } from '@/components/landing/reveal'
 import { useCopy } from '@/components/language-provider'
+import { ptSerif } from '@/lib/fonts'
 import type { Localized } from '@/lib/i18n'
 import { usePageReady } from '@/lib/page-ready'
+import { cn } from '@/lib/utils'
+
+/* Espiral de Fibonacci do fundo, oculta por ora (pedido de 2026-10-13).
+   Para voltar, `true`. */
+const SHOW_SPIRAL = false
 
 gsap.registerPlugin(Draggable)
 
@@ -320,17 +326,24 @@ export function TestimonialsSection() {
 			   nas bordas do viewBox. A discrição vem de `opacity` no svg, não
 			   do alfa da cor: espiral e disco se sobrepõem e, com alfa na
 			   cor, a sobreposição somaria e apareceria mais clara. */}
-			<FibonacciSpiral
-				terms={12}
-				strokeWidth={120}
-				capEye
-				className="absolute top-1/2 left-1/2 w-[88%] -translate-x-1/2 -translate-y-1/2 -scale-x-100 -scale-y-100 overflow-visible text-white opacity-[0.025]"
-			/>
+			{SHOW_SPIRAL && (
+				<FibonacciSpiral
+					terms={12}
+					strokeWidth={120}
+					capEye
+					className="absolute top-1/2 left-1/2 w-[88%] -translate-x-1/2 -translate-y-1/2 -scale-x-100 -scale-y-100 overflow-visible text-white opacity-[0.025]"
+				/>
+			)}
 
 			<Reveal className="relative mb-12 text-center md:mb-16">
 				{/* O clamp mantém uma linha só de ~560px para cima; abaixo
 				   disso a copy quebra em duas, com balance. */}
-				<h2 className="font-heading text-background mx-auto text-[clamp(1.2rem,3.8vw,4rem)] leading-[1.15] tracking-tight text-balance">
+				<h2
+					className={cn(
+						ptSerif.className,
+						'text-background mx-auto text-[clamp(1.2rem,3.8vw,4rem)] leading-[1.1] font-medium text-balance'
+					)}
+				>
 					{t.heading}
 				</h2>
 			</Reveal>

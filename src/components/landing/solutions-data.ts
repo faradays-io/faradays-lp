@@ -5,7 +5,7 @@ import type { Localized } from '@/lib/i18n'
    Copy localizada campo a campo; slug e disponibilidade são um só. */
 export const SOLUTIONS = [
 	{
-		slug: '/distribuicao',
+		slug: '/fs1',
 		name: {
 			pt: 'Operação de distribuição',
 			en: 'Distribution operations'

@@ -19,7 +19,7 @@ export default function CreditoPage() {
 	return (
 		<div className="light bg-background text-foreground">
 			<NavBar />
-			<main className="pt-23">
+			<main className="pt-26">
 				<CreditHero />
 				<CreditProduct />
 				<CreditShowcase />

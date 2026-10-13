@@ -17,7 +17,7 @@ export default function Hero3dCentroPage() {
 		<div className="light light-home bg-background text-foreground min-h-svh">
 			<PageTransition />
 			<NavBar />
-			<main className="pt-23">
+			<main className="pt-26">
 				<Hero3dTest variant="center" />
 			</main>
 			<HomeFooter />

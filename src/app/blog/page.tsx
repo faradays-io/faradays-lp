@@ -23,7 +23,7 @@ export default async function BlogPage() {
 		<div className="light light-home bg-background text-foreground min-h-svh">
 			<PageTransition />
 			<NavBar />
-			<main className="pt-23">
+			<main className="pt-26">
 				<div className="max-w-section mx-auto w-full px-10 py-16 md:px-14 md:py-24">
 					<div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
 						<Reveal>

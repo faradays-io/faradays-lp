@@ -11,7 +11,7 @@ import { FaradaysWordmark } from '@/components/landing/faradays-wordmark'
 import { FOOTER_LEGAL_LINKS } from '@/components/landing/legal-data'
 import { SOLUTIONS } from '@/components/landing/solutions-data'
 import { useCopy, useLang } from '@/components/language-provider'
-import { AiGradientButton } from '@/components/ui/ai-gradient-button'
+import { Button } from '@/components/ui/button'
 import { ptSerif } from '@/lib/fonts'
 import type { Lang, Localized } from '@/lib/i18n'
 import { BOOKING_URL, CONTACT_EMAIL, CONTACT_MAILTO } from '@/lib/links'
@@ -63,12 +63,12 @@ const footerColumns = (lang: Lang) => {
 			title: t.browse,
 			/* Absolutos: o rodapé aparece em mais de uma rota, e âncora
 			   relativa só funcionaria na página que tem as seções.
-			   "Parceiros" e "Relatos" saem da lista enquanto as seções estão
-			   ocultas em /distribuicao (as âncoras não existiriam), e "Preços"
-			   enquanto a rota está privada (`_precos/`); as labels ficam em
-			   COPY para o retorno. */
+			   "Preços" sai da lista enquanto a rota está privada
+			   (`_precos/`); a label fica em COPY para o retorno. */
 			links: [
-				{ label: t.product, href: '/distribuicao#features' },
+				{ label: t.product, href: '/fs1#features' },
+				{ label: t.partners, href: '/fs1#partners' },
+				{ label: t.testimonials, href: '/fs1#testimonials' },
 				{ label: 'Blog', href: '/blog' }
 			]
 		},
@@ -196,7 +196,11 @@ export function HomeFooter() {
 					<p className="text-foreground/70 mt-6 max-w-2xl text-xl/[1.35] text-pretty">
 						{t.ctaSub}
 					</p>
-					<AiGradientButton asChild className="mt-10">
+					<Button
+						asChild
+						size="lg"
+						className="bg-brand text-brand-foreground hover:bg-brand/90 mt-10 px-6"
+					>
 						<a
 							href={BOOKING_URL}
 							target="_blank"
@@ -206,7 +210,7 @@ export function HomeFooter() {
 								{t.bookDemo}
 							</SplitHoverText>
 						</a>
-					</AiGradientButton>
+					</Button>
 				</div>
 				<div className="relative flex flex-col">
 					<AsciiMarkGl

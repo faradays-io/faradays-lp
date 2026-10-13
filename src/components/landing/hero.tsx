@@ -76,7 +76,7 @@ export function Hero() {
 	return (
 		<section
 			ref={rootRef}
-			className="relative -mt-23 flex min-h-svh flex-col overflow-hidden"
+			className="relative -mt-26 flex min-h-svh flex-col overflow-hidden"
 		>
 			<div
 				data-hero-bg

@@ -22,7 +22,7 @@ export default function Marca3dPage() {
 		<div className="light light-home bg-background text-foreground min-h-svh">
 			<PageTransition />
 			<NavBar />
-			<main className="pt-23">
+			<main className="pt-26">
 				<div className="max-w-section mx-auto w-full px-7 py-12 md:py-16">
 					<p className="text-foreground/40 font-mono text-xs tracking-widest uppercase">
 						/teste/marca-3d

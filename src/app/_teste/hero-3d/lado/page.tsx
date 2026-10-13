@@ -17,7 +17,7 @@ export default function Hero3dLadoPage() {
 		<div className="light light-home bg-background text-foreground min-h-svh">
 			<PageTransition />
 			<NavBar />
-			<main className="pt-23">
+			<main className="pt-26">
 				<Hero3dTest variant="split" />
 			</main>
 			<HomeFooter />

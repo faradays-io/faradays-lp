@@ -6,10 +6,10 @@ import Link from 'next/link'
 import { useEffect, useRef } from 'react'
 
 import { SplitHoverText } from '@/components/custom-ui/split-hover-text'
+import { HeroVideo } from '@/components/landing/hero-video'
 import { HERO_COPY } from '@/components/landing/home-hero'
-import { MonfizaAppDemo } from '@/components/landing/monfiza-app-demo'
 import { useCopy } from '@/components/language-provider'
-import { AiGradientButton } from '@/components/ui/ai-gradient-button'
+import { Button } from '@/components/ui/button'
 import { ptSerif } from '@/lib/fonts'
 import type { Localized } from '@/lib/i18n'
 import { usePageReady } from '@/lib/page-ready'
@@ -17,37 +17,36 @@ import { cn } from '@/lib/utils'
 
 const COPY = {
 	pt: {
-		headlineLead: 'Sua empresa na palma da mão, direto no',
+		/* Três linhas fixas: as duas primeiras aqui, a terceira é o
+		   `lastLead` + "WhatsApp" com o ícone. */
+		lines: ['Sua empresa na', 'palma da mão, direto'],
+		lastLead: 'no',
 		sub: 'Cotações, pedidos, compras e documentos se resolvem numa conversa, e o gestor acompanha tudo no portal.'
 	},
 	en: {
-		headlineLead: 'Your company in the palm of your hand, right on',
+		lines: ['Your company in', 'the palm of your hand,'],
+		lastLead: 'right on',
 		sub: 'Quotes, orders, purchases and documents get done in a conversation, and the manager follows everything in the portal.'
 	}
-} satisfies Localized<Record<string, string>>
+} satisfies Localized<{
+	lines: [string, string]
+	lastLead: string
+	sub: string
+}>
 
 /**
- * Hero da v2 (referência de postura: ollama.com) — duas colunas e ponto:
- * a coluna da esquerda empilha headline, sub e CTA alinhados pela vertical,
- * a da direita leva a apresentação em vídeo.
+ * Hero da v2 — texto em cima, em duas colunas: a headline à esquerda e,
+ * alinhados pela base dela, a sub e o CTA à direita. A demo vem embaixo,
+ * centrada no miolo.
  *
  * A estilização é a do `HomeHero` da v1, item a item — PT Serif na
- * headline (a 4rem, um degrau abaixo dos 5rem de lá: aqui ela mora em 4
- * colunas), ícones das ferramentas na última palavra, sub a 70%, o
- * AiGradientButton e a entrada em stagger disparada pelo fim do loader
- * (`data-hero-item`, opacity-0 no markup até lá). O que muda é a
- * composição: lá a sub e o CTA moram numa segunda coluna alinhada pela BASE
- * da headline e a demo só entra depois, na camada sticky do
- * `HeroFeatureFlow`; aqui o CTA é um bloco só e a demo sobe para dentro do
- * hero, parada. Sem o `useRecedeOut` da v1: ele recua a copy no primeiro
- * scroll porque a demo atravessa a tela em seguida — aqui nada atravessa, e
- * a copy sumindo deixaria o hero em branco enquanto ainda está à vista.
+ * headline, sub a 70%, o Button (sem a fita de IA na borda) e a entrada em
+ * stagger disparada pelo fim do loader (`data-hero-item`, opacity-0 no
+ * markup até lá). Sem o `useRecedeOut` da v1: a copy sumindo no primeiro
+ * scroll deixaria o hero em branco enquanto a demo ainda está à vista.
  *
- * O slot da direita é provisório: enquanto o vídeo de apresentação não
- * existe, ele mostra a `MonfizaAppDemo` em `fill` (o chat roda em autoplay
- * sozinho, o quadro certo para uma vitrine parada) sobre a mesma banda de
- * fundo da v1 (`bg.png`). Trocar por `<video>` é substituir o miolo do slot
- * — banda e proporção ficam de pé.
+ * Embaixo, o vídeo de apresentação (`HeroVideo`, arquivo próprio): mudo
+ * em loop como vitrine; o play recomeça do início, com som e barra própria.
  *
  * Copy: headline e sub PRÓPRIAS desde 09/10: a página é a da distribuição,
  * e o canal que ela vende é o WhatsApp, em destaque na última palavra, em
@@ -91,34 +90,42 @@ export function SplitHero() {
 		<section
 			id="hero"
 			ref={rootRef}
-			className="w-full pt-8 pb-24 lg:pt-10 lg:pb-32"
+			className="w-full pt-16 pb-24 lg:pt-28 lg:pb-32"
 		>
 			<div className="max-w-page mx-auto w-full px-[var(--gutter)]">
-				{/* Grade de 12 com as laterais vazias, o padrão do canvas:
-				   copy nas colunas 2-5, vídeo nas 6-11 — 4 + 6 fecham o
-				   miolo de 10, com o vídeo levando a parte maior. Tudo
-				   alinhado pelo topo (`items-start`), colado na nav: o hero
-				   começa onde a página começa. Abaixo de lg empilha — em
-				   coluna estreita não há medida para os dois lado a lado. */}
-				<div className="grid grid-cols-1 items-start gap-x-[var(--grid-gap)] gap-y-12 lg:grid-cols-12">
-					{/* CTA: título, descrição e botão num eixo vertical só. */}
-					<div className="lg:col-span-4 lg:col-start-2">
-						{/* TESTE de tipografia (como na v1): PT Serif só nesta
-						   headline — a fonte não está no par ativo do
-						   registry, então vem pela className do next/font.
-						   `font-medium` cai no Regular 400, a família não tem
-						   500. */}
+				{/* Grade de 12 com as laterais vazias, o padrão do canvas.
+				   Linha de cima: headline nas colunas 2-7 e, alinhados pela
+				   BASE dela, sub + CTA nas 8-11. Embaixo, a demo recuada até
+				   o meio do caminho entre a borda do header e o início do
+				   texto (meia coluna + meia goteira de cada lado). Abaixo de lg tudo empilha. */}
+				<div className="grid grid-cols-1 items-end gap-x-[var(--grid-gap)] gap-y-8 lg:grid-cols-12">
+					{/* TESTE de tipografia (como na v1): PT Serif só nesta
+					   headline — a fonte não está no par ativo do registry,
+					   então vem pela className do next/font. `font-medium`
+					   cai no Regular 400, a família não tem 500.
+
+					   Sempre em TRÊS linhas: cada uma é um bloco `nowrap` e o
+					   corpo acompanha a largura da coluna (`cqi` do
+					   container), teto de 4,5rem — a linha mais longa (a
+					   segunda do EN, ~10em) cabe em qualquer largura. */}
+					<div className="@container lg:col-span-6 lg:col-start-2">
 						<h1
 							data-hero-item
 							className={cn(
 								ptSerif.className,
-								'text-[4rem]/[1.05] font-medium text-balance opacity-0'
+								'text-[min(9cqi,4.5rem)] leading-[1.05] font-medium opacity-0'
 							)}
 						>
-							{c.headlineLead}{' '}
-							{/* "WhatsApp" + ícone num nowrap: o ícone nunca
-							   cai sozinho na linha de baixo. */}
-							<span className="whitespace-nowrap">
+							{c.lines.map((line) => (
+								<span
+									key={line}
+									className="block whitespace-nowrap"
+								>
+									{line}
+								</span>
+							))}
+							<span className="block whitespace-nowrap">
+								{c.lastLead}{' '}
 								<span className="text-brand">WhatsApp</span>{' '}
 								<Image
 									src="/icons/whatsapp.svg"
@@ -129,10 +136,12 @@ export function SplitHero() {
 								/>
 							</span>
 						</h1>
+					</div>
 
+					<div className="lg:col-span-4 lg:col-start-8 lg:pb-2">
 						<p
 							data-hero-item
-							className="text-body-lg text-foreground/70 mt-8 max-w-xl text-pretty opacity-0"
+							className="text-body-lg text-foreground/70 max-w-xl text-pretty opacity-0"
 						>
 							{c.sub}
 						</p>
@@ -141,37 +150,27 @@ export function SplitHero() {
 							data-hero-item
 							className="mt-8 flex items-center gap-3 opacity-0"
 						>
-							<AiGradientButton asChild>
+							<Button
+								asChild
+								size="lg"
+								className="bg-brand text-brand-foreground hover:bg-brand/90 px-6"
+							>
 								<Link href="#cta">
 									<SplitHoverText as="span">
 										{t.bookDemo}
 									</SplitHoverText>
 								</Link>
-							</AiGradientButton>
+							</Button>
 						</div>
 					</div>
+				</div>
 
-					{/* Vídeo de apresentação, sobre a banda da v1. O padding é
-					   proporcional para reproduzir a moldura de lá (10,2% da
-					   largura da demo de cada lado, 6,9% da altura em cima e
-					   embaixo), recalculada a partir da largura da banda:
-					   8,5% × 3,95% — a demo mede 83% da banda e, em 13/9,
-					   3,95% da largura é o que 6,9% da altura dela dá. A
-					   proporção 13/9 é a da demo pinada da v1 (52 × 36rem);
-					   mais achatada, o chat corta o topo em cima de um balão
-					   (`overflow-hidden` + `justify-end`, scrollback por
-					   design). Segurando a proporção o bloco também não pula
-					   quando o vídeo real entrar no lugar. */}
-					<div className="lg:col-span-6 lg:col-start-6">
-						<div
-							data-hero-item
-							className="rounded-2xl bg-[url(/bg.png)] bg-cover bg-center px-[8.5%] py-[3.95%] opacity-0"
-						>
-							<div className="relative aspect-[13/9] w-full">
-								<MonfizaAppDemo fill />
-							</div>
-						</div>
-					</div>
+				{/* Vídeo de apresentação, recuado (ver acima). */}
+				<div
+					data-hero-item
+					className="mt-20 opacity-0 lg:mx-[calc((100%-11*var(--grid-gap))/24+var(--grid-gap)/2)] lg:mt-32"
+				>
+					<HeroVideo />
 				</div>
 			</div>
 		</section>

@@ -4,7 +4,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -25,14 +25,26 @@ const COPY = {
 		pricing: 'Preços',
 		soon: '(em breve)',
 		demo: 'Veja uma demo',
-		switchLang: 'Switch to English'
+		switchLang: 'Switch to English',
+		sectionsLabel: 'Seções da página',
+		partners: 'Empresas',
+		product: 'Produto',
+		metrics: 'Resultados',
+		testimonials: 'Relatos',
+		contact: 'Contato'
 	},
 	en: {
 		solutions: 'Solutions',
 		pricing: 'Pricing',
 		soon: '(soon)',
 		demo: 'See a demo',
-		switchLang: 'Ver em português'
+		switchLang: 'Ver em português',
+		sectionsLabel: 'Page sections',
+		partners: 'Companies',
+		product: 'Product',
+		metrics: 'Results',
+		testimonials: 'Testimonials',
+		contact: 'Contact'
 	}
 } satisfies Localized<Record<string, string>>
 
@@ -89,7 +101,7 @@ function SolutionsMenu() {
 	)
 }
 
-export const PRICING_HREF = '/distribuicao/precos'
+export const PRICING_HREF = '/fs1/precos'
 
 /* Link "Preços" ao lado da logo — opt-in por página (`pricing`), porque a
    nav também serve blog e rotas de teste, onde ele não faz sentido. Por
@@ -116,10 +128,70 @@ function PricingLink() {
 	)
 }
 
+/* Seções da própria página, na ordem em que aparecem. */
+const SECTION_LINKS = [
+	{ id: 'partners', key: 'partners' },
+	{ id: 'features', key: 'product' },
+	{ id: 'metrics', key: 'metrics' },
+	{ id: 'testimonials', key: 'testimonials' },
+	{ id: 'cta', key: 'contact' }
+] as const
+
+/* Navegação central por âncoras (só lg+, centrada na barra). A seção que
+   cruza o meio da tela fica marcada: texto cheio e a pílula de fundo, que
+   acompanha o tema da nav (escurece junto com ela sobre o fim escuro).
+   Âncoras de verdade: o Lenis desce suave e desconta a nav. */
+function SectionNav() {
+	const t = useCopy(COPY)
+	const [active, setActive] = useState<string | null>(null)
+
+	useEffect(() => {
+		const triggers = SECTION_LINKS.flatMap(({ id }) => {
+			const el = document.getElementById(id)
+			if (!el) return []
+			return ScrollTrigger.create({
+				trigger: el,
+				start: 'top 50%',
+				end: 'bottom 50%',
+				onToggle: (self) =>
+					setActive((prev) =>
+						self.isActive ? id : prev === id ? null : prev
+					)
+			})
+		})
+		return () => triggers.forEach((st) => st.kill())
+	}, [])
+
+	return (
+		<ul
+			aria-label={t.sectionsLabel}
+			className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 lg:flex"
+		>
+			{SECTION_LINKS.map(({ id, key }) => (
+				<li key={id} data-nav-item className="opacity-0">
+					<a
+						href={`#${id}`}
+						aria-current={active === id ? 'true' : undefined}
+						className={cn(
+							'flex h-9 items-center rounded-md px-3.5 text-base transition-colors',
+							active === id
+								? 'bg-foreground/[0.07] text-foreground'
+								: 'text-foreground/70 hover:text-foreground'
+						)}
+					>
+						{t[key]}
+					</a>
+				</li>
+			))}
+		</ul>
+	)
+}
+
 export function NavBar({
 	solutions = false,
-	pricing = false
-}: { solutions?: boolean; pricing?: boolean } = {}) {
+	pricing = false,
+	sections = false
+}: { solutions?: boolean; pricing?: boolean; sections?: boolean } = {}) {
 	const { lang, setLang } = useLang()
 	const t = useCopy(COPY)
 	const targetLang = lang === 'pt' ? 'en' : 'pt'
@@ -168,16 +240,47 @@ export function NavBar({
 		return () => st.kill()
 	}, [])
 
+	/* Tema da nav pelo que passa por baixo dela: sobre um trecho marcado com
+	   `data-nav-theme="dark"`, o header ganha `.dark` (re-declara os tokens
+	   só nele) e logo, links e botão invertem. A linha de troca é o meio da
+	   nav (52px = metade dos 104px). */
+	useEffect(() => {
+		const header = headerRef.current
+		if (!header) return
+		const zones = gsap.utils.toArray<HTMLElement>('[data-nav-theme="dark"]')
+		if (!zones.length) return
+		const active = new Set<HTMLElement>()
+		const triggers = zones.map((zone) =>
+			ScrollTrigger.create({
+				trigger: zone,
+				start: 'top 52px',
+				end: 'bottom 52px',
+				onToggle: (self) => {
+					if (self.isActive) active.add(zone)
+					else active.delete(zone)
+					header.classList.toggle('dark', active.size > 0)
+				}
+			})
+		)
+		return () => {
+			triggers.forEach((st) => st.kill())
+			header.classList.remove('dark')
+		}
+	}, [])
+
 	return (
-		<header ref={headerRef} className="fixed inset-x-0 top-0 z-50">
+		<header
+			ref={headerRef}
+			className="text-foreground fixed inset-x-0 top-0 z-50 transition-colors duration-300"
+		>
 			{/* Mesmo canvas das seções (`max-w-page` + goteira de 28px):
 			   acima de 1920px a nav centraliza com o resto da página em vez
 			   de esticar até as bordas da tela. A goteira conta dentro da
 			   medida, então a logo alinha com o conteúdo das seções — e o
-			   padding vertical segue em 1.75rem, que é o que dá os 92px de
-			   altura que o `pt-23` do main compensa. */}
-			<div className="max-w-page mx-auto w-full px-[var(--gutter)] py-7">
-				<nav className="flex h-9 w-full items-center justify-between">
+			   padding de 2.5rem em cima e 1.75rem embaixo dá os 104px de
+			   altura que o `pt-26` do main compensa. */}
+			<div className="max-w-page mx-auto w-full px-[var(--gutter)] pt-10 pb-7">
+				<nav className="relative flex h-9 w-full items-center justify-between">
 					<div className="flex items-center gap-10">
 						<Link
 							href="/"
@@ -190,6 +293,8 @@ export function NavBar({
 						{solutions && <SolutionsMenu />}
 						{pricing && <PricingLink />}
 					</div>
+
+					{sections && <SectionNav />}
 
 					<div className="flex items-center gap-3">
 						<SplitHoverText

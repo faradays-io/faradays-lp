@@ -22,8 +22,16 @@ import { cn } from '@/lib/utils'
 gsap.registerPlugin(ScrollTrigger)
 
 const COPY = {
-	pt: { indexLabel: 'Índice das features' },
-	en: { indexLabel: 'Feature index' }
+	pt: {
+		indexLabel: 'Índice das features',
+		heading: 'Conheça a FS1',
+		sub: 'A agente de IA da Faradays que toca a rotina comercial numa conversa: do pedido no WhatsApp ao documento no portal, sem o time trocar de ferramenta.'
+	},
+	en: {
+		indexLabel: 'Feature index',
+		heading: 'Introducing FS1',
+		sub: 'The Faradays AI agent that runs the sales routine in a conversation: from the WhatsApp request to the document in the portal, without the team switching tools.'
+	}
 } satisfies Localized<Record<string, string>>
 
 /* A quinta feature vem da grade "e mais": o quadro do gestor. As quatro de
@@ -71,6 +79,8 @@ const FEATURES: readonly {
  * blocos já lidos continua em 1 (para reaparecer no lugar certo ao voltar),
  * mas fica invisível — o destaque é da seção atual, e nada mais. O mesmo
  * trigger cuida da cor pelo `onToggle`.
+ *
+ * Sem filete entre os blocos: o respiro (py-24/36) separa as features.
  *
  * Os itens são âncoras de verdade: o Lenis global intercepta o clique e
  * desce suave, já descontando a altura da nav (`anchors.offset` no
@@ -129,6 +139,24 @@ export function FeatureIndex() {
 			className="bg-background text-foreground py-24 lg:py-32"
 		>
 			<div className="max-w-page mx-auto w-full px-[var(--gutter)]">
+				{/* Abertura centrada, na voz dos outros títulos (PT Serif). */}
+				<Reveal
+					y={24}
+					className="mx-auto mb-28 max-w-3xl text-center lg:mb-48"
+				>
+					<h2
+						className={cn(
+							ptSerif.className,
+							'text-[3.5rem]/[1.02] font-medium text-balance lg:text-[6rem]/[1]'
+						)}
+					>
+						{t.heading}
+					</h2>
+					<p className="text-body-lg text-foreground/60 mx-auto mt-8 max-w-xl text-pretty">
+						{t.sub}
+					</p>
+				</Reveal>
+
 				{/* Índice nas colunas 2-3, blocos nas 5-11: a coluna 4 fica
 				   de respiro entre as duas e as laterais seguem vazias, como
 				   no resto do canvas. Abaixo de lg o índice some — numa
@@ -194,7 +222,7 @@ export function FeatureIndex() {
 								key={feature.id}
 								id={`feature-${feature.id}`}
 								data-feature-block
-								className="border-border border-t py-20 first:border-t-0 first:pt-0 lg:py-28 lg:first:pt-0"
+								className="py-24 first:pt-0 lg:py-36 lg:first:pt-0"
 							>
 								<Reveal y={24}>
 									{/* A mesma voz do hero (`SplitHero`): PT Serif
