@@ -1,0 +1,3 @@
+# CODEOWNERS — aprovações de PR.
+# Só a aprovação de um code owner libera o merge (require code owner review ativo no ruleset).
+* @Elymansur18 @marianocho
